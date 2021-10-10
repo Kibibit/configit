@@ -1,8 +1,9 @@
 import { ValidationError } from 'class-validator';
 import { times, values } from 'lodash';
 import { red, cyan } from 'colors';
+import KbError from '@kibibit/kb-error';
 
-export class ConfigValidationError extends Error {
+export class ConfigValidationError extends KbError {
   constructor(validationErrors: ValidationError[], configInstance: any) {
     const message = validationErrors
       .map((validationError) => {

@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd examples/simple-node && npm run start:dev"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Kibibit/configit#readme",
   "dependencies": {
+    "@kibibit/kb-error": "^1.0.3",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "class-validator-jsonschema": "^3.1.0",
@@ -43,5 +44,8 @@
     "@types/nconf": "^0.10.1",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

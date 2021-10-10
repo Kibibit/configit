@@ -6,7 +6,7 @@ import {
   Validate
 } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { chain, keys } from 'lodash';
+import { chain } from 'lodash';
 
 import { JsonSchema } from './json-schema.validator';
 

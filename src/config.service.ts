@@ -46,9 +46,7 @@ export class ConfigService<T extends Config> {
 
   constructor(givenClass: TClass<T>, passedConfig?: Partial<T>, options: IConfigServiceOptions = {}) {
     this.options = options;
-    console.log('looking for root');
     this.appRoot = this.findRoot();
-    console.log('found root');
     if (!passedConfig && configService) { return configService; }
 
     this.genericClass = givenClass;
@@ -60,7 +58,7 @@ export class ConfigService<T extends Config> {
 
     this.configFileName = `${ this.fileName }.${ environment }.env.json`;
 
-    this.configFileRoot = this.findConfigRoot();
+    this.configFileRoot = this.findConfigRoot() || this.appRoot;
 
     this.defaultConfigFilePath = join(this.configFileRoot, `defaults.env.json`);
     this.configFilePath = join(this.configFileRoot, `${ this.fileName }.${ environment }.env.json`);
@@ -81,12 +79,12 @@ export class ConfigService<T extends Config> {
 
     this.config = new this.genericClass(envConfig as T);
 
-    if (config.saveToFile) {
+    if (config.saveToFile || config.init) {
       const plainConfig = classToPlain(this.config);
       plainConfig['$schema'] = `./${ this.jsonSchemaFullname }`;
       const orderedKeys = Object.keys(plainConfig).sort().reduce(
         (obj: { [key: string]: string }, key) => { 
-          if (key === '$schema' || !key.startsWith('$')) {
+          if ((key === '$schema' || !key.startsWith('$')) && key !== 'NODE_ENV') {
             obj[key] = plainConfig[key];
           }
           return obj;
@@ -108,7 +106,7 @@ export class ConfigService<T extends Config> {
   }
 
   private findRoot() {
-    return findRoot(__dirname, (dir) => {
+    return findRoot(process.cwd(), (dir) => {
       const packagePath = join(dir, 'package.json');
       const isPackageJsonExists = pathExistsSync(packagePath);
     
@@ -125,13 +123,13 @@ export class ConfigService<T extends Config> {
 
   private findConfigRoot() {
     try {
-      return findRoot(__dirname, (dir) => {
+      return findRoot(process.cwd(), (dir) => {
         const fileNames = readdirSync(dir);
         const isConfigFileExists = fileNames.includes(this.configFileName);
         return isConfigFileExists;
       });
     } catch (error) {
-      console.error('pizza!');
+      return this.findRoot();
     }
   }
 
@@ -147,7 +145,6 @@ export class ConfigService<T extends Config> {
     const validationErrors = validateSync(configInstance);
 
     if (validationErrors.length > 0) {
-      console.log(validationErrors);
       throw new ConfigValidationError(validationErrors, configInstance);
     }
     return classToPlain(configInstance) as Partial<T>;
