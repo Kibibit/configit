@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "declarationMap": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "outDir": "./lib",
+    "baseUrl": "./",
+    "paths": {
+    },
+    "incremental": true,
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "examples",
+    "lib"
+  ]
+}
