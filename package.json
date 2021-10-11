@@ -1,6 +1,6 @@
 {
   "name": "@kibibit/configit",
-  "version": "1.0.1",
+  "version": "1.0.0-beta.2",
   "description": "a general typescript configuration service",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,13 +11,18 @@
   "scripts": {
     "prebuild": "rimraf lib",
     "build": "tsc",
-    "lint": "eslint -c ./.eslintrc.js \"{src,apps,libs,test}/**/*.ts\"",
-    "lint:fix": "eslint -c ./.eslintrc.js \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "cd examples/simple-node && npm run start:dev"
+    "lint": "eslint -c ./.eslintrc.js \"{src,apps,libs,test,examples}/**/*.ts\"",
+    "lint:fix": "eslint -c ./.eslintrc.js \"{src,apps,libs,test,examples}/**/*.ts\" --fix",
+    "test": "cd examples/simple-node && npm run start:dev",
+    "contributors:all": "cross-env HUSKY=0 node ./tools/get-all-contributors.js",
+    "contributors:add": "cross-env HUSKY=0 all-contributors add",
+    "contributors:generate": "cross-env HUSKY=1 all-contributors generate",
+    "prepare": "husky install",
+    "semantic-release": "cross-env HUSKY=0 semantic-release"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kibibit/configit.git"
+    "url": "https://github.com/Kibibit/configit.git"
   },
   "author": "thatkookooguy <neilkalman@gmail.com>",
   "license": "MIT",
@@ -40,6 +45,15 @@
     "simple-git": "^2.46.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^13.2.1",
+    "@commitlint/config-angular": "^13.2.0",
+    "@commitlint/config-conventional": "^13.2.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/commit-analyzer": "^9.0.1",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^8.0.1",
+    "@semantic-release/npm": "^8.0.0",
+    "@semantic-release/release-notes-generator": "^10.0.2",
     "@types/colors": "^1.2.1",
     "@types/find-root": "^1.1.2",
     "@types/fs-extra": "^9.0.13",
@@ -48,15 +62,92 @@
     "@types/node": "^16.10.3",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
+    "all-contributors-cli": "^6.20.0",
+    "commitizen": "^4.2.4",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-conventional-changelog-emoji": "^0.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-unused-imports": "^1.1.5",
+    "husky": "^7.0.2",
     "rimraf": "^3.0.2",
+    "semantic-release": "^18.0.0",
+    "semantic-release-cli": "^5.4.4",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog-emoji"
+    }
+  },
+  "release": {
+    "branches": [
+      {
+        "name": "main"
+      },
+      {
+        "name": "beta",
+        "channel": "beta",
+        "prerelease": "beta"
+      }
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "angular",
+          "parserOpts": {
+            "noteKeywords": [
+              "BREAKING CHANGE",
+              "BREAKING CHANGES",
+              "BREAKING"
+            ]
+          }
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "angular",
+          "parserOpts": {
+            "noteKeywords": [
+              "BREAKING CHANGE",
+              "BREAKING CHANGES",
+              "BREAKING"
+            ]
+          },
+          "writerOpts": {
+            "commitsSort": [
+              "subject",
+              "scope"
+            ]
+          }
+        }
+      ],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md",
+          "changelogTitle": "achievibit changelog"
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md"
+          ]
+        }
+      ],
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ]
   }
 }

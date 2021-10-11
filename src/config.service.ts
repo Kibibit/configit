@@ -73,14 +73,14 @@ export class ConfigService<T extends Config> {
     );
 
     nconf
-     .argv({
+      .argv({
         parseValues: true
       })
       .env({
         parseValues: true,
         transform: this.options.convertToCamelCase ?
           transformToCamelCase :
-          undefined
+          null
       })
       .file('defaults', { file: this.defaultConfigFilePath })
       .file('environment', { file: this.configFilePath });
@@ -92,19 +92,19 @@ export class ConfigService<T extends Config> {
 
     if (config.saveToFile || config.init) {
       const plainConfig = classToPlain(this.config);
-      plainConfig['$schema'] = `./${ this.jsonSchemaFullname }`;
+      plainConfig.$schema = `./${ this.jsonSchemaFullname }`;
       const orderedKeys = chain(plainConfig)
         .keys()
         .sort()
         .without('NODE_ENV')
-        .reduce((obj: { [key: string]: string }, key) => { 
+        .reduce((obj: { [key: string]: string }, key) => {
           obj[key] = plainConfig[key];
           return obj;
         }, {})
         // .omitBy((value, key) => key.startsWith('$'))
         .value();
 
-        console.log(orderedKeys);
+      console.log(orderedKeys);
 
       writeJson(this.configFilePath, orderedKeys, { spaces: 2 });
     }
@@ -128,14 +128,14 @@ export class ConfigService<T extends Config> {
     return findRoot(process.cwd(), (dir) => {
       const packagePath = join(dir, 'package.json');
       const isPackageJsonExists = pathExistsSync(packagePath);
-    
+
       if (isPackageJsonExists) {
         const packageContent = readJSONSync(packagePath, { encoding: 'utf8' });
-        if (![''].includes(packageContent.name)) {
+        if (![ '' ].includes(packageContent.name)) {
           return true;
         }
       }
-    
+
       return false;
     });
   }
