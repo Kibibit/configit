@@ -1,19 +1,20 @@
 import { join } from 'path';
 
-import { classToPlain, Exclude } from 'class-transformer';
+import { classToPlain } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import findRoot from 'find-root';
 import {
   pathExistsSync,
+  readdirSync,
   readJSONSync,
   writeJson,
-  writeJSONSync,
-  readdirSync
+  writeJSONSync
 } from 'fs-extra';
 import { camelCase, chain, get } from 'lodash';
 import nconf from 'nconf';
-import { Config } from './config.model';
+
 import { ConfigValidationError } from './config.errors';
+import { Config } from './config.model';
 
 export interface IConfigServiceOptions {
   convertToCamelCase?: boolean;
@@ -21,6 +22,7 @@ export interface IConfigServiceOptions {
 
 const environment = get(process, 'env.NODE_ENV', 'development');
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let configService: ConfigService<any>;
 
 type TClass<T> = new (partial: Partial<T>) => T;
@@ -44,7 +46,11 @@ export class ConfigService<T extends Config> {
   readonly configFileRoot?: string;
   readonly appRoot: string;
 
-  constructor(givenClass: TClass<T>, passedConfig?: Partial<T>, options: IConfigServiceOptions = {}) {
+  constructor(
+    givenClass: TClass<T>,
+    passedConfig?: Partial<T>,
+    options: IConfigServiceOptions = {}
+  ) {
     this.options = options;
     this.appRoot = this.findRoot();
     if (!passedConfig && configService) { return configService; }
@@ -60,8 +66,11 @@ export class ConfigService<T extends Config> {
 
     this.configFileRoot = this.findConfigRoot() || this.appRoot;
 
-    this.defaultConfigFilePath = join(this.configFileRoot, `defaults.env.json`);
-    this.configFilePath = join(this.configFileRoot, `${ this.fileName }.${ environment }.env.json`);
+    this.defaultConfigFilePath = join(this.configFileRoot, 'defaults.env.json');
+    this.configFilePath = join(
+      this.configFileRoot,
+      `${ this.fileName }.${ environment }.env.json`
+    );
 
     nconf
      .argv({
@@ -69,7 +78,9 @@ export class ConfigService<T extends Config> {
       })
       .env({
         parseValues: true,
-        transform: this.options.convertToCamelCase ? transformToCamelCase : undefined
+        transform: this.options.convertToCamelCase ?
+          transformToCamelCase :
+          undefined
       })
       .file('defaults', { file: this.defaultConfigFilePath })
       .file('environment', { file: this.configFilePath });
@@ -82,21 +93,29 @@ export class ConfigService<T extends Config> {
     if (config.saveToFile || config.init) {
       const plainConfig = classToPlain(this.config);
       plainConfig['$schema'] = `./${ this.jsonSchemaFullname }`;
-      const orderedKeys = Object.keys(plainConfig).sort().reduce(
-        (obj: { [key: string]: string }, key) => { 
-          if ((key === '$schema' || !key.startsWith('$')) && key !== 'NODE_ENV') {
-            obj[key] = plainConfig[key];
-          }
+      const orderedKeys = chain(plainConfig)
+        .keys()
+        .sort()
+        .without('NODE_ENV')
+        .reduce((obj: { [key: string]: string }, key) => { 
+          obj[key] = plainConfig[key];
           return obj;
-        }, 
-        {}
-      );
+        }, {})
+        // .omitBy((value, key) => key.startsWith('$'))
+        .value();
+
+        console.log(orderedKeys);
 
       writeJson(this.configFilePath, orderedKeys, { spaces: 2 });
     }
 
     const schema = this.config.toJsonSchema();
-    writeJSONSync(join(this.configFileRoot, '/', this.jsonSchemaFullname), schema);
+    const schemaFullPath = join(
+      this.configFileRoot,
+      '/',
+      this.jsonSchemaFullname
+    );
+    writeJSONSync(schemaFullPath, schema);
 
     configService = this;
   }
@@ -145,7 +164,7 @@ export class ConfigService<T extends Config> {
     const validationErrors = validateSync(configInstance);
 
     if (validationErrors.length > 0) {
-      throw new ConfigValidationError(validationErrors, configInstance);
+      throw new ConfigValidationError(validationErrors);
     }
     return classToPlain(configInstance) as Partial<T>;
   }

@@ -1,10 +1,11 @@
 import { ValidationError } from 'class-validator';
+import { cyan,red } from 'colors';
 import { times, values } from 'lodash';
-import { red, cyan } from 'colors';
+
 import KbError from '@kibibit/kb-error';
 
 export class ConfigValidationError extends KbError {
-  constructor(validationErrors: ValidationError[], configInstance: any) {
+  constructor(validationErrors: ValidationError[]) {
     const message = validationErrors
       .map((validationError) => {
         const deco = cyan(times(55, () => '=').join(''));
