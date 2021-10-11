@@ -43,7 +43,7 @@ export class Config {
     const configJsonSchemaObj = validationMetadatasToSchemas({
       additionalConverters: {
         JsonSchema: (meta) => ({
-            description: meta.constraints.join('')
+          description: meta.constraints.join('')
         })
       }
     });

@@ -1,5 +1,5 @@
 import { ValidationError } from 'class-validator';
-import { cyan,red } from 'colors';
+import { cyan, red } from 'colors';
 import { times, values } from 'lodash';
 
 import KbError from '@kibibit/kb-error';

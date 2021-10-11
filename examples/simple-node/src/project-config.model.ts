@@ -1,5 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
-import { IsNumber, Validate, IsString, IsArray } from 'class-validator';
+import { IsNumber, Validate } from 'class-validator';
+
 import { Config, JsonSchema } from '@kibibit/configit';
 
 @Exclude()
