@@ -19,7 +19,6 @@
 <hr>
 
 Unless forced to create a new service, this service will return the first created service
-
 ### Usage
 
 Create a new class to define your configuration.
