@@ -130,6 +130,7 @@ export class ConfigService<T extends Config> {
   }
 
   toPlainObject() {
+    // hope this works now!
     return classToPlain(new this.genericClass(this.config));
   }
 
