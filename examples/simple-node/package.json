@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kibibit/configit": "^1.0.1",
+    "@kibibit/configit": "file:../..",
     "express": "^4.17.1"
   },
   "devDependencies": {
