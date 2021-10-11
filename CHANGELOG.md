@@ -1,5 +1,12 @@
 achievibit changelog
 
+## [1.1.1](https://github.com/Kibibit/configit/compare/v1.1.0...v1.1.1) (2021-10-11)
+
+
+### Bug Fixes
+
+* **base:** fix classtoplain for base config class ([b6847ee](https://github.com/Kibibit/configit/commit/b6847eeb9ada58d32b4967a11bbc3c952517db0b))
+
 # [1.1.0](https://github.com/Kibibit/configit/compare/v1.0.0...v1.1.0) (2021-10-11)
 
 
