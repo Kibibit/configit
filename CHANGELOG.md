@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.2.0](https://github.com/Kibibit/configit/compare/v1.1.1...v1.2.0) (2021-10-11)
+
+
+### Features
+
+* **config:** force new version ([d3f437b](https://github.com/Kibibit/configit/commit/d3f437bfdb2b750d0dae3dd25b1bddd8059fbe49))
+
 ## [1.1.1](https://github.com/Kibibit/configit/compare/v1.1.0...v1.1.1) (2021-10-11)
 
 
