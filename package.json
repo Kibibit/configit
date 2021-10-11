@@ -18,7 +18,7 @@
     "contributors:add": "cross-env HUSKY=0 all-contributors add",
     "contributors:generate": "cross-env HUSKY=1 all-contributors generate",
     "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "semantic-release": "cross-env HUSKY=0 semantic-release"
   },
   "repository": {
     "type": "git",
