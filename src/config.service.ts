@@ -11,13 +11,19 @@ import {
   writeJSONSync
 } from 'fs-extra';
 import { camelCase, chain, get } from 'lodash';
-import nconf from 'nconf';
+import nconf, { IFormats } from 'nconf';
+import nconfYamlFormat from 'nconf-yaml';
 
 import { ConfigValidationError } from './config.errors';
 import { Config } from './config.model';
 
+type IYamlIncludedFormats = IFormats & { yaml: nconfYamlFormat };
+
+const nconfFomrats = (nconf.formats as IYamlIncludedFormats).yaml = nconfYamlFormat;
+
 export interface IConfigServiceOptions {
   convertToCamelCase?: boolean;
+  useYaml?: boolean;
 }
 
 const environment = get(process, 'env.NODE_ENV', 'development');
@@ -83,7 +89,10 @@ export class ConfigService<T extends Config> {
           null
       })
       .file('defaults', { file: this.defaultConfigFilePath })
-      .file('environment', { file: this.configFilePath });
+      .file('environment', {
+        file: this.configFilePath,
+        format: this.options.useYaml ? nconfFomrats : null
+      });
 
     const config = passedConfig || nconf.get();
     const envConfig = this.validateInput(config);
@@ -121,7 +130,7 @@ export class ConfigService<T extends Config> {
   }
 
   toPlainObject() {
-    return classToPlain(this);
+    return classToPlain(new this.genericClass(this.config));
   }
 
   private findRoot() {

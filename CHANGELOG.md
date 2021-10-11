@@ -24,6 +24,13 @@ achievibit changelog
 
 * **release:** force version major bump
 
+# [1.0.0-beta.4](https://github.com/Kibibit/configit/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2021-10-11)
+
+
+### Bug Fixes
+
+* **base:** fix classtoplain for base config class ([b6847ee](https://github.com/Kibibit/configit/commit/b6847eeb9ada58d32b4967a11bbc3c952517db0b))
+
 # [1.0.0-beta.3](https://github.com/Kibibit/configit/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2021-10-11)
 
 
