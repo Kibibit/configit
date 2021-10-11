@@ -60,6 +60,16 @@ app.listen(configService.config.PORT, () => {
 } );
 ```
 
+### Features
+- Supports JSON files\env variables\cli flags as configuration inputs
+- initialize a configuration file with `--saveToFile` or `--init`
+- save configuration files anywhere above your project's package.json
+- forced singleton for a single installation (reuse same class)
+- testable
+- The ability to create json schemas automatically and add descriptions
+  to configuration variables
+- Get meaningfull errors when configuration is wrong!
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
