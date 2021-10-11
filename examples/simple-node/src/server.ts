@@ -13,6 +13,6 @@ app.get( "/", ( req, res ) => {
 } );
 
 app.listen(configService.config.PORT, () => {
-  console.log( `server started at http://localhost:${ port }` );
+  console.log( `server started at http://localhost:${ configService.config.PORT }` );
 } );
 
