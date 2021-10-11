@@ -1,5 +1,17 @@
 achievibit changelog
 
+# [1.0.0-beta.2](https://github.com/Kibibit/configit/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2021-10-11)
+
+
+### Features
+
+* **release:** force version major bump ([2b7dcbd](https://github.com/Kibibit/configit/commit/2b7dcbd2c73133efababd4ca3437b8d60053ce80))
+
+
+### BREAKING CHANGES
+
+* **release:** force version major bump
+
 # 1.0.0-beta.1 (2021-10-11)
 
 
