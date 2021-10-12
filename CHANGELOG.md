@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.6](https://github.com/Kibibit/configit/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2021-10-12)
+
+
+### Features
+
+* **schema:** define a decorator that combines Expose and Validate ([7f4387b](https://github.com/Kibibit/configit/commit/7f4387bed1e7ad4cd97992dc3d6ee8704cfff19d))
+
 # [1.0.0-beta.5](https://github.com/Kibibit/configit/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2021-10-11)
 
 
