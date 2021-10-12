@@ -1,5 +1,18 @@
 achievibit changelog
 
+# [2.0.0](https://github.com/Kibibit/configit/compare/v1.2.0...v2.0.0) (2021-10-12)
+
+
+### Features
+
+* **decorators:** add configuration decorator ([1bfd918](https://github.com/Kibibit/configit/commit/1bfd918c51e2d69ba68a537a4c912960cd8dd463))
+* **schema:** define a decorator that combines Expose and Validate ([7f4387b](https://github.com/Kibibit/configit/commit/7f4387bed1e7ad4cd97992dc3d6ee8704cfff19d))
+
+
+### BREAKING CHANGES
+
+* **decorators:** Since names have changed, this is a breaking change
+
 # [1.2.0](https://github.com/Kibibit/configit/compare/v1.1.1...v1.2.0) (2021-10-11)
 
 
