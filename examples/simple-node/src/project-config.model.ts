@@ -1,14 +1,16 @@
-import { Exclude, Expose } from 'class-transformer';
-import { IsNumber, Validate } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
-import { Config, JsonSchema } from '@kibibit/configit';
+import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 
-@Exclude()
-export class ProjectConfig extends Config {
-  @Expose()
+@Configuration()
+export class ProjectConfig extends BaseConfig {
+  @ConfigVariable('Server port')
   @IsNumber()
-  @Validate(JsonSchema, [
-    'Server port'
-  ])
   PORT: number;
+
+  @ConfigVariable([
+    'This is the slack API to talk and report to channel "hello"'
+  ])
+  @IsString()
+  SLACK_API_KEY: string;
 }
