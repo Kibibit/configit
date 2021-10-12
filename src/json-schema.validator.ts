@@ -20,6 +20,14 @@ class JsonSchema implements ValidatorConstraintInterface {
   }
 }
 
+export function Configuration(): ClassDecorator {
+  const exposeFn = Exclude();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function(target: any) {
+    exposeFn(target);
+  };
+}
+
 export function ConfigVariable(
   description: string | string[] = '',
   options: IConfigVariableOptions = {}

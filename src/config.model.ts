@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   IsBoolean,
   IsIn,
@@ -7,7 +6,7 @@ import {
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { chain } from 'lodash';
 
-import { ConfigVariable } from './json-schema.validator';
+import { Configuration, ConfigVariable } from './json-schema.validator';
 
 export const NODE_ENVIRONMENT_OPTIONS = [
   'google',
@@ -17,8 +16,8 @@ export const NODE_ENVIRONMENT_OPTIONS = [
   'devcontainer'
 ];
 
-@Exclude()
-export class Config {
+@Configuration()
+export class BaseConfig {
   @IsString()
   @IsIn(NODE_ENVIRONMENT_OPTIONS)
   @ConfigVariable(
@@ -34,7 +33,7 @@ export class Config {
   ], { exclude: true })
   saveToFile = false;
 
-  constructor(partial: Partial<Config> = {}) {
+  constructor(partial: Partial<BaseConfig> = {}) {
     Object.assign(this, partial);
   }
 
@@ -49,7 +48,7 @@ export class Config {
 
     const classForSchema = chain(configJsonSchemaObj)
       .keys()
-      .filter((className) => className !== 'Config')
+      .filter((className) => className !== 'BaseConfig')
       .first()
       .value();
     const configJsonSchema = configJsonSchemaObj[classForSchema];
