@@ -1,14 +1,13 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import {
   IsBoolean,
   IsIn,
-  IsString,
-  Validate
+  IsString
 } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { chain } from 'lodash';
 
-import { JsonSchema } from './json-schema.validator';
+import { ConfigVariable } from './json-schema.validator';
 
 export const NODE_ENVIRONMENT_OPTIONS = [
   'google',
@@ -20,19 +19,19 @@ export const NODE_ENVIRONMENT_OPTIONS = [
 
 @Exclude()
 export class Config {
-  @Expose()
   @IsString()
   @IsIn(NODE_ENVIRONMENT_OPTIONS)
-  @Validate(JsonSchema, [
-    'Tells which env file to use and what environment we are running on'
-  ])
+  @ConfigVariable(
+    'Tells which env file to use and what environment we are running on',
+    { exclude: true }
+  )
   NODE_ENV = 'development';
 
   @IsBoolean()
-  @Validate(JsonSchema, [
+  @ConfigVariable([
     'Create a file made out of the internal config. This is mostly for ',
     'merging command line, environment, and file variables to a single instance'
-  ])
+  ], { exclude: true })
   saveToFile = false;
 
   constructor(partial: Partial<Config> = {}) {

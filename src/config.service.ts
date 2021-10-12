@@ -105,15 +105,11 @@ export class ConfigService<T extends Config> {
       const orderedKeys = chain(plainConfig)
         .keys()
         .sort()
-        .without('NODE_ENV')
         .reduce((obj: { [key: string]: string }, key) => {
           obj[key] = plainConfig[key];
           return obj;
         }, {})
-        // .omitBy((value, key) => key.startsWith('$'))
         .value();
-
-      console.log(orderedKeys);
 
       writeJson(this.configFilePath, orderedKeys, { spaces: 2 });
     }
