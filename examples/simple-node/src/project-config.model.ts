@@ -1,10 +1,9 @@
-import { Exclude } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
 
-import { Config, ConfigVariable } from '@kibibit/configit';
+import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 
-@Exclude()
-export class ProjectConfig extends Config {
+@Configuration()
+export class ProjectConfig extends BaseConfig {
   @ConfigVariable('Server port')
   @IsNumber()
   PORT: number;

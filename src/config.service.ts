@@ -15,7 +15,7 @@ import nconf, { IFormats } from 'nconf';
 import nconfYamlFormat from 'nconf-yaml';
 
 import { ConfigValidationError } from './config.errors';
-import { Config } from './config.model';
+import { BaseConfig } from './config.model';
 
 type IYamlIncludedFormats = IFormats & { yaml: nconfYamlFormat };
 
@@ -39,7 +39,7 @@ type TClass<T> = new (partial: Partial<T>) => T;
  * another ConfigService, you'll always get the
  * first one.
  */
-export class ConfigService<T extends Config> {
+export class ConfigService<T extends BaseConfig> {
   private readonly mode: string = environment;
   readonly options: IConfigServiceOptions;
   readonly config?: T;
