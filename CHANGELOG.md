@@ -1,5 +1,17 @@
 achievibit changelog
 
+# [1.0.0-beta.7](https://github.com/Kibibit/configit/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2021-10-12)
+
+
+### Features
+
+* **decorators:** add configuration decorator ([1bfd918](https://github.com/Kibibit/configit/commit/1bfd918c51e2d69ba68a537a4c912960cd8dd463))
+
+
+### BREAKING CHANGES
+
+* **decorators:** Since names have changed, this is a breaking change
+
 # [1.0.0-beta.6](https://github.com/Kibibit/configit/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2021-10-12)
 
 
