@@ -51,13 +51,23 @@ export class BaseConfig {
       .filter((className) => className !== 'BaseConfig')
       .first()
       .value();
-    const configJsonSchema = configJsonSchemaObj[classForSchema];
+    const configJsonSchema = chain(configJsonSchemaObj[classForSchema])
+      .omit([
+        'properties.NODE_ENV',
+        'properties.nodeEnv',
+        'properties.saveToFile'
+      ])
+      .value();
 
-    delete configJsonSchema.properties?.nodeEnv;
-    configJsonSchema.required?.splice(
-      configJsonSchema.required.indexOf('nodeEnv'),
-      1
-    );
+    if (configJsonSchema.required) {
+      configJsonSchema.required = chain(configJsonSchema.required)
+        .filter((value) => ![
+          'NODE_ENV',
+          'nodeEnv',
+          'saveToFile'
+        ].includes(value))
+        .value();
+    }
 
     return configJsonSchema;
   }

@@ -7,12 +7,13 @@ import {
   pathExistsSync,
   readdirSync,
   readJSONSync,
-  writeJson,
+  writeFileSync,
   writeJSONSync
 } from 'fs-extra';
-import { camelCase, chain, get } from 'lodash';
+import { camelCase, chain, get, keys } from 'lodash';
 import nconf, { IFormats } from 'nconf';
 import nconfYamlFormat from 'nconf-yaml';
+import YAML from 'yaml';
 
 import { ConfigValidationError } from './config.errors';
 import { BaseConfig } from './config.model';
@@ -68,14 +69,20 @@ export class ConfigService<T extends BaseConfig> {
       .value();
     this.jsonSchemaFullname = `.${ this.fileName }.env.schema.json`;
 
-    this.configFileName = `${ this.fileName }.${ environment }.env.json`;
+    this.configFileName = [
+      `${ this.fileName }.${ environment }.env.`,
+      `${ this.options.useYaml ? 'yaml' : 'json' }`
+    ].join('');
 
     this.configFileRoot = this.findConfigRoot() || this.appRoot;
 
-    this.defaultConfigFilePath = join(this.configFileRoot, 'defaults.env.json');
+    this.defaultConfigFilePath = join(
+      this.configFileRoot,
+      `defaults.env.${ this.options.useYaml ? 'yaml' : 'json' }`,
+    );
     this.configFilePath = join(
       this.configFileRoot,
-      `${ this.fileName }.${ environment }.env.json`
+      this.configFileName
     );
 
     nconf
@@ -95,32 +102,24 @@ export class ConfigService<T extends BaseConfig> {
       });
 
     const config = passedConfig || nconf.get();
-    const envConfig = this.validateInput(config);
 
+    const pathDoesNotExist = pathExistsSync(this.configFilePath) === false;
+    if (pathDoesNotExist && (config.saveToFile || config.init)) {
+      console.log('Initializing Configuration File');
+      this.config = new this.genericClass({});
+      this.writeConfigToFile();
+      this.writeSchema();
+      return;
+    }
+
+    const envConfig = this.validateInput(config);
     this.config = new this.genericClass(envConfig as T);
 
     if (config.saveToFile || config.init) {
-      const plainConfig = classToPlain(this.config);
-      plainConfig.$schema = `./${ this.jsonSchemaFullname }`;
-      const orderedKeys = chain(plainConfig)
-        .keys()
-        .sort()
-        .reduce((obj: { [key: string]: string }, key) => {
-          obj[key] = plainConfig[key];
-          return obj;
-        }, {})
-        .value();
-
-      writeJson(this.configFilePath, orderedKeys, { spaces: 2 });
+      this.writeConfigToFile();
     }
 
-    const schema = this.config.toJsonSchema();
-    const schemaFullPath = join(
-      this.configFileRoot,
-      '/',
-      this.jsonSchemaFullname
-    );
-    writeJSONSync(schemaFullPath, schema);
+    this.writeSchema();
 
     configService = this;
   }
@@ -128,6 +127,42 @@ export class ConfigService<T extends BaseConfig> {
   toPlainObject() {
     // hope this works now!
     return classToPlain(new this.genericClass(this.config));
+  }
+
+  private writeSchema() {
+    const schema = this.config.toJsonSchema();
+    const schemaFullPath = join(
+      this.configFileRoot,
+      '/',
+      this.jsonSchemaFullname
+    );
+    writeJSONSync(schemaFullPath, schema);
+  }
+
+  private writeConfigToFile() {
+    const plainConfig = classToPlain(this.config);
+    plainConfig.$schema = `./${ this.jsonSchemaFullname }`;
+    const orderedKeys = chain(plainConfig)
+      .keys()
+      .sort()
+      .reduce((obj: { [key: string]: string }, key) => {
+        obj[key] = plainConfig[key];
+        return obj;
+      }, {})
+      .value();
+
+    if (this.options.useYaml) {
+      const yamlValues = chain(orderedKeys)
+        .omit([ '$schema' ])
+        // eslint-disable-next-line no-undefined
+        .omitBy((value) => value === undefined)
+        .value();
+      const yamlString = keys(yamlValues).length > 0 ? YAML.stringify(yamlValues) : '';
+      writeFileSync(this.configFilePath, `# yaml-language-server: $schema=./.yaml.env.schema.json\n${ yamlString }`);
+      return;
+    }
+
+    writeJSONSync(this.configFilePath, orderedKeys, { spaces: 2 });
   }
 
   private findRoot() {

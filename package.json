@@ -13,12 +13,14 @@
     "build": "tsc",
     "lint": "eslint -c ./.eslintrc.js \"{src,apps,libs,test,examples}/**/*.ts\"",
     "lint:fix": "eslint -c ./.eslintrc.js \"{src,apps,libs,test,examples}/**/*.ts\" --fix",
-    "test": "cd examples/simple-node && npm run start:dev",
     "contributors:all": "cross-env HUSKY=0 node ./tools/get-all-contributors.js",
     "contributors:add": "cross-env HUSKY=0 all-contributors add",
     "contributors:generate": "cross-env HUSKY=1 all-contributors generate",
     "prepare": "husky install",
-    "semantic-release": "cross-env HUSKY=0 semantic-release"
+    "semantic-release": "cross-env HUSKY=0 semantic-release",
+    "test": "cd examples/simple-node && npm run start:dev",
+    "test:extend": "cd examples/extend-config && npm run start:dev",
+    "test:yaml": "cd examples/yaml-config && npm run start:dev"
   },
   "repository": {
     "type": "git",

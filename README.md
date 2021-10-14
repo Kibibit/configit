@@ -8,6 +8,7 @@
   <a href="https://www.npmjs.com/package/@kibibit/configit"><img src="https://img.shields.io/npm/v/@kibibit/configit/latest.svg?style=for-the-badge&logo=npm&color=CB3837"></a>
 </p>
 <p align="center">
+<a href="https://www.npmjs.com/package/@kibibit/configit"><img src="https://img.shields.io/npm/v/@kibibit/configit/beta.svg?logo=npm&color=CB3837"></a>
 <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"></a>
  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <a href="#contributors-"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All Contributors"></a>
@@ -20,48 +21,89 @@
 
 Unless forced to create a new service, this service will return the first created service
 
-### Usage
+## Usage
 
 Create a new class to define your configuration.
 The class should extend the `Config` class from this repo
 ```typescript
-import { Exclude, Expose } from 'class-transformer';
-import { IsNumber, Validate, IsString, IsArray } from 'class-validator';
-import { Config, JsonSchema } from '@kibibit/configit';
+import { IsNumber, IsString } from 'class-validator';
 
-@Exclude()
-export class ProjectConfig extends Config {
-  @Expose()
+import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
+
+@Configuration()
+export class ProjectConfig extends BaseConfig {
+  @ConfigVariable('Server port')
   @IsNumber()
-  @Validate(JsonSchema, [
-    'Server port'
-  ])
   PORT: number;
+
+  @ConfigVariable([
+    'This is the slack API to talk and report to channel "hello"'
+  ])
+  @IsString()
+  SLACK_API_KEY: string;
+}
+
 }
 ```
 Then, in your code, initialize the config service when you bootstrap your application
 ```typescript
+import express from 'express';
 import { ConfigService } from '@kibibit/configit';
 import { ProjectConfig } from './project-config.model';
-import express from "express";
 
 export const configService = new ConfigService<ProjectConfig>(ProjectConfig);
-
-console.log(configService.config.PORT);
-
 const app = express();
 
-app.get( "/", ( req, res ) => {
-  res.send( "Hello world!" );
+app.get( '/', ( req, res ) => {
+  res.send( 'Hello world!' );
 } );
 
 app.listen(configService.config.PORT, () => {
-  console.log( `server started at http://localhost:${ configService.config.PORT }` );
-} );
+  console.log(
+    `server started at http://localhost:${ configService.config.PORT }`
+  );
+});
+
 ```
 
-### Features
-- Supports JSON files\env variables\cli flags as configuration inputs
+### Extending the Configuration Service (Recommended)
+You can extend the configuration to add your own customization and functions!
+```typescript
+import { chain } from 'lodash';
+
+import { ConfigService, IConfigServiceOptions } from '@kibibit/configit';
+import { WinstonLogger } from '@kibibit/nestjs-winston';
+
+import { ExtProjectConfig } from './ext-project-config.model';
+import { initializeWinston } from './winston.config';
+
+export class GsConfigService extends ConfigService<ExtProjectConfig> {
+  public logger: WinstonLogger;
+  constructor(passedConfig?: Partial<ExtProjectConfig>, options: IConfigServiceOptions = {}) {
+    super(ExtProjectConfig, passedConfig, options);
+
+    initializeWinston(this.appRoot);
+    this.logger = new WinstonLogger('');
+  }
+
+  getSlackApiObject() {
+    const slackApiObject = chain(this.toPlainObject())
+      .pickBy((value, key) => key.startsWith('SLACK_'))
+      .mapKeys((value, key) => key.replace(/^SLACK_/i, ''))
+      .mapKeys((value, key) => key.toLowerCase())
+      .value();
+
+    return slackApiObject;
+  }
+}
+
+export const configService = new GsConfigService() as GsConfigService;
+
+```
+
+
+## Features
+- Supports JSON\YAML files\env variables\cli flags as configuration inputs. See `yaml-config` in the examples folder
 - initialize a configuration file with `--saveToFile` or `--init`
 - save configuration files anywhere above your project's package.json
 - forced singleton for a single installation (reuse same class)
