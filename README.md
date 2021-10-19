@@ -77,7 +77,7 @@ import { WinstonLogger } from '@kibibit/nestjs-winston';
 import { ExtProjectConfig } from './ext-project-config.model';
 import { initializeWinston } from './winston.config';
 
-export class GsConfigService extends ConfigService<ExtProjectConfig> {
+export class ExtConfigService extends ConfigService<ExtProjectConfig> {
   public logger: WinstonLogger;
   constructor(passedConfig?: Partial<ExtProjectConfig>, options: IConfigServiceOptions = {}) {
     super(ExtProjectConfig, passedConfig, options);
@@ -97,13 +97,14 @@ export class GsConfigService extends ConfigService<ExtProjectConfig> {
   }
 }
 
-export const configService = new GsConfigService() as GsConfigService;
+export const configService = new ExtConfigService() as ExtConfigService;
 
 ```
 
 
 ## Features
 - Supports JSON\YAML files\env variables\cli flags as configuration inputs. See `yaml-config` in the examples folder
+- Supports shared configuration files (same file shared for multiple projects)
 - initialize a configuration file with `--saveToFile` or `--init`
 - save configuration files anywhere above your project's package.json
 - forced singleton for a single installation (reuse same class)
@@ -111,6 +112,9 @@ export const configService = new GsConfigService() as GsConfigService;
 - The ability to create json schemas automatically and add descriptions
   to configuration variables
 - Get meaningfull errors when configuration is wrong!
+
+## Examples
+See the examples folder for a variety of usage examples
 
 ## Contributors ✨
 
