@@ -20,7 +20,8 @@
     "semantic-release": "cross-env HUSKY=0 semantic-release",
     "test": "cd examples/simple-node && npm run start:dev",
     "test:extend": "cd examples/extend-config && npm run start:dev",
-    "test:yaml": "cd examples/yaml-config && npm run start:dev"
+    "test:yaml": "cd examples/yaml-config && npm run start:dev",
+    "test:shared-configs": "cd examples/shared-configs && npm run start:dev"
   },
   "repository": {
     "type": "git",
