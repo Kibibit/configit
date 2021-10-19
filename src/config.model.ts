@@ -91,8 +91,8 @@ export class BaseConfig {
   getFileName(ext: string, isSharedConfig = false) {
     return [
       '.env.',
-      isSharedConfig ? '_shared_.' : '',
       environment, '.',
+      isSharedConfig ? '_shared_.' : '',
       kebabCase(this.name), '.',
       ext
     ].join('');

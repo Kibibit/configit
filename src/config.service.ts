@@ -266,7 +266,7 @@ export class ConfigService<T extends BaseConfig> {
     const plainConfig = classToPlain(config);
     const relativePathToSchema = relative(
       this.configFileRoot,
-      join(this.appRoot, `/${ this.options.schemaFolderName }/${ this.config.getSchemaFileName() }`)
+      join(this.appRoot, `/${ this.options.schemaFolderName }/${ config.getSchemaFileName() }`)
     );
     plainConfig.$schema = relativePathToSchema;
     const sharedConfigFullPath = join(
