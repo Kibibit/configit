@@ -3,7 +3,7 @@ import { IsNumber, IsString } from 'class-validator';
 import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 
 @Configuration()
-export class YamlConfig extends BaseConfig {
+export class YamlProjectConfig extends BaseConfig {
   @ConfigVariable('Server port')
   @IsNumber()
   PORT: number;

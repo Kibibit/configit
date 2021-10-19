@@ -1,12 +1,12 @@
 import { ConfigService, IConfigServiceOptions } from '@kibibit/configit';
 import { WinstonLogger } from '@kibibit/nestjs-winston';
 
-import { YamlConfig } from './yaml-config.model';
+import { YamlProjectConfig } from './yaml-config.model';
 
-export class YamlConfigService extends ConfigService<YamlConfig> {
+export class YamlConfigService extends ConfigService<YamlProjectConfig> {
   public logger: WinstonLogger;
-  constructor(passedConfig?: Partial<YamlConfig>, options: IConfigServiceOptions = {}) {
-    super(YamlConfig, passedConfig, options);
+  constructor(passedConfig?: Partial<YamlProjectConfig>, options: IConfigServiceOptions = {}) {
+    super(YamlProjectConfig, passedConfig, options);
   }
 }
 
