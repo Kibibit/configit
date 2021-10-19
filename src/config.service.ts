@@ -11,13 +11,14 @@ import {
   readJSONSync,
   writeFileSync,
   writeJSONSync } from 'fs-extra';
-import { camelCase, chain, get, keys, mapValues, startCase, times } from 'lodash';
+import { camelCase, chain, keys, mapValues, startCase, times } from 'lodash';
 import nconf, { IFormats } from 'nconf';
 import nconfYamlFormat from 'nconf-yaml';
 import YAML from 'yaml';
 
 import { ConfigValidationError } from './config.errors';
 import { BaseConfig } from './config.model';
+import { getEnvironment, setEnvironment } from './environment.service';
 
 type IYamlIncludedFormats = IFormats & { yaml: nconfYamlFormat };
 
@@ -30,9 +31,11 @@ export interface IConfigServiceOptions {
   schemaFolderName?: string;
   showOverrides?: boolean;
   configFolderRelativePath?: string;
+  encryptConfig?: {
+    algorithm: string;
+    secret: string;
+  };
 }
-
-const environment = get(process, 'env.NODE_ENV', 'development');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let configService: ConfigService<any>;
@@ -46,8 +49,8 @@ type TClass<T> = (new (partial: Partial<T>) => T);
  * first one.
  */
 export class ConfigService<T extends BaseConfig> {
-  private readonly mode: string = environment;
   private fileExtension: 'yaml' | 'json';
+  readonly mode: string = getEnvironment();
   readonly options: IConfigServiceOptions;
   readonly config?: T;
   readonly genericClass?: TClass<T>;
@@ -63,6 +66,9 @@ export class ConfigService<T extends BaseConfig> {
     options: IConfigServiceOptions = {}
   ) {
     if (!passedConfig && configService) { return configService; }
+
+    setEnvironment(passedConfig.NODE_ENV || getEnvironment());
+    this.mode = getEnvironment();
 
     this.options = {
       sharedConfig: [],
@@ -95,9 +101,12 @@ export class ConfigService<T extends BaseConfig> {
       this.writeSchema();
       console.log(cyan('EXITING'));
       process.exit(0);
+      return;
     }
 
     const envConfig = this.validateInput(config);
+    if (!envConfig) { return; }
+    envConfig.NODE_ENV = this.mode;
     this.config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
 
     if (config.saveToFile || config.init) {
@@ -127,17 +136,29 @@ export class ConfigService<T extends BaseConfig> {
         parseValues: true
       })
       .env({
+        separator: '__',
         parseValues: true,
         transform: this.options.convertToCamelCase ?
           transformToCamelCase :
           null
       });
 
+    const nconfFileOptions: nconf.IFileOptions = {
+      format: this.options.useYaml ? nconfFomrats : null
+    };
+
+    if (this.options.encryptConfig) {
+      nconfFileOptions.secure = {
+        secret: this.options.encryptConfig.secret,
+        alg: this.options.encryptConfig.algorithm
+      };
+    }
+
     try {
       nconf
         .file('environment', {
           file: this.configFileFullPath,
-          format: this.options.useYaml ? nconfFomrats : null
+          ...nconfFileOptions
         });
     } catch (error) {
       console.error(red(error.message));
@@ -153,7 +174,7 @@ export class ConfigService<T extends BaseConfig> {
       try {
         nconf.file(sharedConfigInstance.name, {
           file: sharedConfigFullPath,
-          format: this.options.useYaml ? nconfFomrats : null
+          ...nconfFileOptions
         });
       } catch (error) {
         console.error(red(error.message));
@@ -364,6 +385,7 @@ export class ConfigService<T extends BaseConfig> {
 
     if (shouldExitProcess) {
       process.exit(1);
+      return;
     }
 
     return {

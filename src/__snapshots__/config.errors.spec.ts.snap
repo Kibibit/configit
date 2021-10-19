@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Config Model ConfigValidationError beautify class-validator errors 1`] = `
+"
+=======================================================
+ property: toppings
+ value: [ 'cheese', 'pepperoni', 5 ]
+=======================================================
+    - Topping must be one of: cheese, pepperoni, sausage
+
+"
+`;

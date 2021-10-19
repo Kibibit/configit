@@ -2,11 +2,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: [
-      './tsconfig.json',
-      './examples/simple-node/tsconfig.json',
-      './examples/extend-config/tsconfig.json',
-      './examples/yaml-config/tsconfig.json',
-      './examples/shared-configs/tsconfig.json'
+      './tsconfig.eslint.json'
     ],
     sourceType: 'module',
   },
@@ -187,7 +183,6 @@ module.exports = {
     'require-atomic-updates': 'error',
     'dot-notation': 'error',
     'require-await': 'warn',
-    'no-shadow': 'warn',
     'no-undefined': 'error',
     'line-comment-position': [ 'error', { position: 'above' } ]
   }
