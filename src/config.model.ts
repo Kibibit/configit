@@ -4,11 +4,10 @@ import {
   IsString
 } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { chain, get, kebabCase } from 'lodash';
+import { chain, kebabCase } from 'lodash';
 
+import { getEnvironment } from './environment.service';
 import { Configuration, ConfigVariable } from './json-schema.validator';
-
-const environment = get(process, 'env.NODE_ENV', 'development');
 
 export const NODE_ENVIRONMENT_OPTIONS = [
   'google',
@@ -91,7 +90,7 @@ export class BaseConfig {
   getFileName(ext: string, isSharedConfig = false) {
     return [
       '.env.',
-      environment, '.',
+      getEnvironment(), '.',
       isSharedConfig ? '_shared_.' : '',
       kebabCase(this.name), '.',
       ext
