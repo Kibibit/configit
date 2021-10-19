@@ -16,6 +16,7 @@ module.exports = {
   collectCoverageFrom: [
     '**/*.(t|j)s',
     '!**/*.decorator.ts',
+    '!**/*.mock.ts',
     '!**/index.ts',
     '!**/dev-tools/**/*.ts'
   ],
