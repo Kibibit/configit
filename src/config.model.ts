@@ -4,9 +4,11 @@ import {
   IsString
 } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { chain } from 'lodash';
+import { chain, get, kebabCase } from 'lodash';
 
 import { Configuration, ConfigVariable } from './json-schema.validator';
+
+const environment = get(process, 'env.NODE_ENV', 'development');
 
 export const NODE_ENVIRONMENT_OPTIONS = [
   'google',
@@ -16,8 +18,12 @@ export const NODE_ENVIRONMENT_OPTIONS = [
   'devcontainer'
 ];
 
+type TClass<T> = (new (partial: Partial<T>) => T);
+
 @Configuration()
 export class BaseConfig {
+  name: string;
+
   @IsString()
   @IsIn(NODE_ENVIRONMENT_OPTIONS)
   @ConfigVariable(
@@ -48,8 +54,7 @@ export class BaseConfig {
 
     const classForSchema = chain(configJsonSchemaObj)
       .keys()
-      .filter((className) => className !== 'BaseConfig')
-      .first()
+      .find((className) => className === this.constructor.name)
       .value();
     const configJsonSchema = chain(configJsonSchemaObj[classForSchema])
       .omit([
@@ -70,5 +75,30 @@ export class BaseConfig {
     }
 
     return configJsonSchema;
+  }
+
+  private cleanFileName(fileName: string) {
+    return chain(fileName)
+      .replace(/Config$/i, '')
+      .replace(/Configuration$/i, '')
+      .value();
+  }
+
+  setName(genericClass: TClass<BaseConfig>) {
+    this.name = this.cleanFileName(genericClass.name);
+  }
+
+  getFileName(ext: string, isSharedConfig = false) {
+    return [
+      '.env.',
+      isSharedConfig ? '_shared_.' : '',
+      environment, '.',
+      kebabCase(this.name), '.',
+      ext
+    ].join('');
+  }
+
+  getSchemaFileName() {
+    return `${ kebabCase(this.name) }.env.schema.json`;
   }
 }
