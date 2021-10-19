@@ -1,5 +1,19 @@
 achievibit changelog
 
+# [2.1.0](https://github.com/Kibibit/configit/compare/v2.0.0...v2.1.0) (2021-10-19)
+
+
+### Bug Fixes
+
+* **service:** small fixes to names and schemas ([b0a836c](https://github.com/Kibibit/configit/commit/b0a836c3853014685fa75602d9e8d7da2b9a2089))
+
+
+### Features
+
+* **examples:** add example for shared config ([c47956c](https://github.com/Kibibit/configit/commit/c47956cbb1e0bc9ed9f1ac9973181556dcaee9d4))
+* **service:** add options to service and support shared configs ([589cd69](https://github.com/Kibibit/configit/commit/589cd697638a23e7bc34c706b470f73725e54d04))
+* **config:** support yaml config files ([4e5d507](https://github.com/Kibibit/configit/commit/4e5d507c7a214855e3ef7a545cd1a155af97bf8f))
+
 # [2.0.0](https://github.com/Kibibit/configit/compare/v1.2.0...v2.0.0) (2021-10-12)
 
 
