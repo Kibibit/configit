@@ -12,6 +12,12 @@
 <a href="https://codecov.io/gh/Kibibit/configit">
   <img src="https://codecov.io/gh/Kibibit/configit/branch/beta/graph/badge.svg?token=DrXLrpuExK">
 </a>
+<a href="https://github.com/Kibibit/configit/actions/workflows/build.yml">
+  <img src="https://github.com/Kibibit/configit/actions/workflows/build.yml/badge.svg?style=flat-square&branch=beta" alt="Build">
+</a>
+<a href="https://github.com/Kibibit/configit/actions/workflows/tests.yml">
+  <img src="https://github.com/Kibibit/configit/actions/workflows/tests.yml/badge.svg?style=flat-square&branch=beta" alt="Tests">
+</a>
 <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"></a>
  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <a href="#contributors-"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All Contributors"></a>
