@@ -7,6 +7,18 @@ achievibit changelog
 
 * **build:** fix build to not include configuration ([812386c](https://github.com/Kibibit/configit/commit/812386c32f2e81b3b2df1d761d615f39c1fdfc1f))
 
+
+### Features
+
+* **service:** allow overriding config folder when exporting ([62f9edc](https://github.com/Kibibit/configit/commit/62f9edc01ac77b062097456b99bc9e3a106827c1))
+
+# [1.0.0-beta.10](https://github.com/Kibibit/configit/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2021-10-28)
+
+
+### Bug Fixes
+
+* **build:** fix build to not include configuration ([812386c](https://github.com/Kibibit/configit/commit/812386c32f2e81b3b2df1d761d615f39c1fdfc1f))
+
 # [1.0.0-beta.9](https://github.com/Kibibit/configit/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2021-10-28)
 
 
