@@ -26,7 +26,6 @@
 <p align="center">
   A general typescript configuration service
 </p>
-
 <hr>
 
 Unless forced to create a new service, this service will return the first created service
