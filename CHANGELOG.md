@@ -1,5 +1,12 @@
 achievibit changelog
 
+## [2.2.1](https://github.com/Kibibit/configit/compare/v2.2.0...v2.2.1) (2021-10-28)
+
+
+### Bug Fixes
+
+* **build:** fix build to not include configuration ([#15](https://github.com/Kibibit/configit/issues/15)) ([0b5ff04](https://github.com/Kibibit/configit/commit/0b5ff04d2cf57148c6fb74f6216316b7f04e3080))
+
 # [2.2.0](https://github.com/Kibibit/configit/compare/v2.1.0...v2.2.0) (2021-10-28)
 
 
