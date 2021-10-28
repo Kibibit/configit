@@ -1,14 +1,14 @@
 import {
   IsBoolean,
   IsIn,
+  IsOptional,
   IsString
 } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { chain, get, kebabCase } from 'lodash';
+import { chain, kebabCase } from 'lodash';
 
+import { getEnvironment } from './environment.service';
 import { Configuration, ConfigVariable } from './json-schema.validator';
-
-const environment = get(process, 'env.NODE_ENV', 'development');
 
 export const NODE_ENVIRONMENT_OPTIONS = [
   'google',
@@ -16,6 +16,11 @@ export const NODE_ENVIRONMENT_OPTIONS = [
   'production',
   'test',
   'devcontainer'
+];
+
+export const CONVERT_TO_OPTIONS = [
+  'json',
+  'yaml'
 ];
 
 type TClass<T> = (new (partial: Partial<T>) => T);
@@ -39,6 +44,21 @@ export class BaseConfig {
   ], { exclude: true })
   saveToFile = false;
 
+  @IsBoolean()
+  @ConfigVariable(
+    'Save the file to JSON if defaults to YAML and vise versa',
+    { exclude: true }
+  )
+  convert = false;
+
+  @IsString()
+  @IsOptional()
+  @ConfigVariable(
+    'Object Wrapper for saved file',
+    { exclude: true }
+  )
+  wrapper;
+
   constructor(partial: Partial<BaseConfig> = {}) {
     Object.assign(this, partial);
   }
@@ -60,7 +80,9 @@ export class BaseConfig {
       .omit([
         'properties.NODE_ENV',
         'properties.nodeEnv',
-        'properties.saveToFile'
+        'properties.saveToFile',
+        'properties.convert',
+        'properties.wrapper'
       ])
       .value();
 
@@ -69,7 +91,9 @@ export class BaseConfig {
         .filter((value) => ![
           'NODE_ENV',
           'nodeEnv',
-          'saveToFile'
+          'saveToFile',
+          'convert',
+          'wrapper'
         ].includes(value))
         .value();
     }
@@ -91,7 +115,7 @@ export class BaseConfig {
   getFileName(ext: string, isSharedConfig = false) {
     return [
       '.env.',
-      environment, '.',
+      getEnvironment(), '.',
       isSharedConfig ? '_shared_.' : '',
       kebabCase(this.name), '.',
       ext

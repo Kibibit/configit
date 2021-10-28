@@ -9,6 +9,15 @@
 </p>
 <p align="center">
 <a href="https://www.npmjs.com/package/@kibibit/configit"><img src="https://img.shields.io/npm/v/@kibibit/configit/beta.svg?logo=npm&color=CB3837"></a>
+<a href="https://codecov.io/gh/Kibibit/configit">
+  <img src="https://codecov.io/gh/Kibibit/configit/branch/beta/graph/badge.svg?token=DrXLrpuExK">
+</a>
+<a href="https://github.com/Kibibit/configit/actions/workflows/build.yml">
+  <img src="https://github.com/Kibibit/configit/actions/workflows/build.yml/badge.svg?style=flat-square&branch=beta" alt="Build">
+</a>
+<a href="https://github.com/Kibibit/configit/actions/workflows/tests.yml">
+  <img src="https://github.com/Kibibit/configit/actions/workflows/tests.yml/badge.svg?style=flat-square&branch=beta" alt="Tests">
+</a>
 <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"></a>
  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <a href="#contributors-"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All Contributors"></a>
@@ -77,7 +86,7 @@ import { WinstonLogger } from '@kibibit/nestjs-winston';
 import { ExtProjectConfig } from './ext-project-config.model';
 import { initializeWinston } from './winston.config';
 
-export class GsConfigService extends ConfigService<ExtProjectConfig> {
+export class ExtConfigService extends ConfigService<ExtProjectConfig> {
   public logger: WinstonLogger;
   constructor(passedConfig?: Partial<ExtProjectConfig>, options: IConfigServiceOptions = {}) {
     super(ExtProjectConfig, passedConfig, options);
@@ -97,13 +106,14 @@ export class GsConfigService extends ConfigService<ExtProjectConfig> {
   }
 }
 
-export const configService = new GsConfigService() as GsConfigService;
+export const configService = new ExtConfigService() as ExtConfigService;
 
 ```
 
 
 ## Features
 - Supports JSON\YAML files\env variables\cli flags as configuration inputs. See `yaml-config` in the examples folder
+- Supports shared configuration files (same file shared for multiple projects)
 - initialize a configuration file with `--saveToFile` or `--init`
 - save configuration files anywhere above your project's package.json
 - forced singleton for a single installation (reuse same class)
@@ -111,6 +121,9 @@ export const configService = new GsConfigService() as GsConfigService;
 - The ability to create json schemas automatically and add descriptions
   to configuration variables
 - Get meaningfull errors when configuration is wrong!
+
+## Examples
+See the examples folder for a variety of usage examples
 
 ## Contributors ✨
 
