@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [2.2.0](https://github.com/Kibibit/configit/compare/v2.1.0...v2.2.0) (2021-10-28)
+
+
+### Features
+
+* **yaml:** support convertion of config file on save ([4b8000c](https://github.com/Kibibit/configit/commit/4b8000c79520f936308febdc20117d3ab97aac54))
+
 # [2.1.0](https://github.com/Kibibit/configit/compare/v2.0.0...v2.1.0) (2021-10-19)
 
 
