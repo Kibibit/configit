@@ -15,36 +15,10 @@ Array [
 ]
 `;
 
-exports[`Config Service Service can SAVE the config files with saveToFile or init param 2`] = `
-Array [
-  "/.schemas/pizza.env.schema.json",
-  Object {
-    "properties": Object {
-      "toppings": Object {
-        "description": "optional toppings for the pizza",
-        "items": Object {
-          "enum": Array [
-            "cheese",
-            "pepperoni",
-            "sausage",
-          ],
-          "type": "string",
-        },
-        "type": "array",
-      },
-    },
-    "required": Array [],
-    "type": "object",
-  },
-  Object {
-    "spaces": 2,
-  },
-]
-`;
-
 exports[`Config Service Service can be forced to be created again 1`] = `
 PizzaConfig {
   "NODE_ENV": "test",
+  "convert": false,
   "name": "Pizza",
   "saveToFile": false,
   "toppings": Array [

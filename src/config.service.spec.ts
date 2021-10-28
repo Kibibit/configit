@@ -41,7 +41,6 @@ describe('Config Service', () => {
     (fsExtra.writeJSONSync as jest.Mock).mockReturnValue(false);
     (fsExtra.pathExistsSync as jest.Mock).mockReturnValue(false);
     const mockExit = mockProcessExit();
-    (fsExtra.writeJSONSync as jest.Mock).mockClear();
     jest.clearAllMocks();
     new PizzaConfigService({
       saveToFile: true,
@@ -58,16 +57,17 @@ describe('Config Service', () => {
   test('Service can SAVE the config files with saveToFile or init param', () => {
     (fsExtra.writeJSONSync as jest.Mock).mockReturnValue(false);
     (fsExtra.pathExistsSync as jest.Mock).mockReturnValue(true);
-    (fsExtra.writeJSONSync as jest.Mock).mockClear();
     jest.clearAllMocks();
+    const mockExit = mockProcessExit();
     new PizzaConfigService({
       saveToFile: true,
       NODE_ENV: 'test',
       toppings: [ ToppingEnum.Cheese ]
     });
 
-    expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(2);
+    expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
     expect((fsExtra.writeJSONSync as jest.Mock).mock.calls[0]).toMatchSnapshot();
-    expect((fsExtra.writeJSONSync as jest.Mock).mock.calls[1]).toMatchSnapshot();
+    expect(mockExit).toHaveBeenCalledWith(0);
+    mockExit.mockRestore();
   });
 });

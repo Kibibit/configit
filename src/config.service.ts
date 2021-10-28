@@ -101,6 +101,7 @@ export class ConfigService<T extends BaseConfig> {
       this.writeSchema();
       console.log(cyan('EXITING'));
       process.exit(0);
+      return;
     }
 
     const envConfig = this.validateInput(config);
@@ -114,10 +115,10 @@ export class ConfigService<T extends BaseConfig> {
       }
       const useYaml = config.convert ? !this.options.useYaml : this.options.useYaml;
       const objectWrapper = config.wrapper;
-      console.log('objectWrapper', objectWrapper);
       this.writeConfigToFile(useYaml, objectWrapper, config.convert);
       console.log(cyan('EXITING'));
       process.exit(0);
+      return;
     }
 
     this.writeSchema();
