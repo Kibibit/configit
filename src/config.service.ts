@@ -37,6 +37,13 @@ export interface IConfigServiceOptions {
   };
 }
 
+export interface IWriteConfigToFileOptions {
+    useYaml: boolean;
+    excludeSchema?: boolean;
+    objectWrapper?: string;
+    outputFolder?: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let configService: ConfigService<any>;
 
@@ -115,7 +122,7 @@ export class ConfigService<T extends BaseConfig> {
       }
       const useYaml = config.convert ? !this.options.useYaml : this.options.useYaml;
       const objectWrapper = config.wrapper;
-      this.writeConfigToFile(useYaml, objectWrapper, config.convert);
+      this.writeConfigToFile({ useYaml, objectWrapper, excludeSchema: config.convert });
       console.log(cyan('EXITING'));
       process.exit(0);
       return;
@@ -131,16 +138,25 @@ export class ConfigService<T extends BaseConfig> {
     return classToPlain(new this.genericClass(this.config));
   }
 
-  writeConfigToFile(useYaml = this.options.useYaml, objectWrapper?: string, excludeSchema = false) {
+  writeConfigToFile(
+    {
+      useYaml,
+      excludeSchema,
+      objectWrapper,
+      outputFolder
+    }: IWriteConfigToFileOptions = {
+      useYaml: this.options.useYaml,
+      excludeSchema: false
+    }) {
     const fileExtension = useYaml ? 'yaml' : 'json';
     const configFileName = this.config.getFileName(fileExtension);
     const configFileFullPath = join(
-      this.configFileRoot,
+      outputFolder || this.configFileRoot,
       configFileName
     );
     const plainConfig = classToPlain(this.config);
     const relativePathToSchema = relative(
-      this.configFileRoot,
+      outputFolder || this.configFileRoot,
       join(this.appRoot, `/${ this.options.schemaFolderName }/${ this.config.getSchemaFileName() }`)
     );
     if (!excludeSchema) {
