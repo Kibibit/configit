@@ -11,6 +11,20 @@ achievibit changelog
 ### Features
 
 * **service:** allow overriding config folder when exporting ([62f9edc](https://github.com/Kibibit/configit/commit/62f9edc01ac77b062097456b99bc9e3a106827c1))
+* **readme:** force another release? ([b3ba1fc](https://github.com/Kibibit/configit/commit/b3ba1fc8401177045d23d15eeaa643c46e1b8388))
+* **tests:** improve coverage ([329f9cc](https://github.com/Kibibit/configit/commit/329f9cc09f34532954f7ccb6c4b6ba5146ebe6c2))
+
+# [1.0.0-beta.10](https://github.com/Kibibit/configit/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2021-10-28)
+
+
+### Bug Fixes
+
+* **build:** fix build to not include configuration ([812386c](https://github.com/Kibibit/configit/commit/812386c32f2e81b3b2df1d761d615f39c1fdfc1f))
+
+
+### Features
+
+* **service:** allow overriding config folder when exporting ([62f9edc](https://github.com/Kibibit/configit/commit/62f9edc01ac77b062097456b99bc9e3a106827c1))
 * **tests:** improve coverage ([329f9cc](https://github.com/Kibibit/configit/commit/329f9cc09f34532954f7ccb6c4b6ba5146ebe6c2))
 
 # [1.0.0-beta.10](https://github.com/Kibibit/configit/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2021-10-28)
