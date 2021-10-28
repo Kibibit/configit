@@ -67,7 +67,7 @@ export class ConfigService<T extends BaseConfig> {
   ) {
     if (!passedConfig && configService) { return configService; }
 
-    setEnvironment(passedConfig.NODE_ENV || getEnvironment());
+    setEnvironment(passedConfig?.NODE_ENV || getEnvironment());
     this.mode = getEnvironment();
 
     this.options = {
@@ -101,7 +101,6 @@ export class ConfigService<T extends BaseConfig> {
       this.writeSchema();
       console.log(cyan('EXITING'));
       process.exit(0);
-      return;
     }
 
     const envConfig = this.validateInput(config);
@@ -110,7 +109,15 @@ export class ConfigService<T extends BaseConfig> {
     this.config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
 
     if (config.saveToFile || config.init) {
-      this.writeConfigToFile();
+      if (config.convert) {
+        console.log(cyan('Converting Configuration File'));
+      }
+      const useYaml = config.convert ? !this.options.useYaml : this.options.useYaml;
+      const objectWrapper = config.wrapper;
+      console.log('objectWrapper', objectWrapper);
+      this.writeConfigToFile(useYaml, objectWrapper, config.convert);
+      console.log(cyan('EXITING'));
+      process.exit(0);
     }
 
     this.writeSchema();
@@ -121,6 +128,59 @@ export class ConfigService<T extends BaseConfig> {
   toPlainObject() {
     // hope this works now!
     return classToPlain(new this.genericClass(this.config));
+  }
+
+  writeConfigToFile(useYaml = this.options.useYaml, objectWrapper?: string, excludeSchema = false) {
+    const fileExtension = useYaml ? 'yaml' : 'json';
+    const configFileName = this.config.getFileName(fileExtension);
+    const configFileFullPath = join(
+      this.configFileRoot,
+      configFileName
+    );
+    const plainConfig = classToPlain(this.config);
+    const relativePathToSchema = relative(
+      this.configFileRoot,
+      join(this.appRoot, `/${ this.options.schemaFolderName }/${ this.config.getSchemaFileName() }`)
+    );
+    if (!excludeSchema) {
+      plainConfig.$schema = relativePathToSchema;
+    }
+    const orderedKeys = this.orderObjectKeys(plainConfig);
+
+    if (useYaml) {
+      const yamlValues = chain(orderedKeys)
+        .omit([ '$schema' ])
+        // eslint-disable-next-line no-undefined
+        .omitBy((value) => value === undefined)
+        .value();
+
+      const output = objectWrapper ?
+        { [objectWrapper]: yamlValues } :
+        yamlValues;
+      const yamlString = keys(yamlValues).length > 0 ? YAML.stringify(output) : '';
+      writeFileSync(
+        configFileFullPath,
+        [
+          excludeSchema ? '' : [
+            '# yaml-language-server: $schema=',
+            relativePathToSchema,
+            '\n'
+          ].join(''),
+          yamlString
+        ].join('')
+      );
+      return;
+    }
+
+    const output = objectWrapper ?
+      { [objectWrapper]: orderedKeys } :
+      orderedKeys;
+
+    writeJSONSync(this.configFileFullPath, output, { spaces: 2 });
+
+    for (const sharedConfig of this.options.sharedConfig) {
+      this.writeSharedConfigToFile(sharedConfig);
+    }
   }
 
   private createConfigInstance(genericClass: TClass<BaseConfig>, data) {
@@ -246,40 +306,6 @@ export class ConfigService<T extends BaseConfig> {
     writeJSONSync(schemaFullPath, schema, { spaces: 2 });
 
     return schema;
-  }
-
-  private writeConfigToFile() {
-    const plainConfig = classToPlain(this.config);
-    const relativePathToSchema = relative(
-      this.configFileRoot,
-      join(this.appRoot, `/${ this.options.schemaFolderName }/${ this.config.getSchemaFileName() }`)
-    );
-    plainConfig.$schema = relativePathToSchema;
-    const orderedKeys = this.orderObjectKeys(plainConfig);
-
-    if (this.options.useYaml) {
-      const yamlValues = chain(orderedKeys)
-        .omit([ '$schema' ])
-        // eslint-disable-next-line no-undefined
-        .omitBy((value) => value === undefined)
-        .value();
-      const yamlString = keys(yamlValues).length > 0 ? YAML.stringify(yamlValues) : '';
-      writeFileSync(
-        this.configFileFullPath,
-        [
-          '# yaml-language-server: $schema=',
-          relativePathToSchema,
-          `\n${ yamlString }`
-        ].join('')
-      );
-      return;
-    }
-
-    writeJSONSync(this.configFileFullPath, orderedKeys, { spaces: 2 });
-
-    for (const sharedConfig of this.options.sharedConfig) {
-      this.writeSharedConfigToFile(sharedConfig);
-    }
   }
 
   private writeSharedConfigToFile(configClass: TClass<BaseConfig>) {
