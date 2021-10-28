@@ -184,6 +184,7 @@ module.exports = {
     'dot-notation': 'error',
     'require-await': 'warn',
     'no-undefined': 'error',
-    'line-comment-position': [ 'error', { position: 'above' } ]
+    'line-comment-position': [ 'error', { position: 'above' } ],
+    'template-curly-spacing': [ 'error', 'always' ]
   }
 };
