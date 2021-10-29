@@ -25,6 +25,7 @@
 </p>
 <p align="center">
   A general typescript configuration service
+
 </p>
 <hr>
 
