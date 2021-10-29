@@ -11,6 +11,9 @@ achievibit changelog
 ### Features
 
 * **service:** allow overriding config folder when exporting ([62f9edc](https://github.com/Kibibit/configit/commit/62f9edc01ac77b062097456b99bc9e3a106827c1))
+* **release:** force a release ([456b2a8](https://github.com/Kibibit/configit/commit/456b2a83444b897f1b310a9e40de925902c619cb))
+* **readme:** force another release? ([b3ba1fc](https://github.com/Kibibit/configit/commit/b3ba1fc8401177045d23d15eeaa643c46e1b8388))
+* **tests:** improve coverage ([329f9cc](https://github.com/Kibibit/configit/commit/329f9cc09f34532954f7ccb6c4b6ba5146ebe6c2))
 
 ## [2.2.1](https://github.com/Kibibit/configit/compare/v2.2.0...v2.2.1) (2021-10-28)
 

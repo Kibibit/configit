@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
 import { values } from 'lodash';
 
 import { BaseConfig, Configuration, ConfigVariable } from './';
@@ -24,5 +24,10 @@ export class PizzaConfig extends BaseConfig {
   }
 }
 
-global.ToppingEnum = ToppingEnum;
-global.PizzaConfig = PizzaConfig;
+@Configuration()
+export class ToppingsConfig extends BaseConfig {
+  @IsOptional()
+  @IsBoolean()
+  @ConfigVariable('Should meat be included in the toppings options')
+  INCLUDE_MEAT;
+}

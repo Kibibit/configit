@@ -15,6 +15,16 @@ Array [
 ]
 `;
 
+exports[`Config Service Service can Save and CONVERT the config files with saveToFile or init param 1`] = `"/.env.test.pizza.yaml"`;
+
+exports[`Config Service Service can Save and CONVERT the config files with saveToFile or init param 2`] = `
+"
+toppings:
+  - cheese
+
+"
+`;
+
 exports[`Config Service Service can be forced to be created again 1`] = `
 PizzaConfig {
   "NODE_ENV": "test",
@@ -65,4 +75,106 @@ Array [
     "spaces": 2,
   },
 ]
+`;
+
+exports[`Config Service Service can return a plain object 1`] = `
+Object {
+  "toppings": Array [
+    "cheese",
+  ],
+}
+`;
+
+exports[`Config Service Service can save yaml with schema 1`] = `"/.env.test.pizza.yaml"`;
+
+exports[`Config Service Service can save yaml with schema 2`] = `
+"# yaml-language-server: $schema=.schemas/pizza.env.schema.json
+toppings:
+  - cheese
+"
+`;
+
+exports[`Config Service Service returns correct empty yaml when config is empty 1`] = `"/.env.test.pizza.yaml"`;
+
+exports[`Config Service Shared Configurations Can define shared config 1`] = `"/.schemas/toppings.env.schema.json"`;
+
+exports[`Config Service Shared Configurations Can define shared config 2`] = `
+Object {
+  "properties": Object {
+    "INCLUDE_MEAT": Object {
+      "description": "(OVERRIDE SHARED CONFIG)
+Should meat be included in the toppings options",
+      "type": "boolean",
+    },
+  },
+  "required": Array [],
+  "type": "object",
+}
+`;
+
+exports[`Config Service Shared Configurations Can define shared config 3`] = `"/.schemas/pizza.env.schema.json"`;
+
+exports[`Config Service Shared Configurations Can define shared config 4`] = `
+Object {
+  "properties": Object {
+    "toppings": Object {
+      "description": "optional toppings for the pizza",
+      "items": Object {
+        "enum": Array [
+          "cheese",
+          "pepperoni",
+          "sausage",
+        ],
+        "type": "string",
+      },
+      "type": "array",
+    },
+  },
+  "required": Array [],
+  "type": "object",
+}
+`;
+
+exports[`Config Service Shared Configurations Can define shared config 5`] = `"/.env.test.pizza.json"`;
+
+exports[`Config Service Shared Configurations Can define shared config 6`] = `
+Object {
+  "$schema": ".schemas/pizza.env.schema.json",
+  "toppings": Array [
+    "cheese",
+  ],
+}
+`;
+
+exports[`Config Service Shared Configurations Can define shared config 7`] = `"/.env.test._shared_.toppings.json"`;
+
+exports[`Config Service Shared Configurations Can define shared config 8`] = `
+Object {
+  "$schema": ".schemas/toppings.env.schema.json",
+  "INCLUDE_MEAT": true,
+}
+`;
+
+exports[`Config Service wrap variables in attribute JSON 1`] = `"/.env.test.pizza.json"`;
+
+exports[`Config Service wrap variables in attribute JSON 2`] = `
+Object {
+  "env_variables": Object {
+    "$schema": ".schemas/pizza.env.schema.json",
+    "toppings": Array [
+      "cheese",
+    ],
+  },
+}
+`;
+
+exports[`Config Service wrap variables in attribute YAML 1`] = `"/.env.test.pizza.yaml"`;
+
+exports[`Config Service wrap variables in attribute YAML 2`] = `
+"
+env_variables:
+  toppings:
+    - cheese
+
+"
 `;
