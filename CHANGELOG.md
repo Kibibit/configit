@@ -1,5 +1,16 @@
 achievibit changelog
 
+# [1.0.0-beta.13](https://github.com/Kibibit/configit/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2021-10-29)
+
+
+### Features
+
+* **service:** allow overriding config folder when exporting ([62f9edc](https://github.com/Kibibit/configit/commit/62f9edc01ac77b062097456b99bc9e3a106827c1))
+* **release:** force a release ([456b2a8](https://github.com/Kibibit/configit/commit/456b2a83444b897f1b310a9e40de925902c619cb))
+* **readme:** force another release? ([b3ba1fc](https://github.com/Kibibit/configit/commit/b3ba1fc8401177045d23d15eeaa643c46e1b8388))
+* **tests:** improve coverage ([329f9cc](https://github.com/Kibibit/configit/commit/329f9cc09f34532954f7ccb6c4b6ba5146ebe6c2))
+* **release:** try and force release ([4599bc7](https://github.com/Kibibit/configit/commit/4599bc7c67126a45c38405d5312ae1f824997342)), closes [/github.com/semantic-release/semantic-release/discussions/2213#discussioncomment-1555536](https://github.com//github.com/semantic-release/semantic-release/discussions/2213/issues/discussioncomment-1555536)
+
 # [1.0.0-beta.10](https://github.com/Kibibit/configit/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2021-10-28)
 
 
