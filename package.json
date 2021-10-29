@@ -1,6 +1,6 @@
 {
   "name": "@kibibit/configit",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "a general typescript configuration service",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
