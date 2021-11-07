@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/Kibibit/configit" target="blank"><img src="https://github.com/kibibit.png" width="150" ></a>
+  <a href="https://github.com/Kibibit/configit" target="blank"><img src="logo.png" width="150" ></a>
   <h2 align="center">
     @kibibit/configit
   </h2>
@@ -16,7 +16,7 @@
   <img src="https://github.com/Kibibit/configit/actions/workflows/build.yml/badge.svg?style=flat-square&branch=beta" alt="Build">
 </a>
 <a href="https://github.com/Kibibit/configit/actions/workflows/tests.yml">
-  <img src="https://github.com/Kibibit/configit/actions/workflows/tests.yml/badge.svg?style=flat-square&branch=beta" alt="Tests">
+  <img src="https://github.com/Kibibit/configit/actions/workflows/tests.yml/badge.svg?branch=beta" alt="Tests">
 </a>
 <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"></a>
  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
@@ -144,6 +144,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
+
+<div>Logo made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<br>
 
 ## Stay in touch
 
