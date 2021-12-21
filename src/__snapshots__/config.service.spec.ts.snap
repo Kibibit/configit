@@ -19,6 +19,7 @@ exports[`Config Service Service can Save and CONVERT the config files with saveT
 
 exports[`Config Service Service can Save and CONVERT the config files with saveToFile or init param 2`] = `
 "
+# yaml-language-server: $schema=.schemas/pizza.env.schema.json
 toppings:
   - cheese
 
@@ -28,7 +29,6 @@ toppings:
 exports[`Config Service Service can be forced to be created again 1`] = `
 PizzaConfig {
   "NODE_ENV": "test",
-  "convert": false,
   "name": "Pizza",
   "saveToFile": false,
   "toppings": Array [
@@ -85,16 +85,17 @@ Object {
 }
 `;
 
-exports[`Config Service Service can save yaml with schema 1`] = `"/.env.test.pizza.yaml"`;
+exports[`Config Service Service can save yaml without schema 1`] = `"/.env.test.pizza.yaml"`;
 
-exports[`Config Service Service can save yaml with schema 2`] = `
-"# yaml-language-server: $schema=.schemas/pizza.env.schema.json
-toppings:
+exports[`Config Service Service can save yaml without schema 2`] = `
+"toppings:
   - cheese
 "
 `;
 
 exports[`Config Service Service returns correct empty yaml when config is empty 1`] = `"/.env.test.pizza.yaml"`;
+
+exports[`Config Service Service returns correct empty yaml when config is empty 2`] = `"# yaml-language-server: $schema=.schemas/pizza.env.schema.json"`;
 
 exports[`Config Service Shared Configurations Can define shared config 1`] = `"/.schemas/toppings.env.schema.json"`;
 
@@ -168,10 +169,24 @@ Object {
 }
 `;
 
+exports[`Config Service wrap variables in attribute JSONC 1`] = `"/.env.test.pizza.jsonc"`;
+
+exports[`Config Service wrap variables in attribute JSONC 2`] = `
+Object {
+  "env_variables": Object {
+    "$schema": ".schemas/pizza.env.schema.json",
+    "toppings": Array [
+      "cheese",
+    ],
+  },
+}
+`;
+
 exports[`Config Service wrap variables in attribute YAML 1`] = `"/.env.test.pizza.yaml"`;
 
 exports[`Config Service wrap variables in attribute YAML 2`] = `
 "
+# yaml-language-server: $schema=.schemas/pizza.env.schema.json
 env_variables:
   toppings:
     - cheese

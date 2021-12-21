@@ -12,21 +12,28 @@ import {
   writeFileSync,
   writeJSONSync } from 'fs-extra';
 import { camelCase, chain, keys, mapValues, startCase, times } from 'lodash';
-import nconf, { IFormats } from 'nconf';
+import nconf, { IFormat, IFormats } from 'nconf';
 import nconfYamlFormat from 'nconf-yaml';
 import YAML from 'yaml';
+
+import * as nconfJsoncFormat from '@kibibit/nconf-jsonc';
 
 import { ConfigValidationError } from './config.errors';
 import { BaseConfig } from './config.model';
 import { getEnvironment, setEnvironment } from './environment.service';
 
-type IYamlIncludedFormats = IFormats & { yaml: nconfYamlFormat };
+type INconfKibibitFormats = IFormats & {
+  yaml: nconfYamlFormat;
+  jsonc: IFormat;
+};
 
-const nconfFomrats = (nconf.formats as IYamlIncludedFormats).yaml = nconfYamlFormat;
+const nconfFormats = nconf.formats as INconfKibibitFormats;
+nconfFormats.yaml = nconfYamlFormat;
+nconfFormats.jsonc = nconfJsoncFormat;
 
 export interface IConfigServiceOptions {
   convertToCamelCase?: boolean;
-  useYaml?: boolean;
+  fileFormat?: EFileFormats;
   sharedConfig?: TClass<BaseConfig>[];
   schemaFolderName?: string;
   showOverrides?: boolean;
@@ -37,8 +44,14 @@ export interface IConfigServiceOptions {
   };
 }
 
+export enum EFileFormats {
+  json = 'json',
+  yaml = 'yaml',
+  jsonc = 'jsonc',
+}
+
 export interface IWriteConfigToFileOptions {
-    useYaml: boolean;
+    fileFormat: EFileFormats;
     excludeSchema?: boolean;
     objectWrapper?: string;
     outputFolder?: string;
@@ -56,7 +69,7 @@ type TClass<T> = (new (partial: Partial<T>) => T);
  * first one.
  */
 export class ConfigService<T extends BaseConfig> {
-  private fileExtension: 'yaml' | 'json';
+  private fileExtension: EFileFormats;
   readonly mode: string = getEnvironment();
   readonly options: IConfigServiceOptions;
   readonly config?: T;
@@ -79,7 +92,7 @@ export class ConfigService<T extends BaseConfig> {
 
     this.options = {
       sharedConfig: [],
-      useYaml: false,
+      fileFormat: EFileFormats.json,
       convertToCamelCase: false,
       schemaFolderName: '.schemas',
       showOverrides: false,
@@ -87,7 +100,7 @@ export class ConfigService<T extends BaseConfig> {
     };
     this.appRoot = this.findRoot();
     this.genericClass = givenClass;
-    this.fileExtension = this.options.useYaml ? 'yaml' : 'json';
+    this.fileExtension = this.options.fileFormat;
     this.config = this.createConfigInstance(this.genericClass, {}) as T;
     this.configFileName = this.config.getFileName(this.fileExtension);
     this.configFileRoot = this.findConfigRoot();
@@ -120,9 +133,9 @@ export class ConfigService<T extends BaseConfig> {
       if (config.convert) {
         console.log(cyan('Converting Configuration File'));
       }
-      const useYaml = config.convert ? !this.options.useYaml : this.options.useYaml;
+      const fileFormat = config.convert;
       const objectWrapper = config.wrapper;
-      this.writeConfigToFile({ useYaml, objectWrapper, excludeSchema: config.convert });
+      this.writeConfigToFile({ fileFormat, objectWrapper });
       console.log(cyan('EXITING'));
       process.exit(0);
       return;
@@ -140,15 +153,15 @@ export class ConfigService<T extends BaseConfig> {
 
   writeConfigToFile(
     {
-      useYaml,
+      fileFormat,
       excludeSchema,
       objectWrapper,
       outputFolder
     }: IWriteConfigToFileOptions = {
-      useYaml: this.options.useYaml,
+      fileFormat: this.options.fileFormat,
       excludeSchema: false
     }) {
-    const fileExtension = useYaml ? 'yaml' : 'json';
+    const fileExtension = fileFormat;
     const configFileName = this.config.getFileName(fileExtension);
     const configFileFullPath = join(
       outputFolder || this.configFileRoot,
@@ -164,7 +177,7 @@ export class ConfigService<T extends BaseConfig> {
     }
     const orderedKeys = this.orderObjectKeys(plainConfig);
 
-    if (useYaml) {
+    if (fileFormat === 'yaml') {
       const yamlValues = chain(orderedKeys)
         .omit([ '$schema' ])
         // eslint-disable-next-line no-undefined
@@ -221,7 +234,7 @@ export class ConfigService<T extends BaseConfig> {
       });
 
     const nconfFileOptions: nconf.IFileOptions = {
-      format: this.options.useYaml ? nconfFomrats : null
+      format: nconfFormats[this.options.fileFormat]
     };
 
     if (this.options.encryptConfig) {
@@ -340,7 +353,7 @@ export class ConfigService<T extends BaseConfig> {
 
     const orderedKeys = this.orderObjectKeys(plainConfig);
 
-    if (this.options.useYaml) {
+    if (this.options.fileFormat === 'yaml') {
       const yamlValues = chain(orderedKeys)
         .omit([ '$schema' ])
       // eslint-disable-next-line no-undefined
