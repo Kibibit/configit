@@ -1,0 +1,21 @@
+{
+  "name": "extend-config",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@kibibit/configit": "file:../..",
+    "@kibibit/nestjs-winston": "^0.6.0",
+    "bytes": "^3.1.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.3"
+  }
+}

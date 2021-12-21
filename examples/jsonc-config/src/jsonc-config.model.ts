@@ -1,12 +1,12 @@
-import { IsPort, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 
 @Configuration()
-export class ExtProjectConfig extends BaseConfig {
+export class JsoncProjectConfig extends BaseConfig {
   @ConfigVariable('Server port')
-  @IsPort()
-  PORT: string;
+  @IsNumber()
+  PORT: number;
 
   @ConfigVariable([
     'This is the slack organization to talk to'
