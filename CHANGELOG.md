@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [2.5.0](https://github.com/Kibibit/configit/compare/v2.4.0...v2.5.0) (2021-12-22)
+
+
+### Features
+
+* **formats:** add support for jsonc format ([d1483bd](https://github.com/Kibibit/configit/commit/d1483bd2c452d0d6e6c1d32e07d3007b9228bfb5))
+
 # [2.4.0](https://github.com/Kibibit/configit/compare/v2.3.0...v2.4.0) (2021-10-29)
 
 
