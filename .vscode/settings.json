@@ -4,7 +4,9 @@
   "editor.detectIndentation": false,
   "editor.rulers": [120],
   "editor.matchBrackets": "always",
-  "debug.javascript.autoAttachFilter": "smart",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs":"active",
+  "debug.javascript.autoAttachFilter": "onlyWithFlag",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
   },

@@ -36,9 +36,10 @@
   "bugs": {
     "url": "https://github.com/Kibibit/configit/issues"
   },
-  "homepage": "https://github.com/Kibibit/configit#readme",
+  "homepage": "https://kibibit.io/configit",
   "dependencies": {
     "@kibibit/kb-error": "^1.0.3",
+    "@kibibit/nconf-jsonc": "^1.0.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "class-validator-jsonschema": "^3.1.0",

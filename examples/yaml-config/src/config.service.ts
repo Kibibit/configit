@@ -1,4 +1,4 @@
-import { ConfigService, IConfigServiceOptions } from '@kibibit/configit';
+import { ConfigService, EFileFormats, IConfigServiceOptions } from '@kibibit/configit';
 import { WinstonLogger } from '@kibibit/nestjs-winston';
 
 import { YamlProjectConfig } from './yaml-config.model';
@@ -11,5 +11,5 @@ export class YamlConfigService extends ConfigService<YamlProjectConfig> {
 }
 
 export const configService = new YamlConfigService(null, {
-  useYaml: true
+  fileFormat: EFileFormats.yaml
 }) as YamlConfigService;

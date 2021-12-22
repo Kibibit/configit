@@ -2,7 +2,7 @@
 import fsExtra from 'fs-extra';
 import { mockProcessExit } from 'jest-mock-process';
 
-import { ConfigService, IConfigServiceOptions } from './config.service';
+import { ConfigService, EFileFormats, IConfigServiceOptions } from './config.service';
 import { PizzaConfig, ToppingEnum, ToppingsConfig } from './pizza.config.model.mock';
 
 class PizzaConfigService extends ConfigService<PizzaConfig> {
@@ -79,7 +79,7 @@ describe('Config Service', () => {
   test('Service can Save and CONVERT the config files with saveToFile or init param', () => {
     new PizzaConfigService({
       saveToFile: true,
-      convert: true,
+      convert: EFileFormats.yaml,
       NODE_ENV: 'test',
       toppings: [ ToppingEnum.Cheese ]
     });
@@ -97,7 +97,7 @@ describe('Config Service', () => {
     test('YAML', () => {
       new PizzaConfigService({
         saveToFile: true,
-        convert: true,
+        convert: EFileFormats.yaml,
         wrapper: 'env_variables',
         NODE_ENV: 'test',
         toppings: [ ToppingEnum.Cheese ]
@@ -109,6 +109,23 @@ describe('Config Service', () => {
 
       expect(filePath).toMatchSnapshot();
       expect(`\n${ fileContent }\n`).toMatchSnapshot();
+      expect(mockExit).toHaveBeenCalledWith(0);
+    });
+
+    test('JSONC', () => {
+      new PizzaConfigService({
+        saveToFile: true,
+        wrapper: 'env_variables',
+        NODE_ENV: 'test',
+        toppings: [ ToppingEnum.Cheese ]
+      }, { fileFormat: EFileFormats.jsonc });
+
+      expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
+
+      const [ filePath, fileContent ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[0];
+
+      expect(filePath).toMatchSnapshot();
+      expect(fileContent).toMatchSnapshot();
       expect(mockExit).toHaveBeenCalledWith(0);
     });
 
@@ -133,7 +150,7 @@ describe('Config Service', () => {
   test('Service returns correct empty yaml when config is empty', () => {
     new PizzaConfigService({
       saveToFile: true,
-      convert: true
+      convert: EFileFormats.yaml
     });
 
     expect(fsExtra.writeFileSync).toHaveBeenCalledTimes(1);
@@ -141,7 +158,7 @@ describe('Config Service', () => {
     const [ filePath, fileContent ] = (fsExtra.writeFileSync as jest.Mock).mock.calls[0];
 
     expect(filePath).toMatchSnapshot();
-    expect(fileContent.trim()).toEqual('');
+    expect(fileContent.trim()).toMatchSnapshot();
     expect(mockExit).toHaveBeenCalledWith(0);
   });
 
@@ -155,15 +172,15 @@ describe('Config Service', () => {
     expect(plainObjectConfig).toMatchSnapshot();
   });
 
-  test('Service can save yaml with schema', async () => {
+  test('Service can save yaml without schema', async () => {
     const pizzaConfigInstance = new PizzaConfigService({
       NODE_ENV: 'test',
       toppings: [ ToppingEnum.Cheese ]
     });
 
     await pizzaConfigInstance.writeConfigToFile({
-      useYaml: true,
-      excludeSchema: false
+      fileFormat: EFileFormats.yaml,
+      excludeSchema: true
     });
 
     expect(fsExtra.writeFileSync).toHaveBeenCalledTimes(1);
@@ -171,7 +188,7 @@ describe('Config Service', () => {
     const [ filePath, fileContent ] = (fsExtra.writeFileSync as jest.Mock).mock.calls[0];
 
     expect(filePath).toMatchSnapshot();
-    expect(fileContent).toContain('# yaml-language-server: $schema=');
+    expect(fileContent).not.toContain('# yaml-language-server: $schema=');
     expect(fileContent).toMatchSnapshot();
   });
 
@@ -186,7 +203,7 @@ describe('Config Service', () => {
       });
 
       pizzaConfigInstance.writeConfigToFile({
-        useYaml: false
+        fileFormat: EFileFormats.json
         // excludeSchema: false
       });
 

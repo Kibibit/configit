@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsEnum,
   IsIn,
   IsOptional,
   IsString
@@ -7,6 +8,7 @@ import {
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { chain, kebabCase } from 'lodash';
 
+import { EFileFormats } from './config.service';
 import { getEnvironment } from './environment.service';
 import { Configuration, ConfigVariable } from './json-schema.validator';
 
@@ -16,11 +18,6 @@ export const NODE_ENVIRONMENT_OPTIONS = [
   'production',
   'test',
   'devcontainer'
-];
-
-export const CONVERT_TO_OPTIONS = [
-  'json',
-  'yaml'
 ];
 
 type TClass<T> = (new (partial: Partial<T>) => T);
@@ -44,12 +41,13 @@ export class BaseConfig {
   ], { exclude: true })
   saveToFile = false;
 
-  @IsBoolean()
+  @IsEnum(EFileFormats)
+  @IsOptional()
   @ConfigVariable(
     'Save the file to JSON if defaults to YAML and vise versa',
     { exclude: true }
   )
-  convert = false;
+  convert: EFileFormats;
 
   @IsString()
   @IsOptional()
