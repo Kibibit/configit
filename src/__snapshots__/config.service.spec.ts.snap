@@ -193,3 +193,35 @@ env_variables:
 
 "
 `;
+
+exports[`Config Service writeConfigToFile JSON 1`] = `"/.env.test.pizza.json"`;
+
+exports[`Config Service writeConfigToFile JSON 2`] = `
+Object {
+  "env_variables": Object {
+    "toppings": Array [
+      "cheese",
+    ],
+  },
+}
+`;
+
+exports[`Config Service writeConfigToFile JSONC 1`] = `"/.env.test.pizza.jsonc"`;
+
+exports[`Config Service writeConfigToFile JSONC 2`] = `
+Object {
+  "env_variables": Object {
+    "toppings": Array [
+      "cheese",
+    ],
+  },
+}
+`;
+
+exports[`Config Service writeConfigToFile YAML 1`] = `"/.env.test.pizza.yaml"`;
+
+exports[`Config Service writeConfigToFile YAML 2`] = `
+"env_variables:
+  toppings:
+    - cheese"
+`;

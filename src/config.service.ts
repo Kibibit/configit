@@ -100,7 +100,7 @@ export class ConfigService<T extends BaseConfig> {
     };
     this.appRoot = this.findRoot();
     this.genericClass = givenClass;
-    this.fileExtension = this.options.fileFormat;
+    this.fileExtension = this.options.fileFormat || EFileFormats.json;
     this.config = this.createConfigInstance(this.genericClass, {}) as T;
     this.configFileName = this.config.getFileName(this.fileExtension);
     this.configFileRoot = this.findConfigRoot();
@@ -133,7 +133,7 @@ export class ConfigService<T extends BaseConfig> {
       if (config.convert) {
         console.log(cyan('Converting Configuration File'));
       }
-      const fileFormat = config.convert;
+      const fileFormat = config.convert ? config.convert : this.fileExtension;
       const objectWrapper = config.wrapper;
       this.writeConfigToFile({ fileFormat, objectWrapper });
       console.log(cyan('EXITING'));
@@ -206,7 +206,7 @@ export class ConfigService<T extends BaseConfig> {
       { [objectWrapper]: orderedKeys } :
       orderedKeys;
 
-    writeJSONSync(this.configFileFullPath, output, { spaces: 2 });
+    writeJSONSync(configFileFullPath, output, { spaces: 2 });
 
     for (const sharedConfig of this.options.sharedConfig) {
       this.writeSharedConfigToFile(sharedConfig);

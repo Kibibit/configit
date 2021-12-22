@@ -192,6 +192,67 @@ describe('Config Service', () => {
     expect(fileContent).toMatchSnapshot();
   });
 
+  test('writeConfigToFile YAML', () => {
+    const config = new PizzaConfigService({
+      toppings: [ ToppingEnum.Cheese ]
+    });
+
+    config.writeConfigToFile({
+      fileFormat: EFileFormats.yaml,
+      excludeSchema: true,
+      objectWrapper: 'env_variables'
+    });
+
+    expect(fsExtra.writeFileSync).toHaveBeenCalledTimes(1);
+
+    const [ filePath, fileContent ] = (fsExtra.writeFileSync as jest.Mock).mock.calls[0];
+
+    expect(filePath).toMatchSnapshot();
+    expect(fileContent.trim()).toMatchSnapshot();
+  });
+
+  test('writeConfigToFile JSONC', () => {
+    const config = new PizzaConfigService({
+      toppings: [ ToppingEnum.Cheese ]
+    });
+
+    jest.clearAllMocks();
+
+    config.writeConfigToFile({
+      fileFormat: EFileFormats.jsonc,
+      excludeSchema: true,
+      objectWrapper: 'env_variables'
+    });
+
+    expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
+
+    const [ filePath, fileContent ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[0];
+
+    expect(filePath).toMatchSnapshot();
+    expect(fileContent).toMatchSnapshot();
+  });
+
+  test('writeConfigToFile JSON', () => {
+    const config = new PizzaConfigService({
+      toppings: [ ToppingEnum.Cheese ]
+    });
+
+    jest.clearAllMocks();
+
+    config.writeConfigToFile({
+      fileFormat: EFileFormats.json,
+      excludeSchema: true,
+      objectWrapper: 'env_variables'
+    });
+
+    expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
+
+    const [ filePath, fileContent ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[0];
+
+    expect(filePath).toMatchSnapshot();
+    expect(fileContent).toMatchSnapshot();
+  });
+
   describe('Shared Configurations', () => {
     test('Can define shared config', () => {
       const pizzaConfigInstance = new PizzaConfigService({
