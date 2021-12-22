@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.15](https://github.com/Kibibit/configit/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2021-12-22)
+
+
+### Bug Fixes
+
+* **jsonc:** fix jsonc file saving ([6c4d669](https://github.com/Kibibit/configit/commit/6c4d669159c33dea0c8b8b8056fc9feeb20b1017))
+
 # [1.0.0-beta.14](https://github.com/Kibibit/configit/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2021-12-21)
 
 
