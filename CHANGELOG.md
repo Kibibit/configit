@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.16](https://github.com/Kibibit/configit/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-12-24)
+
+
+### Features
+
+* **formats:** add support for hjson ([3f7968a](https://github.com/Kibibit/configit/commit/3f7968a8701b6cfa5bb11b64e7754386d17a2a3f))
+
 # [1.0.0-beta.15](https://github.com/Kibibit/configit/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2021-12-22)
 
 
