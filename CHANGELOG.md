@@ -1,5 +1,13 @@
 achievibit changelog
 
+# [2.6.0](https://github.com/Kibibit/configit/compare/v2.5.1...v2.6.0) (2022-02-01)
+
+
+### Features
+
+* **formats:** add support for hjson ([3f7968a](https://github.com/Kibibit/configit/commit/3f7968a8701b6cfa5bb11b64e7754386d17a2a3f))
+* **schema:** allow skipping schema writing ([ee040ab](https://github.com/Kibibit/configit/commit/ee040ab4e5a5279a85057bda282d1e6eb3649f35))
+
 ## [2.5.1](https://github.com/Kibibit/configit/compare/v2.5.0...v2.5.1) (2021-12-22)
 
 
