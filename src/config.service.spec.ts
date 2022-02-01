@@ -211,6 +211,25 @@ describe('Config Service', () => {
     expect(fileContent.trim()).toMatchSnapshot();
   });
 
+  test('writeConfigToFile HJSON', () => {
+    const config = new PizzaConfigService({
+      toppings: [ ToppingEnum.Cheese ]
+    });
+
+    config.writeConfigToFile({
+      fileFormat: EFileFormats.hjson,
+      excludeSchema: true,
+      objectWrapper: 'env_variables'
+    });
+
+    expect(fsExtra.writeFileSync).toHaveBeenCalledTimes(1);
+
+    const [ filePath, fileContent ] = (fsExtra.writeFileSync as jest.Mock).mock.calls[0];
+
+    expect(filePath).toMatchSnapshot();
+    expect(fileContent.trim()).toMatchSnapshot();
+  });
+
   test('writeConfigToFile JSONC', () => {
     const config = new PizzaConfigService({
       toppings: [ ToppingEnum.Cheese ]

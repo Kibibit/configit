@@ -11,6 +11,7 @@ import {
   readJSONSync,
   writeFileSync,
   writeJSONSync } from 'fs-extra';
+import { stringify as hjsonStringify } from 'hjson';
 import { camelCase, chain, keys, mapValues, startCase, times } from 'lodash';
 import nconf, { IFormat, IFormats } from 'nconf';
 import nconfYamlFormat from 'nconf-yaml';
@@ -35,6 +36,7 @@ export interface IConfigServiceOptions {
   convertToCamelCase?: boolean;
   fileFormat?: EFileFormats;
   sharedConfig?: TClass<BaseConfig>[];
+  skipSchema?: boolean;
   schemaFolderName?: string;
   showOverrides?: boolean;
   configFolderRelativePath?: string;
@@ -48,6 +50,7 @@ export enum EFileFormats {
   json = 'json',
   yaml = 'yaml',
   jsonc = 'jsonc',
+  hjson = 'hjson'
 }
 
 export interface IWriteConfigToFileOptions {
@@ -95,6 +98,7 @@ export class ConfigService<T extends BaseConfig> {
       fileFormat: EFileFormats.json,
       convertToCamelCase: false,
       schemaFolderName: '.schemas',
+      skipSchema: false,
       showOverrides: false,
       ...options
     };
@@ -141,7 +145,9 @@ export class ConfigService<T extends BaseConfig> {
       return;
     }
 
-    this.writeSchema();
+    if (!this.options.skipSchema) {
+      this.writeSchema();
+    }
 
     configService = this;
   }
@@ -205,6 +211,15 @@ export class ConfigService<T extends BaseConfig> {
     const output = objectWrapper ?
       { [objectWrapper]: orderedKeys } :
       orderedKeys;
+
+    if (fileFormat === 'hjson') {
+      writeFileSync(configFileFullPath, hjsonStringify(output, {
+        quotes: 'min',
+        space: 2
+      }));
+
+      return;
+    }
 
     writeJSONSync(configFileFullPath, output, { spaces: 2 });
 

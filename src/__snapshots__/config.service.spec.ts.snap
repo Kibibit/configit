@@ -194,6 +194,20 @@ env_variables:
 "
 `;
 
+exports[`Config Service writeConfigToFile HJSON 1`] = `"/.env.test.pizza.hjson"`;
+
+exports[`Config Service writeConfigToFile HJSON 2`] = `
+"{
+  env_variables:
+  {
+    toppings:
+    [
+      cheese
+    ]
+  }
+}"
+`;
+
 exports[`Config Service writeConfigToFile JSON 1`] = `"/.env.test.pizza.json"`;
 
 exports[`Config Service writeConfigToFile JSON 2`] = `
