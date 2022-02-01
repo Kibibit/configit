@@ -36,6 +36,7 @@ export interface IConfigServiceOptions {
   convertToCamelCase?: boolean;
   fileFormat?: EFileFormats;
   sharedConfig?: TClass<BaseConfig>[];
+  skipSchema?: boolean;
   schemaFolderName?: string;
   showOverrides?: boolean;
   configFolderRelativePath?: string;
@@ -97,6 +98,7 @@ export class ConfigService<T extends BaseConfig> {
       fileFormat: EFileFormats.json,
       convertToCamelCase: false,
       schemaFolderName: '.schemas',
+      skipSchema: false,
       showOverrides: false,
       ...options
     };
@@ -143,7 +145,9 @@ export class ConfigService<T extends BaseConfig> {
       return;
     }
 
-    this.writeSchema();
+    if (!this.options.skipSchema) {
+      this.writeSchema();
+    }
 
     configService = this;
   }
