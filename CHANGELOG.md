@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.17](https://github.com/Kibibit/configit/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2022-02-01)
+
+
+### Features
+
+* **schema:** allow skipping schema writing ([ee040ab](https://github.com/Kibibit/configit/commit/ee040ab4e5a5279a85057bda282d1e6eb3649f35))
+
 # [1.0.0-beta.16](https://github.com/Kibibit/configit/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-12-24)
 
 
