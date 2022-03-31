@@ -71,8 +71,10 @@ describe('Config Service', () => {
       toppings: [ ToppingEnum.Cheese ]
     });
 
-    expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
+    expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(2);
     expect((fsExtra.writeJSONSync as jest.Mock).mock.calls[0]).toMatchSnapshot();
+    expect(mockExit).toHaveBeenCalledWith(0);
+    expect((fsExtra.writeJSONSync as jest.Mock).mock.calls[1]).toMatchSnapshot();
     expect(mockExit).toHaveBeenCalledWith(0);
   });
 
@@ -120,12 +122,17 @@ describe('Config Service', () => {
         toppings: [ ToppingEnum.Cheese ]
       }, { fileFormat: EFileFormats.jsonc });
 
-      expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
+      expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(2);
 
       const [ filePath, fileContent ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[0];
+      const [ filePath2, fileContent2 ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[1];
 
       expect(filePath).toMatchSnapshot();
       expect(fileContent).toMatchSnapshot();
+      expect(mockExit).toHaveBeenCalledWith(0);
+
+      expect(filePath2).toMatchSnapshot();
+      expect(fileContent2).toMatchSnapshot();
       expect(mockExit).toHaveBeenCalledWith(0);
     });
 
@@ -137,12 +144,17 @@ describe('Config Service', () => {
         toppings: [ ToppingEnum.Cheese ]
       });
 
-      expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(1);
+      expect(fsExtra.writeJSONSync).toHaveBeenCalledTimes(2);
 
       const [ filePath, fileContent ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[0];
+      const [ filePath2, fileContent2 ] = (fsExtra.writeJSONSync as jest.Mock).mock.calls[1];
 
       expect(filePath).toMatchSnapshot();
       expect(fileContent).toMatchSnapshot();
+      expect(mockExit).toHaveBeenCalledWith(0);
+
+      expect(filePath2).toMatchSnapshot();
+      expect(fileContent2).toMatchSnapshot();
       expect(mockExit).toHaveBeenCalledWith(0);
     });
   });
