@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.19](https://github.com/Kibibit/configit/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2022-03-31)
+
+
+### Bug Fixes
+
+* **schema:** make sure schema is created before validation ([2751cf1](https://github.com/Kibibit/configit/commit/2751cf1b42b068053a32a3b3cc677b4b2a43687c))
+
 # [1.0.0-beta.18](https://github.com/Kibibit/configit/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2022-03-31)
 
 
