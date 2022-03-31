@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.18](https://github.com/Kibibit/configit/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2022-03-31)
+
+
+### Features
+
+* **env:** Support e2e as NODE_ENV value ([1e9b975](https://github.com/Kibibit/configit/commit/1e9b975375e897c095635d382a8f6bab9970c9fc))
+
 # [1.0.0-beta.17](https://github.com/Kibibit/configit/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2022-02-01)
 
 
