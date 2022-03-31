@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [2.7.0](https://github.com/Kibibit/configit/compare/v2.6.0...v2.7.0) (2022-03-31)
+
+
+### Features
+
+* **force:** force release ([de3fef0](https://github.com/Kibibit/configit/commit/de3fef0a742d012bca8a44c1fc1338e3d25a9473))
+
 # [2.6.0](https://github.com/Kibibit/configit/compare/v2.5.1...v2.6.0) (2022-02-01)
 
 
