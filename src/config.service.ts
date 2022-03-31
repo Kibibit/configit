@@ -128,6 +128,10 @@ export class ConfigService<T extends BaseConfig> {
       return;
     }
 
+    if (!this.options.skipSchema) {
+      this.writeSchema();
+    }
+
     const envConfig = this.validateInput(config);
     if (!envConfig) { return; }
     envConfig.NODE_ENV = this.mode;
@@ -143,10 +147,6 @@ export class ConfigService<T extends BaseConfig> {
       console.log(cyan('EXITING'));
       process.exit(0);
       return;
-    }
-
-    if (!this.options.skipSchema) {
-      this.writeSchema();
     }
 
     configService = this;

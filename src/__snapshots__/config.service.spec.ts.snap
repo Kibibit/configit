@@ -2,6 +2,33 @@
 
 exports[`Config Service Service can SAVE the config files with saveToFile or init param 1`] = `
 Array [
+  "/.schemas/pizza.env.schema.json",
+  Object {
+    "properties": Object {
+      "toppings": Object {
+        "description": "optional toppings for the pizza",
+        "items": Object {
+          "enum": Array [
+            "cheese",
+            "pepperoni",
+            "sausage",
+          ],
+          "type": "string",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [],
+    "type": "object",
+  },
+  Object {
+    "spaces": 2,
+  },
+]
+`;
+
+exports[`Config Service Service can SAVE the config files with saveToFile or init param 2`] = `
+Array [
   "/.env.test.pizza.json",
   Object {
     "$schema": ".schemas/pizza.env.schema.json",
@@ -156,9 +183,32 @@ Object {
 }
 `;
 
-exports[`Config Service wrap variables in attribute JSON 1`] = `"/.env.test.pizza.json"`;
+exports[`Config Service wrap variables in attribute JSON 1`] = `"/.schemas/pizza.env.schema.json"`;
 
 exports[`Config Service wrap variables in attribute JSON 2`] = `
+Object {
+  "properties": Object {
+    "toppings": Object {
+      "description": "optional toppings for the pizza",
+      "items": Object {
+        "enum": Array [
+          "cheese",
+          "pepperoni",
+          "sausage",
+        ],
+        "type": "string",
+      },
+      "type": "array",
+    },
+  },
+  "required": Array [],
+  "type": "object",
+}
+`;
+
+exports[`Config Service wrap variables in attribute JSON 3`] = `"/.env.test.pizza.json"`;
+
+exports[`Config Service wrap variables in attribute JSON 4`] = `
 Object {
   "env_variables": Object {
     "$schema": ".schemas/pizza.env.schema.json",
@@ -169,9 +219,32 @@ Object {
 }
 `;
 
-exports[`Config Service wrap variables in attribute JSONC 1`] = `"/.env.test.pizza.jsonc"`;
+exports[`Config Service wrap variables in attribute JSONC 1`] = `"/.schemas/pizza.env.schema.json"`;
 
 exports[`Config Service wrap variables in attribute JSONC 2`] = `
+Object {
+  "properties": Object {
+    "toppings": Object {
+      "description": "optional toppings for the pizza",
+      "items": Object {
+        "enum": Array [
+          "cheese",
+          "pepperoni",
+          "sausage",
+        ],
+        "type": "string",
+      },
+      "type": "array",
+    },
+  },
+  "required": Array [],
+  "type": "object",
+}
+`;
+
+exports[`Config Service wrap variables in attribute JSONC 3`] = `"/.env.test.pizza.jsonc"`;
+
+exports[`Config Service wrap variables in attribute JSONC 4`] = `
 Object {
   "env_variables": Object {
     "$schema": ".schemas/pizza.env.schema.json",
