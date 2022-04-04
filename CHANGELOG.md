@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.20](https://github.com/Kibibit/configit/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2022-04-04)
+
+
+### Bug Fixes
+
+* **security:** run security audit and fix problems ([ec13209](https://github.com/Kibibit/configit/commit/ec13209f9f2658069c4b3f1a466ffedf71498e2f))
+
 # [1.0.0-beta.19](https://github.com/Kibibit/configit/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2022-03-31)
 
 
