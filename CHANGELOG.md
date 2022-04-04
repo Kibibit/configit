@@ -1,5 +1,18 @@
 achievibit changelog
 
+# [2.8.0](https://github.com/Kibibit/configit/compare/v2.7.0...v2.8.0) (2022-04-04)
+
+
+### Bug Fixes
+
+* **schema:** make sure schema is created before validation ([2751cf1](https://github.com/Kibibit/configit/commit/2751cf1b42b068053a32a3b3cc677b4b2a43687c))
+* **security:** run security audit and fix problems ([ec13209](https://github.com/Kibibit/configit/commit/ec13209f9f2658069c4b3f1a466ffedf71498e2f))
+
+
+### Features
+
+* **env:** Support e2e as NODE_ENV value ([1e9b975](https://github.com/Kibibit/configit/commit/1e9b975375e897c095635d382a8f6bab9970c9fc))
+
 # [2.7.0](https://github.com/Kibibit/configit/compare/v2.6.0...v2.7.0) (2022-03-31)
 
 
