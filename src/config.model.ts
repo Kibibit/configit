@@ -1,7 +1,6 @@
 import {
   IsBoolean,
   IsEnum,
-  IsIn,
   IsOptional,
   IsString
 } from 'class-validator';
@@ -19,10 +18,7 @@ export const NODE_ENVIRONMENT_OPTIONS = [
   'test',
   'devcontainer',
   'staging',
-  'e2e',
-  'testing1',
-  'testing2',
-  'stage'
+  'e2e'
 ];
 
 type TClass<T> = (new (partial: Partial<T>) => T);
@@ -32,7 +28,6 @@ export class BaseConfig {
   name: string;
 
   @IsString()
-  @IsIn(NODE_ENVIRONMENT_OPTIONS)
   @ConfigVariable(
     'Tells which env file to use and what environment we are running on',
     { exclude: true }
