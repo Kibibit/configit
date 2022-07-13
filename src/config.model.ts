@@ -19,7 +19,10 @@ export const NODE_ENVIRONMENT_OPTIONS = [
   'test',
   'devcontainer',
   'staging',
-  'e2e'
+  'e2e',
+  'testing1',
+  'testing2',
+  'stage'
 ];
 
 type TClass<T> = (new (partial: Partial<T>) => T);
