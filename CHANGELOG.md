@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.21](https://github.com/Kibibit/configit/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2022-07-18)
+
+
+### Features
+
+* adding support for any environment name ([273f312](https://github.com/Kibibit/configit/commit/273f312b23be9f2789a8b6914cd80ec2246b9889))
+
 # [1.0.0-beta.20](https://github.com/Kibibit/configit/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2022-04-04)
 
 
