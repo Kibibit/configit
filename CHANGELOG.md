@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [2.9.0](https://github.com/Kibibit/configit/compare/v2.8.1...v2.9.0) (2022-07-19)
+
+
+### Features
+
+* adding support for any environment name ([273f312](https://github.com/Kibibit/configit/commit/273f312b23be9f2789a8b6914cd80ec2246b9889))
+
 ## [2.8.1](https://github.com/Kibibit/configit/compare/v2.8.0...v2.8.1) (2022-07-19)
 
 
