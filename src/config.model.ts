@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsOptional,
   IsString
 } from 'class-validator';
@@ -28,6 +29,7 @@ export class BaseConfig {
   name: string;
 
   @IsString()
+  @IsIn(NODE_ENVIRONMENT_OPTIONS)
   @ConfigVariable(
     'Tells which env file to use and what environment we are running on',
     { exclude: true }
