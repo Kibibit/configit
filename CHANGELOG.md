@@ -1,5 +1,12 @@
 achievibit changelog
 
+## [2.8.1](https://github.com/Kibibit/configit/compare/v2.8.0...v2.8.1) (2022-07-19)
+
+
+### Reverts
+
+* Revert "Release/2022 06 19 (#31)" (#32) ([fd89cd2](https://github.com/Kibibit/configit/commit/fd89cd219d1a1eee357724b5968dbf3ad1cd11c1)), closes [#31](https://github.com/Kibibit/configit/issues/31) [#32](https://github.com/Kibibit/configit/issues/32)
+
 # [2.8.0](https://github.com/Kibibit/configit/compare/v2.7.0...v2.8.0) (2022-04-04)
 
 
