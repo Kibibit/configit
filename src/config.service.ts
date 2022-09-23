@@ -133,6 +133,11 @@ export class ConfigService<T extends BaseConfig> {
     }
 
     const envConfig = this.validateInput(config);
+    if (config.validate) {
+      console.log(cyan('EXITING'));
+      process.exit(0);
+      return;
+    }
     if (!envConfig) { return; }
     envConfig.NODE_ENV = this.mode;
     this.config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
