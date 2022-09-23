@@ -1,5 +1,17 @@
 achievibit changelog
 
+# [1.0.0-beta.22](https://github.com/Kibibit/configit/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2022-09-23)
+
+
+### Bug Fixes
+
+* **security:** :ambulance: fix security vulnerabilities ([483fe6c](https://github.com/Kibibit/configit/commit/483fe6c54d000162b5dc6c22558314ca2003e698))
+
+
+### Features
+
+* **validation:** :sparkles: add validation flag ([95d18e6](https://github.com/Kibibit/configit/commit/95d18e61aaa8274e5bd938081bf2557e41531507))
+
 # [1.0.0-beta.21](https://github.com/Kibibit/configit/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2022-07-18)
 
 
