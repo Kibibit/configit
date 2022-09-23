@@ -6,17 +6,17 @@ import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 export class YamlProjectConfig extends BaseConfig {
   @ConfigVariable('Server port')
   @IsNumber()
-  PORT: number;
+    PORT: number;
 
   @ConfigVariable([
     'This is the slack organization to talk to'
   ])
   @IsString()
-  SLACK_ORGANIZATION_NAME: string;
+    SLACK_ORGANIZATION_NAME: string;
 
   @ConfigVariable([
     'This is the slack API to talk and report to channel "hello"'
   ])
   @IsString()
-  SLACK_API_KEY: string;
+    SLACK_API_KEY: string;
 }

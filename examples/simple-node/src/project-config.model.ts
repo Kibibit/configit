@@ -6,11 +6,11 @@ import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 export class ProjectConfig extends BaseConfig {
   @ConfigVariable('Server port')
   @IsNumber()
-  PORT: number;
+    PORT: number;
 
   @ConfigVariable([
     'This is the slack API to talk and report to channel "hello"'
   ])
   @IsString()
-  SLACK_API_KEY: string;
+    SLACK_API_KEY: string;
 }

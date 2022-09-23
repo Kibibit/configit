@@ -32,14 +32,14 @@ export class BaseConfig {
     'Tells which env file to use and what environment we are running on',
     { exclude: true }
   )
-  NODE_ENV = 'development';
+    NODE_ENV = 'development';
 
   @IsBoolean()
   @ConfigVariable([
     'Create a file made out of the internal config. This is mostly for ',
     'merging command line, environment, and file variables to a single instance'
   ], { exclude: true })
-  saveToFile = false;
+    saveToFile = false;
 
   @IsEnum(EFileFormats)
   @IsOptional()
@@ -47,7 +47,7 @@ export class BaseConfig {
     'Save the file to JSON if defaults to YAML and vise versa',
     { exclude: true }
   )
-  convert: EFileFormats;
+    convert: EFileFormats;
 
   @IsString()
   @IsOptional()
@@ -55,7 +55,15 @@ export class BaseConfig {
     'Object Wrapper for saved file',
     { exclude: true }
   )
-  wrapper;
+    wrapper;
+
+  @IsBoolean()
+  @IsOptional()
+  @ConfigVariable(
+    'validate configuration and exit immediately',
+    { exclude: true }
+  )
+    validate;
 
   constructor(partial: Partial<BaseConfig> = {}) {
     Object.assign(this, partial);
@@ -79,6 +87,7 @@ export class BaseConfig {
         'properties.NODE_ENV',
         'properties.nodeEnv',
         'properties.saveToFile',
+        'properties.validate',
         'properties.convert',
         'properties.wrapper'
       ])
@@ -90,6 +99,7 @@ export class BaseConfig {
           'NODE_ENV',
           'nodeEnv',
           'saveToFile',
+          'validate',
           'convert',
           'wrapper'
         ].includes(value))

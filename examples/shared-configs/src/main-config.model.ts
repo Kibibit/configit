@@ -6,9 +6,9 @@ import { BaseConfig, Configuration, ConfigVariable } from '@kibibit/configit';
 export class MainConfig extends BaseConfig {
   @ConfigVariable('Server port')
   @IsNumber()
-  PORT: number;
+    PORT: number;
 
   @ConfigVariable('Secret only used by this server')
   @IsString()
-  SECRET: number;
+    SECRET: number;
 }
