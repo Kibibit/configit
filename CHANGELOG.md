@@ -1,5 +1,13 @@
 achievibit changelog
 
+# [1.0.0-beta.24](https://github.com/Kibibit/configit/compare/v1.0.0-beta.23...v1.0.0-beta.24) (2022-11-08)
+
+
+### Bug Fixes
+
+* **security:** run npm audit fix to fix simple security problems ([78ef9a4](https://github.com/Kibibit/configit/commit/78ef9a44efdc655c1f8c4d5ee0c6ca551d8b6ab1))
+* **security:** update all dependencies ([b5a3eb5](https://github.com/Kibibit/configit/commit/b5a3eb52a920b4e42fb1eb20b493f380b4dedca2))
+
 # [1.0.0-beta.23](https://github.com/Kibibit/configit/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2022-11-08)
 
 
