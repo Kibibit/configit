@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.23](https://github.com/Kibibit/configit/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2022-11-08)
+
+
+### Features
+
+* **booleans:** support booleans case insensitive by default ([027eb1a](https://github.com/Kibibit/configit/commit/027eb1ac2e2611d2bf280225db4b41352f5dba8e))
+
 # [1.0.0-beta.22](https://github.com/Kibibit/configit/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2022-09-23)
 
 
