@@ -1,7 +1,9 @@
 import { chain } from 'lodash';
 
 import { ConfigService, IConfigServiceOptions } from '@kibibit/configit';
-import { WinstonLogger } from '@kibibit/nestjs-winston';
+import {
+  WinstonLogger
+} from '@kibibit/nestjs-winston';
 
 import { ExtProjectConfig } from './ext-project-config.model';
 import { initializeWinston } from './winston.config';

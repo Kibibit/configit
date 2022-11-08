@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Config Model config.toJsonSchema 1`] = `
-Object {
-  "properties": Object {
-    "toppings": Object {
+{
+  "properties": {
+    "toppings": {
       "description": "optional toppings for the pizza",
-      "items": Object {
-        "enum": Array [
+      "items": {
+        "enum": [
           "cheese",
           "pepperoni",
           "sausage",
@@ -16,7 +16,7 @@ Object {
       "type": "array",
     },
   },
-  "required": Array [],
+  "required": [],
   "type": "object",
 }
 `;
