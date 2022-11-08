@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Config Service Service can SAVE the config files with saveToFile or init param 1`] = `
-Array [
+[
   "/.schemas/pizza.env.schema.json",
-  Object {
-    "properties": Object {
-      "toppings": Object {
+  {
+    "properties": {
+      "toppings": {
         "description": "optional toppings for the pizza",
-        "items": Object {
-          "enum": Array [
+        "items": {
+          "enum": [
             "cheese",
             "pepperoni",
             "sausage",
@@ -18,25 +18,25 @@ Array [
         "type": "array",
       },
     },
-    "required": Array [],
+    "required": [],
     "type": "object",
   },
-  Object {
+  {
     "spaces": 2,
   },
 ]
 `;
 
 exports[`Config Service Service can SAVE the config files with saveToFile or init param 2`] = `
-Array [
+[
   "/.env.test.pizza.json",
-  Object {
+  {
     "$schema": ".schemas/pizza.env.schema.json",
-    "toppings": Array [
+    "toppings": [
       "cheese",
     ],
   },
-  Object {
+  {
     "spaces": 2,
   },
 ]
@@ -58,34 +58,34 @@ PizzaConfig {
   "NODE_ENV": "test",
   "name": "Pizza",
   "saveToFile": false,
-  "toppings": Array [
+  "toppings": [
     "cheese",
   ],
 }
 `;
 
 exports[`Config Service Service can initialize the config files with saveToFile or init param 1`] = `
-Array [
+[
   "/.env.test.pizza.json",
-  Object {
+  {
     "$schema": ".schemas/pizza.env.schema.json",
     "toppings": undefined,
   },
-  Object {
+  {
     "spaces": 2,
   },
 ]
 `;
 
 exports[`Config Service Service can initialize the config files with saveToFile or init param 2`] = `
-Array [
+[
   "/.schemas/pizza.env.schema.json",
-  Object {
-    "properties": Object {
-      "toppings": Object {
+  {
+    "properties": {
+      "toppings": {
         "description": "optional toppings for the pizza",
-        "items": Object {
-          "enum": Array [
+        "items": {
+          "enum": [
             "cheese",
             "pepperoni",
             "sausage",
@@ -95,18 +95,18 @@ Array [
         "type": "array",
       },
     },
-    "required": Array [],
+    "required": [],
     "type": "object",
   },
-  Object {
+  {
     "spaces": 2,
   },
 ]
 `;
 
 exports[`Config Service Service can return a plain object 1`] = `
-Object {
-  "toppings": Array [
+{
+  "toppings": [
     "cheese",
   ],
 }
@@ -127,15 +127,15 @@ exports[`Config Service Service returns correct empty yaml when config is empty 
 exports[`Config Service Shared Configurations Can define shared config 1`] = `"/.schemas/toppings.env.schema.json"`;
 
 exports[`Config Service Shared Configurations Can define shared config 2`] = `
-Object {
-  "properties": Object {
-    "INCLUDE_MEAT": Object {
+{
+  "properties": {
+    "INCLUDE_MEAT": {
       "description": "(OVERRIDE SHARED CONFIG)
 Should meat be included in the toppings options",
       "type": "boolean",
     },
   },
-  "required": Array [],
+  "required": [],
   "type": "object",
 }
 `;
@@ -143,12 +143,12 @@ Should meat be included in the toppings options",
 exports[`Config Service Shared Configurations Can define shared config 3`] = `"/.schemas/pizza.env.schema.json"`;
 
 exports[`Config Service Shared Configurations Can define shared config 4`] = `
-Object {
-  "properties": Object {
-    "toppings": Object {
+{
+  "properties": {
+    "toppings": {
       "description": "optional toppings for the pizza",
-      "items": Object {
-        "enum": Array [
+      "items": {
+        "enum": [
           "cheese",
           "pepperoni",
           "sausage",
@@ -158,7 +158,7 @@ Object {
       "type": "array",
     },
   },
-  "required": Array [],
+  "required": [],
   "type": "object",
 }
 `;
@@ -166,9 +166,9 @@ Object {
 exports[`Config Service Shared Configurations Can define shared config 5`] = `"/.env.test.pizza.json"`;
 
 exports[`Config Service Shared Configurations Can define shared config 6`] = `
-Object {
+{
   "$schema": ".schemas/pizza.env.schema.json",
-  "toppings": Array [
+  "toppings": [
     "cheese",
   ],
 }
@@ -177,7 +177,7 @@ Object {
 exports[`Config Service Shared Configurations Can define shared config 7`] = `"/.env.test._shared_.toppings.json"`;
 
 exports[`Config Service Shared Configurations Can define shared config 8`] = `
-Object {
+{
   "$schema": ".schemas/toppings.env.schema.json",
   "INCLUDE_MEAT": true,
 }
@@ -186,12 +186,12 @@ Object {
 exports[`Config Service wrap variables in attribute JSON 1`] = `"/.schemas/pizza.env.schema.json"`;
 
 exports[`Config Service wrap variables in attribute JSON 2`] = `
-Object {
-  "properties": Object {
-    "toppings": Object {
+{
+  "properties": {
+    "toppings": {
       "description": "optional toppings for the pizza",
-      "items": Object {
-        "enum": Array [
+      "items": {
+        "enum": [
           "cheese",
           "pepperoni",
           "sausage",
@@ -201,7 +201,7 @@ Object {
       "type": "array",
     },
   },
-  "required": Array [],
+  "required": [],
   "type": "object",
 }
 `;
@@ -209,10 +209,10 @@ Object {
 exports[`Config Service wrap variables in attribute JSON 3`] = `"/.env.test.pizza.json"`;
 
 exports[`Config Service wrap variables in attribute JSON 4`] = `
-Object {
-  "env_variables": Object {
+{
+  "env_variables": {
     "$schema": ".schemas/pizza.env.schema.json",
-    "toppings": Array [
+    "toppings": [
       "cheese",
     ],
   },
@@ -222,12 +222,12 @@ Object {
 exports[`Config Service wrap variables in attribute JSONC 1`] = `"/.schemas/pizza.env.schema.json"`;
 
 exports[`Config Service wrap variables in attribute JSONC 2`] = `
-Object {
-  "properties": Object {
-    "toppings": Object {
+{
+  "properties": {
+    "toppings": {
       "description": "optional toppings for the pizza",
-      "items": Object {
-        "enum": Array [
+      "items": {
+        "enum": [
           "cheese",
           "pepperoni",
           "sausage",
@@ -237,7 +237,7 @@ Object {
       "type": "array",
     },
   },
-  "required": Array [],
+  "required": [],
   "type": "object",
 }
 `;
@@ -245,10 +245,10 @@ Object {
 exports[`Config Service wrap variables in attribute JSONC 3`] = `"/.env.test.pizza.jsonc"`;
 
 exports[`Config Service wrap variables in attribute JSONC 4`] = `
-Object {
-  "env_variables": Object {
+{
+  "env_variables": {
     "$schema": ".schemas/pizza.env.schema.json",
-    "toppings": Array [
+    "toppings": [
       "cheese",
     ],
   },
@@ -284,9 +284,9 @@ exports[`Config Service writeConfigToFile HJSON 2`] = `
 exports[`Config Service writeConfigToFile JSON 1`] = `"/.env.test.pizza.json"`;
 
 exports[`Config Service writeConfigToFile JSON 2`] = `
-Object {
-  "env_variables": Object {
-    "toppings": Array [
+{
+  "env_variables": {
+    "toppings": [
       "cheese",
     ],
   },
@@ -296,9 +296,9 @@ Object {
 exports[`Config Service writeConfigToFile JSONC 1`] = `"/.env.test.pizza.jsonc"`;
 
 exports[`Config Service writeConfigToFile JSONC 2`] = `
-Object {
-  "env_variables": Object {
-    "toppings": Array [
+{
+  "env_variables": {
+    "toppings": [
       "cheese",
     ],
   },
