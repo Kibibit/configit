@@ -25,7 +25,8 @@
     "test:simple": "cd examples/simple-node && npm run start:dev",
     "test:extend": "cd examples/extend-config && npm run start:dev",
     "test:yaml": "cd examples/yaml-config && npm run start:dev",
-    "test:shared-configs": "cd examples/shared-configs && npm run start:dev"
+    "test:shared-configs": "cd examples/shared-configs && npm run start:dev",
+    "test:uppercase-booleans": "cd examples/uppercase-booleans && export TEST_BOOLEAN='True' && npm run start:dev"
   },
   "repository": {
     "type": "git",
