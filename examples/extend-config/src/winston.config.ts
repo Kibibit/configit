@@ -4,8 +4,7 @@ import bytes from 'bytes';
 import winston, { createLogger } from 'winston';
 
 import {
-  nestLike,
-  winstonInstance
+  winstonConsoleFormat
 } from '@kibibit/nestjs-winston';
 
 const fiveMegaBytes = bytes('5MB');
@@ -16,14 +15,14 @@ const omitMeta = [
 ];
 
 export function initializeWinston(rootFolder: string) {
-  winstonInstance.logger = createLogger({
+  const logger = createLogger({
     transports: [
       new winston.transports.Console({
         level: 'debug',
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.ms(),
-          nestLike('achievibit', omitMeta),
+          winstonConsoleFormat
         )
       }),
       new winston.transports.File({
@@ -59,6 +58,8 @@ export function initializeWinston(rootFolder: string) {
       winston.format.json()
     )
   });
+
+  return logger;
 
   function getCallerFile(): string {
     try {
