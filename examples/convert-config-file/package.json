@@ -13,12 +13,12 @@
   "license": "ISC",
   "dependencies": {
     "@kibibit/configit": "file:../..",
-    "@kibibit/nestjs-winston": "^0.6.0",
-    "bytes": "^3.1.0",
-    "winston": "^3.3.3"
+    "@kibibit/nestjs-winston": "^1.0.0",
+    "bytes": "^3.1.2",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
-    "@types/node": "^16.10.3",
+    "@types/node": "^18.11.9",
     "rimraf": "^3.0.2"
   }
 }
