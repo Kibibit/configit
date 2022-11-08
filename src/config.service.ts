@@ -34,6 +34,7 @@ nconfFormats.jsonc = nconfJsoncFormat;
 
 export interface IConfigServiceOptions {
   convertToCamelCase?: boolean;
+  convertUppercaseBooleans?: boolean;
   fileFormat?: EFileFormats;
   sharedConfig?: TClass<BaseConfig>[];
   skipSchema?: boolean;
@@ -97,6 +98,7 @@ export class ConfigService<T extends BaseConfig> {
       sharedConfig: [],
       fileFormat: EFileFormats.json,
       convertToCamelCase: false,
+      convertUppercaseBooleans: true,
       schemaFolderName: '.schemas',
       skipSchema: false,
       showOverrides: false,
@@ -248,9 +250,15 @@ export class ConfigService<T extends BaseConfig> {
       .env({
         separator: '__',
         parseValues: true,
-        transform: this.options.convertToCamelCase ?
-          transformToCamelCase :
-          null
+        transform: (obj) => {
+          const transformedBooleans = this.options.convertUppercaseBooleans ?
+            transformStringBooleansToBooleans(obj) :
+            obj;
+          const transformedCamelCase = this.options.convertToCamelCase ?
+            transformToCamelCase(transformedBooleans) :
+            transformedBooleans;
+          return transformedCamelCase;
+        }
       });
 
     const nconfFileOptions: nconf.IFileOptions = {
@@ -507,4 +515,20 @@ function transformToCamelCase(obj: { key: string; value: string }) {
   obj.key = camelCasedKey;
 
   return camelCasedKey && obj;
+}
+
+function transformStringBooleansToBooleans(
+  obj: { key: string; value: string }
+): { key: string; value: boolean | string } {
+  const result: { key: string; value: boolean | string } = {
+    key: obj.key,
+    value: obj.value
+  };
+  if (obj.value?.toLowerCase() === 'true') {
+    result.value = true;
+  } else if (obj.value?.toLowerCase() === 'false') {
+    result.value = false;
+  }
+
+  return result;
 }
