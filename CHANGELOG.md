@@ -1,5 +1,18 @@
 achievibit changelog
 
+# [2.11.0](https://github.com/Kibibit/configit/compare/v2.10.0...v2.11.0) (2022-11-08)
+
+
+### Bug Fixes
+
+* **security:** run npm audit fix to fix simple security problems ([78ef9a4](https://github.com/Kibibit/configit/commit/78ef9a44efdc655c1f8c4d5ee0c6ca551d8b6ab1))
+* **security:** update all dependencies ([b5a3eb5](https://github.com/Kibibit/configit/commit/b5a3eb52a920b4e42fb1eb20b493f380b4dedca2))
+
+
+### Features
+
+* **booleans:** support booleans case insensitive by default ([027eb1a](https://github.com/Kibibit/configit/commit/027eb1ac2e2611d2bf280225db4b41352f5dba8e))
+
 # [2.10.0](https://github.com/Kibibit/configit/compare/v2.9.0...v2.10.0) (2022-09-23)
 
 
