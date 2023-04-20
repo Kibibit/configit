@@ -24,6 +24,15 @@
         "infra",
         "test"
       ]
+    },
+    {
+      "login": "nitzan-madar",
+      "name": "Nitzan Madar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73841521?v=4",
+      "profile": "https://github.com/nitzan-madar",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
