@@ -1,5 +1,13 @@
 achievibit changelog
 
+## [2.11.1](https://github.com/Kibibit/configit/compare/v2.11.0...v2.11.1) (2023-04-30)
+
+
+### Bug Fixes
+
+* **security:** update dependencies ([ed1d84f](https://github.com/Kibibit/configit/commit/ed1d84fbd101689790bb027ee55362eccfd78865))
+* **security:** vulnerability fixes ([b97aa00](https://github.com/Kibibit/configit/commit/b97aa00c2923fe2430b2358264034f2df6b3cf74))
+
 # [2.11.0](https://github.com/Kibibit/configit/compare/v2.10.0...v2.11.0) (2022-11-08)
 
 
