@@ -10,7 +10,7 @@ on:
 jobs:
   serverunittest:
     name: Tests
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v2
