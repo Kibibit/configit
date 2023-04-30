@@ -30,5 +30,8 @@
     "fontWeight": "bold",
     "borderRadius": "2px",
     "isWholeLine": true,
-  }
+  },
+  "conventionalCommits.scopes": [
+    "security"
+  ]
 }
