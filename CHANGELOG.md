@@ -1,5 +1,12 @@
 achievibit changelog
 
+# [1.0.0-beta.26](https://github.com/Kibibit/configit/compare/v1.0.0-beta.25...v1.0.0-beta.26) (2023-04-30)
+
+
+### Bug Fixes
+
+* **security:** vulnerability fixes ([b97aa00](https://github.com/Kibibit/configit/commit/b97aa00c2923fe2430b2358264034f2df6b3cf74))
+
 # [1.0.0-beta.25](https://github.com/Kibibit/configit/compare/v1.0.0-beta.24...v1.0.0-beta.25) (2023-04-30)
 
 
