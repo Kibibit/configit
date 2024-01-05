@@ -44,7 +44,7 @@ Full tech stack [here](/techstack.md)
 # Tech Stack File
 ![](https://img.stackshare.io/repo.svg "repo") [Kibibit/configit](https://github.com/Kibibit/configit)![](https://img.stackshare.io/public_badge.svg "public")
 <br/><br/>
-|48<br/>Tools used|12/27/23 <br/>Report generated|
+|52<br/>Tools used|01/05/24 <br/>Report generated|
 |------|------|
 </div>
 
@@ -205,9 +205,9 @@ Full tech stack [here](/techstack.md)
 </table>
 
 
-## <img src='https://img.stackshare.io/group.svg' /> Open source packages (31)</h2>
+## <img src='https://img.stackshare.io/group.svg' /> Open source packages (35)</h2>
 
-## <img width='24' height='24' src='https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png'/> npm (31)
+## <img width='24' height='24' src='https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png'/> npm (35)
 
 |NAME|VERSION|LAST UPDATED|LAST UPDATED BY|LICENSE|VULNERABILITIES|
 |:------|:------|:------|:------|:------|:------|
@@ -239,9 +239,13 @@ Full tech stack [here](/techstack.md)
 |[express](https://www.npmjs.com/express)|v4.18.2|11/08/22|thatkookooguy |MIT|N/A|
 |[find-root](https://www.npmjs.com/find-root)|v1.1.0|10/10/21|thatkookooguy |MIT|N/A|
 |[fs-extra](https://www.npmjs.com/fs-extra)|v9.1.0|04/19/23|Nitzan Madar |MIT|N/A|
+|[husky](https://www.npmjs.com/husky)|v8.0.3|04/19/23|Nitzan Madar |MIT|N/A|
+|[nconf](https://www.npmjs.com/nconf)|v0.12.0|04/19/23|Nitzan Madar |MIT|N/A|
 |[rimraf](https://www.npmjs.com/rimraf)|v3.0.2|12/22/21|thatkookooguy |ISC|N/A|
+|[semantic-release](https://www.npmjs.com/semantic-release)|v21.0.2|04/30/23|thatkookooguy |MIT|N/A|
 |[ts-jest](https://www.npmjs.com/ts-jest)|v29.1.0|04/30/23|thatkookooguy |MIT|N/A|
 |[ts-node](https://www.npmjs.com/ts-node)|v10.9.1|04/30/23|thatkookooguy |MIT|N/A|
+|[winston](https://www.npmjs.com/winston)|v3.8.2|11/08/22|thatkookooguy |MIT|N/A|
 
 <br/>
 <div align='center'>
