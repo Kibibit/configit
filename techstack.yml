@@ -2,11 +2,11 @@ repo_name: Kibibit/configit
 report_id: c0c932f1568474005f09ec5a248d0279
 version: 0.1
 repo_type: Public
-timestamp: '2023-12-27T19:58:31+00:00'
+timestamp: '2024-01-05T08:28:05+00:00'
 requested_by: k1b1b0t
 provider: github
 branch: beta
-detected_tools_count: 48
+detected_tools_count: 52
 tools:
 - name: JavaScript
   description: Lightweight, interpreted, object-oriented language with first-class
@@ -17,6 +17,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/Kibibit/configit
   detection_source: Repo Metadata
 - name: TypeScript
   description: A superset of JavaScript that compiles to clean JavaScript output
@@ -27,6 +28,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1612/bynNY5dJ.jpg
+  detection_source_url: https://github.com/Kibibit/configit
   detection_source: Repo Metadata
 - name: YAML
   description: A straightforward machine parsable data serialization format designed
@@ -37,6 +39,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1744/yaml.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package.json
   detection_source: package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2021-10-10 17:39:23.000000000 Z
@@ -64,6 +67,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Frameworks (Full Stack)
   image_url: https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/examples/convert-config-file/package.json
   detection_source: examples/convert-config-file/package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2021-12-22 21:53:08.000000000 Z
@@ -76,6 +80,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Code Review
   image_url: https://img.stackshare.io/service/3337/Q4L7Jncy.jpg
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package.json
   detection_source: package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2021-10-10 17:39:23.000000000 Z
@@ -87,6 +92,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/Kibibit/configit
   detection_source: Repo Metadata
 - name: GitHub Actions
   description: Automate your workflow from idea to production
@@ -96,6 +102,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Continuous Integration
   image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/.github/workflows/build.yml
   detection_source: ".github/workflows/build.yml"
   last_updated_by: thatkookooguy
   last_updated_on: 2021-10-11 02:32:28.000000000 Z
@@ -122,6 +129,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Text Editor
   image_url: https://img.stackshare.io/service/4202/Visual_Studio_Code_logo.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/.vscode/tasks.json
   detection_source: ".vscode/tasks.json"
   last_updated_by: thatkookooguy
   last_updated_on: 2021-12-22 21:52:12.000000000 Z
@@ -133,6 +141,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Front End Package Manager
   image_url: https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package.json
   detection_source: package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2021-10-10 17:39:23.000000000 Z
@@ -158,6 +167,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png
+  detection_source_url: https://github.com/Kibibit/configit
   detection_source: Repo Metadata
 - name: Winston
   description: a multi-transport async logging library for node.js
@@ -165,6 +175,7 @@ tools:
   open_source: false
   hosted_saas: false
   image_url: https://img.stackshare.io/service/6668/9682013.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/examples/convert-config-file/package.json
   detection_source: examples/convert-config-file/package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2022-11-08 22:02:32.000000000 Z
@@ -173,6 +184,7 @@ tools:
   open_source: false
   hosted_saas: false
   image_url: https://img.stackshare.io/service/9527/5502029.jpeg
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package.json
   detection_source: package.json
   last_updated_by: Nitzan Madar
   last_updated_on: 2023-04-19 10:26:05.000000000 Z
@@ -181,6 +193,7 @@ tools:
   open_source: false
   hosted_saas: false
   image_url: https://img.stackshare.io/service/7721/4624.jpeg
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package.json
   detection_source: package.json
   last_updated_by: Nitzan Madar
   last_updated_on: 2023-04-19 10:26:05.000000000 Z
@@ -190,6 +203,7 @@ tools:
   open_source: false
   hosted_saas: false
   image_url: https://img.stackshare.io/service/10156/12867925.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package.json
   detection_source: package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2023-04-30 14:38:36.000000000 Z
@@ -590,6 +604,34 @@ tools:
   detection_source: package.json
   last_updated_by: Nitzan Madar
   last_updated_on: 2023-04-19 10:26:05.000000000 Z
+- name: husky
+  description: Prevents bad commit or push
+  package_url: https://www.npmjs.com/husky
+  version: 8.0.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15831/default_14fd11531839d935f920b6d55bd6f3528c890ad7.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package-lock.json
+  detection_source: package.json
+  last_updated_by: Nitzan Madar
+  last_updated_on: 2023-04-19 10:26:05.000000000 Z
+- name: nconf
+  description: Hierarchical node.js configuration with files
+  package_url: https://www.npmjs.com/nconf
+  version: 0.12.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16591/default_50c9ed1615a25628505ab53def64d82450ced26b.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package-lock.json
+  detection_source: package.json
+  last_updated_by: Nitzan Madar
+  last_updated_on: 2023-04-19 10:26:05.000000000 Z
 - name: rimraf
   description: A deep deletion module for node
   package_url: https://www.npmjs.com/rimraf
@@ -604,6 +646,20 @@ tools:
   detection_source: examples/convert-config-file/package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2021-12-22 21:53:08.000000000 Z
+- name: semantic-release
+  description: Automated semver compliant package publishing
+  package_url: https://www.npmjs.com/semantic-release
+  version: 21.0.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15935/default_b45165a5d30e541ab11711a34a78209b3e8ed7fd.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/package-lock.json
+  detection_source: package.json
+  last_updated_by: thatkookooguy
+  last_updated_on: 2023-04-30 14:38:36.000000000 Z
 - name: ts-jest
   description: A preprocessor with source maps support to help use TypeScript with
     Jest
@@ -633,3 +689,17 @@ tools:
   detection_source: package.json
   last_updated_by: thatkookooguy
   last_updated_on: 2023-04-30 14:38:36.000000000 Z
+- name: winston
+  description: A logger for just about everything
+  package_url: https://www.npmjs.com/winston
+  version: 3.8.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16003/default_261820f5687b4c88a3e8f95c71b5e8dccd34c1d7.png
+  detection_source_url: https://github.com/Kibibit/configit/blob/beta/examples/convert-config-file/package-lock.json
+  detection_source: examples/convert-config-file/package.json
+  last_updated_by: thatkookooguy
+  last_updated_on: 2022-11-08 22:02:32.000000000 Z
