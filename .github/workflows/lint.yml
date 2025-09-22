@@ -15,29 +15,15 @@ jobs:
 
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.lock') }}
+          node-version: '22'
+          cache: 'npm'
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       - name: Run linters
-        uses: wearerequired/lint-action@v1.9.0
-        with:
-          # github_token: ${{ secrets.BOT_TOKEN }}
-          # Enable linters
-          eslint: true
-          # Eslint options
-          # eslint_dir: server/
-          eslint_extensions: js,ts
+        run: npm run lint
