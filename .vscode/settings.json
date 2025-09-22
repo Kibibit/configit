@@ -8,7 +8,7 @@
   "editor.guides.bracketPairs":"active",
   "debug.javascript.autoAttachFilter": "onlyWithFlag",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
+    "source.fixAll.eslint": "explicit"
   },
   "eslint.format.enable": true,
   "bracketPairColorizer.colorMode": "Consecutive",
@@ -33,5 +33,25 @@
   },
   "conventionalCommits.scopes": [
     "security"
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#af5598",
+    "activityBar.background": "#af5598",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#a3b867",
+    "activityBarBadge.foreground": "#15202b",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#af5598",
+    "statusBar.background": "#8e437b",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#af5598",
+    "statusBarItem.remoteBackground": "#8e437b",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#8e437b",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#8e437b99",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#8e437b"
 }
