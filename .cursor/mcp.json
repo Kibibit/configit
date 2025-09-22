@@ -3,6 +3,12 @@
     "docker": {
       "command": "npx",
       "args": ["docker-mcp"]
+    },
+    "lsmcp": {
+      "command": "npx",
+      "args": ["-y", "@mizchi/lsmcp", "-p", "typescript"],
+      "workingDirectory": ".",
+      "env": { "NODE_OPTIONS": "--max-old-space-size=4096" }
     }
   }
 }
