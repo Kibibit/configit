@@ -13,12 +13,21 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest'
   },
+  coverageProvider: 'v8',
   collectCoverageFrom: [
-    '**/*.(t|j)s',
-    '!**/*.decorator.ts',
-    '!**/*.mock.ts',
-    '!**/index.ts',
-    '!**/dev-tools/**/*.ts'
+    'src/**/*.{ts,js}',
+    '!src/**/*.spec.ts',
+    '!src/**/*.test.ts',
+    '!src/**/*.mock.ts',
+    '!src/**/*.decorator.ts',
+    '!src/**/index.ts'
+  ],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/lib/',
+    '/dist/',
+    '/examples/',
+    '/scripts/'
   ],
   reporters: [
     'default',
