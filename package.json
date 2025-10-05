@@ -9,6 +9,8 @@
     "/src"
   ],
   "scripts": {
+    "lsmcp:init": "npx @mizchi/lsmcp init -p typescript",
+    "lsmcp:index": "npx @mizchi/lsmcp index -p typescript",
     "prebuild": "rimraf lib",
     "build": "tsc",
     "lint": "eslint -c ./.eslintrc.js \"{src,apps,libs,test,examples}/**/*.ts\"",

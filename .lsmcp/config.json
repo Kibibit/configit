@@ -1,0 +1,8 @@
+{
+  "$schema": "../node_modules/@mizchi/lsmcp/lsmcp.schema.json",
+  "preset": "typescript",
+  "settings": {
+    "autoIndex": true,
+    "indexConcurrency": 5
+  }
+}

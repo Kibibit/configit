@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "lsmcp-configit": {
+      "command": "npx",
+      "args": ["-y", "@mizchi/lsmcp", "-p", "typescript"],
+      "workingDirectory": ".",
+      "env": { "NODE_OPTIONS": "--max-old-space-size=4096" }
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://localhost:8083/context7/"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
