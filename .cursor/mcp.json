@@ -18,6 +18,13 @@
       "args": [
         "@playwright/mcp@latest"
       ]
+    },
+    "atlassian": {
+      "command": "npx",
+      "args": [
+        "mcp-remote", 
+        "http://localhost:8083/atlassian/"
+      ]
     }
   }
 }
