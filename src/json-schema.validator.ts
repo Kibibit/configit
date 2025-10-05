@@ -5,8 +5,23 @@ import {
   ValidatorConstraintInterface
 } from 'class-validator';
 
+import { EConfigSource } from './config.types';
+
 export interface IConfigVariableOptions {
+  /**
+   * Whether to exclude this property from the generated config file
+   * @default false
+   */
   exclude?: boolean;
+
+  /**
+   * Restrict the source of this configuration value
+   * - 'env': Must come from environment variables or CLI arguments
+   * - 'file': Must come from config file only
+   * - 'both': Can come from any source (default)
+   * @default 'both'
+   */
+  source?: EConfigSource | 'env' | 'file' | 'both';
 }
 
 @ValidatorConstraint({ name: 'JsonSchema', async: false })
