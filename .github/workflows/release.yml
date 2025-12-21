@@ -8,18 +8,35 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+      pages: write
+      id-token: write  # Required for npm provenance
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.BOT_TOKEN }}
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
+          cache: 'npm'
+
+      - name: 🔧 Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Sanity check versions
+        run: |
+          node -v
+          npm -v
+          npm config get registry
+
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-node-modules
         with:
@@ -30,12 +47,13 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build --if-present
-      - name: Release
+      - name: 🚀 Semantic Release
+        id: semrel
+        uses: cycjimmy/semantic-release-action@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          HUSKY: 0
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: k1b1b0t
           GIT_AUTHOR_EMAIL: k1b1b0t@kibibit.io
           GIT_COMMITTER_NAME: k1b1b0t
           GIT_COMMITTER_EMAIL: k1b1b0t@kibibit.io
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run semantic-release

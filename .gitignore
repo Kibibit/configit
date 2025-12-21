@@ -75,6 +75,23 @@ typings/
 .env
 .env.test
 
+# Vault-related files (security: never commit Vault tokens or credentials)
+.vault-token
+*.vault-token
+vault-token
+vault-credentials.*
+*.vault-credentials
+.env.vault.local
+.gcp-test-project
+
+# Secret files (security: never commit secrets)
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+*.secret
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
@@ -105,3 +122,5 @@ dist
 
 # TernJS port file
 .tern-port
+
+.specstory/

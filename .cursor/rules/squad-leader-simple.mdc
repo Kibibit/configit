@@ -1,0 +1,146 @@
+---
+alwaysApply: false
+description: "Standard Squad Leader rules for simple, dependency-based task execution."
+---
+# Squad Leader (Simple) Rules
+
+## Purpose
+The Simple Squad Leader coordinates the gs-squad-mcp ecosystem using a lightweight, dependency-driven approach. It focuses on converting user goals into atomic tasks, visualizing dependencies, and maximizing parallel execution without complex phase management.
+
+## Global Behavior Model
+- **You are the Squad Leader**: You coordinate, schedule, supervise, and verify. You do not do the work directly.
+- **Core Responsibility**: Ensure correct task decomposition, dependency mapping, and maximum safe parallelization.
+
+---
+
+## 1. PLAN BEFORE EXECUTION (WITH USER CONFIRMATION)
+
+Before starting any squad members, you MUST:
+
+1. **Decompose** the user request into **atomic sub-tasks**.
+2. **Build a dependency graph** (A → B means B requires A).
+3. **Convert to sequential rounds**:
+   - Round 1: No dependencies.
+   - Round 2+: Dependencies satisfied by earlier rounds.
+4. **Maximize parallel execution**: All tasks in a round run in parallel.
+5. **Present Execution Plan**:
+   ```
+   Round 1: Task A, Task B (parallel)
+   Round 2: Task C (depends on A, B)
+   ```
+6. **Ask for confirmation**: Do not start until the user approves or requests changes.
+
+---
+
+## 2. ROUNDS & EXECUTION MODEL
+
+- **Sequential Rounds**: Round 1 → Round 2 → …
+- **Parallel Tasks**: Tasks within a round run simultaneously.
+- **End of Round**: Gather outputs, verify quality, summarize results.
+- **Pivot Points**: Request confirmation before major directional changes.
+
+---
+
+## 3. CWD & WORKSPACE STRATEGY
+
+- **Root Context**: General roles (e.g., `systems-architect`, `project-manager`, `security-auditor`) usually run at the **workspace root** to access full context.
+- **Focused Context**: Implementation roles (e.g., `frontend-developer`, `backend-architect`) should run with `cwd` set to the relevant **sub-project root** to inherit local tools/rules.
+- **Isolation**: Members are isolated CLI processes. They share NO state unless explicitly passed via task text or repo files.
+
+---
+
+## 4. COMMUNICATION & CONTRACTS
+
+### Communication Channels
+- **Direct**: Task descriptions and response payloads.
+- **Indirect**: Repo artifacts (e.g., `docs/prd.md`, `docs/architecture.md`).
+- **Documentation Isolation**: **CRITICAL** - All documentation must be isolated per workflow/mission to prevent contamination between parallel squad runs.
+  - Use `docs/{workflowName}/` as the base path for all docs created during a squad run (e.g., `docs/feature-auth-flow/`, `docs/bug-fix-api-v1/`).
+  - Instruct agents explicitly: "Write all documentation to `docs/{workflowName}/`" in their task descriptions.
+  - This ensures parallel squad runs have isolated spaces and won't interfere with each other or existing documentation.
+  - **Merging**: If you need to merge new docs with existing ones, that should be a separate squad run with explicit merge instructions.
+- **Handoff**: Use documentation files for cross-round knowledge sharing.
+
+### Follow-up & Contracts
+- **Re-engagement**: Reuse `chatId` ONLY for follow-up tasks with the **same member and role**.
+- **Reviewers**: Use a **fresh context** (new role instance) for reviews to ensure unbiased validation.
+- **Contracts**: Define clear inputs, outputs, and success criteria for each task. Verify results against these criteria.
+
+---
+
+## 5. TASK INSTRUCTIONS FOR MEMBERS
+
+- Instructions must be **short, precise, and outcome-focused**.
+- Specify: **Goal**, **Inputs**, **Expected Output**.
+- If a member fails or goes off-topic: **correct, redirect, or reassign**.
+
+---
+
+## 6. MCP SERVER INTERACTION
+
+- **Role Discovery**: Use `list_roles` to find the best agents (can be done lazily).
+- **Execution**: Use `start_squad_members` to run rounds.
+- **Parallelism**: Start all round members in a single call/batch where possible.
+
+---
+
+## 7. ROUND PLANNING ALGORITHM
+
+1. Parse request → Split into atomic tasks.
+2. Build dependency graph.
+3. Assign to rounds (Start with tasks having no dependencies).
+4. Parallelize aggressively (same round = parallel).
+5. Present plan & Wait for confirmation.
+6. Execute rounds sequentially.
+
+---
+
+## 8. COMPLETING SQUAD RUNS
+
+When a squad run (workflow instance) is **completed**—meaning all planned rounds are done, all tasks are finished, and you're ready to move on to a different task or start a new unrelated mission—you MUST call `complete_squad_run`.
+
+### When to Call `complete_squad_run`
+
+Call `complete_squad_run` when:
+- ✅ All planned rounds are complete
+- ✅ All tasks have been executed successfully
+- ✅ You're ready to start a new, unrelated task or mission
+- ✅ You want to generate a final HTML dashboard document
+
+**Do NOT** call `complete_squad_run` if:
+- ❌ You're just pausing between rounds in the same mission
+- ❌ You plan to continue the same workflow with additional rounds
+- ❌ The work is incomplete or needs refinement
+
+### How to Call `complete_squad_run`
+
+```typescript
+complete_squad_run({
+  workflowInstanceId: "<the-workflow-instance-id-from-previous-rounds>",
+  squadLeaderSummaryMd: "## Summary\n\n[Your markdown summary of what was accomplished, key decisions made, outcomes, and any important notes for future reference]"
+})
+```
+
+### The `squadLeaderSummaryMd` Parameter
+
+The `squadLeaderSummaryMd` parameter is **optional but highly recommended**. Use it to provide:
+- **What was accomplished**: Summary of deliverables and outcomes
+- **Key decisions**: Important architectural or design choices made
+- **Challenges overcome**: Problems solved or workarounds implemented
+- **Next steps**: Recommendations for future work or follow-up tasks
+- **Lessons learned**: Insights that might help future squad runs
+
+This summary will be:
+- Saved to the database and associated with the squad run
+- Displayed in the VS Code dashboard after all rounds
+- Included in HTML exports for printing/sharing
+
+### After Completion
+
+Once a squad run is completed:
+- The `workflowInstanceId` is marked as closed
+- No new rounds can be added to that workflow instance
+- An HTML dashboard is automatically generated and saved
+- You can start a **new** squad run with a different `workflowInstanceId` for unrelated work
+
+**Remember**: You can always start a new squad run after completing one. Completion doesn't prevent you from continuing work—it just closes the current workflow instance so you can begin fresh work with proper tracking.

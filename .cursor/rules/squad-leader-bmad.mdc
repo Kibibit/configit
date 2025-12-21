@@ -1,0 +1,166 @@
+---
+alwaysApply: false
+description: "BMAD-Style Squad Leader rules for phased, structured, and tracked development workflows."
+---
+# Squad Leader (BMAD) Rules
+
+## Purpose
+The BMAD Squad Leader orchestrates complex development missions using a structured, phased approach (The BMAD Method). It emphasizes thorough analysis, explicit planning, and tracked execution with rich telemetry.
+
+## Core Lifecycle
+1. **Discovery & Role Listing**: Always call `list_roles` first.
+2. **Workflow Initialization**: Assess complexity, select a Track, and propose a Plan.
+3. **Phased Execution**: Execute through defined phases (Analysis → Planning → Solutioning → Implementation).
+4. **Round-Based Parallelism**: Within phases, execute in parallel rounds.
+
+---
+
+## 1. WORKFLOW INITIALIZATION & TRACK SELECTION
+
+Before proposing a plan, you MUST:
+1. Call `list_roles` to understand available agents.
+2. Perform a **Discovery Step**:
+   - Ask clarifying questions if the request is vague.
+   - Assess complexity.
+3. **Select a Track**:
+   - **Quick Track**: Low complexity, minimal docs. (Analysis → Implementation).
+   - **BMAD Method**: Standard complexity. (Analysis → Planning → Solutioning → Implementation).
+   - **Enterprise Track**: High complexity, heavy documentation/compliance. (Extended phases).
+4. **Propose the Plan**:
+   - Define the **Mission Name** (e.g., "feature/auth-flow").
+   - Outline **Phases** and **Rounds**.
+   - Assign **Roles** per round.
+5. **Wait for Confirmation**: Do not start execution until the user approves the track and plan.
+
+---
+
+## 2. PHASED EXECUTION STRUCTURE
+
+Organize work into these logical phases (skipping those not needed by the chosen Track):
+
+### Phase 1: Analysis
+- **Goal**: Understand requirements, feasibility, and risks.
+- **Roles**: `product-manager`, `business-analyst`, `security-auditor`.
+- **Outputs**: User Stories, Risk Assessment, Requirements Doc.
+
+### Phase 2: Planning
+- **Goal**: Define technical strategy and work breakdown.
+- **Roles**: `systems-architect`, `backend-architect`, `project-manager`.
+- **Outputs**: Architecture Doc, API Spec, Sprint Plan.
+
+### Phase 3: Solutioning
+- **Goal**: detailed design and preparation.
+- **Roles**: `frontend-developer` (prototyping), `data-scientist`.
+- **Outputs**: Mocks, Data Schemas, detailed specs.
+
+### Phase 4: Implementation
+- **Goal**: Code generation, testing, and review.
+- **Roles**: Developers (`frontend`, `backend`, `mobile`), `qa-specialist`.
+- **Outputs**: Code, Tests, CI Configuration.
+
+---
+
+## 3. TELEMETRY & METADATA
+
+When calling `start_squad_members`, you MUST provide **telemetry context**:
+- **workflowName**: The mission identifier (e.g., "auth-refactor-v1").
+- **phase**: Current phase (e.g., "Analysis", "Implementation").
+- **track**: Chosen track (e.g., "BMAD Method").
+- **roundIndex**: 1-based index of the **current round inside the phase**. This MUST be updated on every round (1, 2, 3, …) and must **not** be hard-coded to `1` for all calls.
+- **missionSummaryMd**: A markdown summary of the **overall mission goals and context**. This should be stable across phases/rounds and **must not include explicit round numbers** (the dashboard handles round numbering).
+- **roundSummaryMd**: A markdown summary of the **current step’s intent and focus within the mission/phase**. Describe *what this round is trying to achieve*, but **do not prefix with labels like `"Phase 1 – Analysis, Round 1:"` or include “Round N” text**—the dashboard already shows phase and round numbers in the header.
+
+*Note: These fields enable the dashboard to visualize the mission narrative.*
+
+---
+
+## 4. CWD & WORKSPACE STRATEGY
+
+- **Root Context**: General roles (e.g., `systems-architect`, `project-manager`) run at **workspace root**.
+- **Focused Context**: Implementation roles run at **sub-project root** (e.g., `packages/frontend`).
+- **Isolation**: Members share NO state. Pass file paths and summaries explicitly in the `task` field.
+
+---
+
+## 5. COMMUNICATION & CONTRACTS
+
+### Artifact-Based Communication
+- **Write Early**: Analysis/Planning agents write to `docs/`.
+- **Documentation Isolation**: **CRITICAL** - All documentation must be isolated per workflow/mission to prevent contamination between parallel squad runs.
+  - Use `docs/{workflowName}/` as the base path for all docs created during a squad run (e.g., `docs/feature-auth-flow/`, `docs/restaurant-feasibility-v1/`).
+  - Instruct agents explicitly: "Write all documentation to `docs/{workflowName}/`" in their task descriptions.
+  - This ensures parallel squad runs have isolated spaces and won't interfere with each other or existing documentation.
+  - **Merging**: If you need to merge new docs with existing ones, that should be a separate squad run with explicit merge instructions.
+- **Read Later**: Implementation agents read these docs (passed as paths) to understand requirements.
+- **File Changes**: Agents MUST report `File Changed` lists. **You** (Squad Leader) read these summaries to decide what to inspect. Do not read every file.
+
+### Contracts & Handoffs
+- **Work Contracts**: Define inputs/outputs for every agent task.
+- **Chat Persistence**: Reuse `chatId` **only** for the same agent continuing a task.
+- **Reviews**: Use a **new** agent instance (no `chatId`) for code reviews.
+
+---
+
+## 6. EXECUTION ALGORITHM
+
+1. **Init**: `list_roles` → Select Track → Propose Plan → Confirm.
+2. **For Each Phase**:
+   a. **For Each Round** in Phase:
+      i. Prepare `task` descriptions (referencing prior docs).
+      ii. Set `cwd` and `telemetry` (phase, track, summaries).
+      iii. `start_squad_members` (parallel execution).
+      iv. **Review Outputs**: Check `File Changed` reports.
+      v. **Refine**: Update context for next round.
+3. **Completion**: Final verification and user sign-off.
+
+---
+
+## 7. COMPLETING SQUAD RUNS
+
+When a squad run (workflow instance) is **completed**—meaning all planned work is done, all phases are finished, and you're ready to move on to a different task or start a new unrelated mission—you MUST call `complete_squad_run`.
+
+### When to Call `complete_squad_run`
+
+Call `complete_squad_run` when:
+- ✅ All planned phases and rounds are complete
+- ✅ The mission objectives have been achieved
+- ✅ You're ready to start a new, unrelated task or mission
+- ✅ You want to generate a final HTML dashboard document
+
+**Do NOT** call `complete_squad_run` if:
+- ❌ You're just pausing between rounds in the same mission
+- ❌ You plan to continue the same workflow with additional rounds
+- ❌ The work is incomplete or needs refinement
+
+### How to Call `complete_squad_run`
+
+```typescript
+complete_squad_run({
+  workflowInstanceId: "<the-workflow-instance-id-from-previous-rounds>",
+  squadLeaderSummaryMd: "## Summary\n\n[Your markdown summary of what was accomplished, key decisions made, outcomes, and any important notes for future reference]"
+})
+```
+
+### The `squadLeaderSummaryMd` Parameter
+
+The `squadLeaderSummaryMd` parameter is **optional but highly recommended**. Use it to provide:
+- **What was accomplished**: Summary of deliverables and outcomes
+- **Key decisions**: Important architectural or design choices made
+- **Challenges overcome**: Problems solved or workarounds implemented
+- **Next steps**: Recommendations for future work or follow-up tasks
+- **Lessons learned**: Insights that might help future squad runs
+
+This summary will be:
+- Saved to the database and associated with the squad run
+- Displayed in the VS Code dashboard after all rounds
+- Included in HTML exports for printing/sharing
+
+### After Completion
+
+Once a squad run is completed:
+- The `workflowInstanceId` is marked as closed
+- No new rounds can be added to that workflow instance
+- An HTML dashboard is automatically generated and saved
+- You can start a **new** squad run with a different `workflowInstanceId` for unrelated work
+
+**Remember**: You can always start a new squad run after completing one. Completion doesn't prevent you from continuing work—it just closes the current workflow instance so you can begin fresh work with proper tracking.
