@@ -20,11 +20,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.BOT_TOKEN }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
+
+      - name: 🔧 Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Sanity check versions
+        run: |
+          node -v
+          npm -v
+          npm config get registry
+
       - name: Cache node modules
         uses: actions/cache@v4
         env:
