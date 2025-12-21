@@ -51,6 +51,7 @@ jobs:
         id: semrel
         uses: cycjimmy/semantic-release-action@v5
         env:
+          HUSKY: 0
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: k1b1b0t
           GIT_AUTHOR_EMAIL: k1b1b0t@kibibit.io
