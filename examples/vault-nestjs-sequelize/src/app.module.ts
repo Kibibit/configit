@@ -10,9 +10,10 @@ import { TestController } from './test/test.controller';
  */
 @Module({
   imports: [
-    ConfigModule, // Global module - must be first
+    // Global module - must be first
+    ConfigModule,
     DatabaseModule
   ],
-  controllers: [TestController]
+  controllers: [ TestController ]
 })
 export class AppModule {}

@@ -1,22 +1,21 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 import {
   BaseConfig,
   Configuration,
   ConfigVariable,
-  VaultPath,
   VaultEngine,
-  VaultKey
-} from '@kibibit/configit';
+  VaultKey,
+  VaultPath } from '@kibibit/configit';
 
 /**
  * Database configuration with Vault dynamic credentials
- * 
+ *
  * Credentials are fetched from Vault database engine:
  * - Path: database/creds/configit-readonly
  * - TTL: 60 seconds (auto-refreshed before expiry)
  * - Keys: username, password
- * 
+ *
  * Note: @IsOptional() allows initial validation to pass before Vault secrets are loaded.
  * After initializeVault(), credentials will be populated from Vault.
  */
@@ -24,15 +23,15 @@ import {
 export class DatabaseConfig extends BaseConfig {
   @ConfigVariable('Database host')
   @IsString()
-  DATABASE_HOST: string = 'localhost';
+    DATABASE_HOST = 'localhost';
 
   @ConfigVariable('Database port')
   @IsNumber()
-  DATABASE_PORT: number = 5433;
+    DATABASE_PORT = 5433;
 
   @ConfigVariable('Database name')
   @IsString()
-  DATABASE_NAME: string = 'configit_test';
+    DATABASE_NAME = 'configit_test';
 
   // Dynamic credentials from Vault (auto-rotated)
   // @IsOptional() allows initial validation to pass before Vault init
@@ -42,7 +41,7 @@ export class DatabaseConfig extends BaseConfig {
   @ConfigVariable('Database username from Vault')
   @IsOptional()
   @IsString()
-  DATABASE_USERNAME?: string;
+    DATABASE_USERNAME?: string;
 
   @VaultPath('creds/configit-readonly')
   @VaultEngine('database')
@@ -50,5 +49,5 @@ export class DatabaseConfig extends BaseConfig {
   @ConfigVariable('Database password from Vault')
   @IsOptional()
   @IsString()
-  DATABASE_PASSWORD?: string;
+    DATABASE_PASSWORD?: string;
 }

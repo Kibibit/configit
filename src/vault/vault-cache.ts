@@ -84,7 +84,7 @@ export class VaultCache {
     // Access the overrides store directly to get current values
     const overridesStore = (nconf as any).stores?.overrides;
     const existingOverrides = overridesStore?.store || {};
-    
+
     // Merge and set all overrides at once
     nconf.overrides({
       ...existingOverrides,

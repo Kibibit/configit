@@ -1,6 +1,7 @@
+import { Sequelize } from 'sequelize';
+
 import { Controller, Get } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/sequelize';
-import { Sequelize } from 'sequelize';
 
 import { AppConfigService } from '../config/config.service';
 
@@ -38,7 +39,7 @@ export class TestController {
     try {
       // Simple query to test connection
       const query = 'SELECT NOW() as current_time, version() as version';
-      const [results] = await this.sequelize.query(query);
+      const [ results ] = await this.sequelize.query(query);
 
       const creds = this.configService.getDatabaseCredentials();
       const vaultHealth = this.configService.getVaultHealth();
@@ -88,7 +89,7 @@ export class TestController {
     port: number;
     database: string;
     passwordLength: number;
-  } {
+    } {
     const creds = this.configService.getDatabaseCredentials();
     return {
       username: creds.username,

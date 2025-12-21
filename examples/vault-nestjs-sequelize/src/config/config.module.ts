@@ -7,8 +7,8 @@ import { AppConfigService } from './config.service';
  */
 @Global()
 @Module({
-  providers: [AppConfigService],
-  exports: [AppConfigService]
+  providers: [ AppConfigService ],
+  exports: [ AppConfigService ]
 })
 export class ConfigModule {}
 

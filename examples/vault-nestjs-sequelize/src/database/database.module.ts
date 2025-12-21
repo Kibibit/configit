@@ -1,12 +1,13 @@
-import { Module, OnModuleInit } from '@nestjs/common';
-import { SequelizeModule, InjectConnection } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
+
+import { Module, OnModuleInit } from '@nestjs/common';
+import { InjectConnection, SequelizeModule } from '@nestjs/sequelize';
 
 import { AppConfigService } from '../config/config.service';
 
 /**
  * Database module with Sequelize configured for dynamic credential rotation
- * 
+ *
  * Handles credential rotation by:
  * 1. Listening for authentication errors
  * 2. Reconnecting with fresh credentials from Configit
@@ -15,10 +16,10 @@ import { AppConfigService } from '../config/config.service';
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
-      inject: [AppConfigService],
+      inject: [ AppConfigService ],
       useFactory: async (configService: AppConfigService) => {
         const creds = configService.getDatabaseCredentials();
-        
+
         return {
           dialect: 'postgres',
           host: creds.host,
@@ -28,7 +29,7 @@ import { AppConfigService } from '../config/config.service';
           password: creds.password,
           logging: (sql: string) => {
             // Log queries (remove in production)
-            console.log(`[Sequelize] ${sql}`);
+            console.log(`[Sequelize] ${ sql }`);
           },
           pool: {
             max: 5,
@@ -89,7 +90,7 @@ export class DatabaseModule implements OnModuleInit {
         return await originalQuery(sql, options);
       } catch (error: any) {
         // Check if it's an authentication error
-        const isAuthError = 
+        const isAuthError =
           error?.message?.includes('password authentication failed') ||
           (error?.message?.includes('FATAL') && error?.message?.includes('password')) ||
           error?.name === 'SequelizeConnectionError' ||
@@ -97,14 +98,14 @@ export class DatabaseModule implements OnModuleInit {
 
         if (isAuthError) {
           console.log('⚠ Authentication error detected, refreshing credentials...');
-          
+
           try {
             // Get fresh credentials from Configit (may trigger refresh)
             const creds = this.configService.getDatabaseCredentials();
-            
+
             // Close existing connection pool
             await this.sequelize.connectionManager.close();
-            
+
             // Update connection options with new credentials
             // Access the internal options object (mutable)
             const options = (this.sequelize as any).options;
@@ -113,13 +114,13 @@ export class DatabaseModule implements OnModuleInit {
             options.database = creds.database;
             options.username = creds.username;
             options.password = creds.password;
-            
+
             // Reconnect with new credentials
             await this.sequelize.connectionManager.initPools();
             await this.sequelize.authenticate();
-            
+
             console.log('✓ Reconnected with fresh credentials');
-            
+
             // Retry the original query
             return await originalQuery(sql, options);
           } catch (reconnectError: any) {
@@ -127,7 +128,7 @@ export class DatabaseModule implements OnModuleInit {
             throw reconnectError;
           }
         }
-        
+
         // Not an auth error, rethrow
         throw error;
       }

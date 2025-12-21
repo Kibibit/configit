@@ -122,7 +122,7 @@ export class ConfigService<T extends BaseConfig> {
 
     /**
      * Two-Phase Initialization Pattern:
-     * 
+     *
      * Phase 1 (Constructor - Synchronous):
      * - Create VaultIntegration instance if configured (not initialized yet)
      * - This allows Vault to be optional and maintains backward compatibility
@@ -177,7 +177,7 @@ export class ConfigService<T extends BaseConfig> {
 
   /**
    * Getter for config property with Vault initialization guard
-   * 
+   *
    * Phase 3 (Runtime Access - Synchronous):
    * - Returns config synchronously (Vault secrets already loaded via nconf.overrides())
    * - Warns if Vault is configured but not initialized
@@ -191,25 +191,25 @@ export class ConfigService<T extends BaseConfig> {
         'Config may not include Vault secrets.'
       );
     }
-    
+
     if (!this._config) {
       throw new Error('ConfigService config not initialized');
     }
-    
+
     return this._config;
   }
 
   /**
    * Phase 2: Vault Initialization (Async)
-   * 
+   *
    * Initializes Vault connection, authenticates, and loads secrets.
    * Secrets are injected into nconf.overrides() (highest priority).
    * Config is re-created with Vault secrets included.
-   * 
+   *
    * Error Handling:
    * - If fallback.required === false: Logs warning and continues without Vault secrets
    * - If fallback.required === true (default): Throws error and fails fast
-   * 
+   *
    * @throws {Error} If Vault initialization fails and fallback.required !== false
    */
   async initializeVault(): Promise<void> {
@@ -237,7 +237,7 @@ export class ConfigService<T extends BaseConfig> {
       // Now that Vault secrets are in nconf.overrides(), re-validate config
       const config = nconf.get(); // Now includes Vault secrets (highest priority)
       const envConfig = this.validateInput(config);
-      
+
       if (envConfig) {
         envConfig.NODE_ENV = this.mode;
         // Update config instance with Vault secrets included
@@ -249,18 +249,18 @@ export class ConfigService<T extends BaseConfig> {
     } catch (error: any) {
       // Handle initialization failure based on fallback config
       const fallback = this.options.vault.fallback;
-      
+
       if (fallback?.required !== false) {
         // Required - rethrow error
         throw new Error(
-          `Vault initialization failed: ${error?.message || 'Unknown error'}. ` +
+          `Vault initialization failed: ${ error?.message || 'Unknown error' }. ` +
           `Vault is required for this configuration.`
         );
       }
-      
+
       // Optional - log warning and continue with existing config
       console.warn(
-        `Vault initialization failed: ${error?.message || 'Unknown error'}. ` +
+        `Vault initialization failed: ${ error?.message || 'Unknown error' }. ` +
         `Continuing without Vault secrets.`
       );
       // Config already created without Vault secrets - that's fine

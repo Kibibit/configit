@@ -1,13 +1,13 @@
-import 'reflect-metadata';
-
 import { NestFactory } from '@nestjs/core';
 
+import { AppConfigService, initializeConfigit } from './config/config.service';
 import { AppModule } from './app.module';
-import { initializeConfigit, AppConfigService } from './config/config.service';
+
+import 'reflect-metadata';
 
 /**
  * Bootstrap NestJS application with Vault initialization
- * 
+ *
  * IMPORTANT: Vault must be initialized BEFORE NestFactory.create()
  * because Sequelize needs database credentials during module initialization.
  */
@@ -32,22 +32,21 @@ async function bootstrap() {
     const port = process.env.PORT || 3000;
     await app.listen(port);
 
-    console.log(`\n✓ Application is running on: http://localhost:${port}`);
+    console.log(`\n✓ Application is running on: http://localhost:${ port }`);
     console.log('\nTest endpoints:');
-    console.log(`  GET http://localhost:${port}/test/db - Query database`);
-    console.log(`  GET http://localhost:${port}/test/credentials - Show current credentials`);
-    console.log(`  GET http://localhost:${port}/test/vault-health - Show Vault health\n`);
+    console.log(`  GET http://localhost:${ port }/test/db - Query database`);
+    console.log(`  GET http://localhost:${ port }/test/credentials - Show current credentials`);
+    console.log(`  GET http://localhost:${ port }/test/vault-health - Show Vault health\n`);
 
     // Log credential rotation info
     const vaultHealth = configService.getVaultHealth();
     if (vaultHealth) {
       console.log('Vault health status:');
-      console.log(`  Connected: ${vaultHealth.connected}`);
-      console.log(`  Cache size: ${vaultHealth.cacheSize}`);
-      console.log(`  Refresh queue: ${vaultHealth.refreshQueueSize}`);
+      console.log(`  Connected: ${ vaultHealth.connected }`);
+      console.log(`  Cache size: ${ vaultHealth.cacheSize }`);
+      console.log(`  Refresh queue: ${ vaultHealth.refreshQueueSize }`);
       console.log('');
     }
-
   } catch (error: any) {
     console.error('\n✗ Failed to start application:', error.message);
     if (error.message.includes('Vault')) {

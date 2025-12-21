@@ -32,15 +32,18 @@ export async function initializeConfigit(): Promise<ConfigService<DatabaseConfig
       ]
     },
     tls: {
-      enabled: false, // Dev only - use TLS in production
+      // Dev only - use TLS in production
+      enabled: false,
       verifyCertificate: false
     },
-    refreshBuffer: 10 // Refresh 10 seconds before expiry (60s TTL - 10s buffer)
+    // Refresh 10 seconds before expiry (60s TTL - 10s buffer)
+    refreshBuffer: 10
   };
 
   // Initialize Configit with Vault support
   configServiceInstance = new ConfigService<DatabaseConfig>(
     DatabaseConfig,
+    // eslint-disable-next-line no-undefined
     undefined,
     {
       vault: vaultOptions
@@ -49,10 +52,16 @@ export async function initializeConfigit(): Promise<ConfigService<DatabaseConfig
 
   // Initialize Vault and load secrets
   await configServiceInstance.initializeVault();
+  // eslint-disable-next-line require-atomic-updates
   vaultInitialized = true;
 
   console.log('✓ Vault initialized and secrets loaded');
-  console.log(`  Database: ${ configServiceInstance.config.DATABASE_HOST }:${ configServiceInstance.config.DATABASE_PORT }/${ configServiceInstance.config.DATABASE_NAME }`);
+  console.log([
+    `  Database: `,
+    `${ configServiceInstance.config.DATABASE_HOST }:`,
+    `${ configServiceInstance.config.DATABASE_PORT }/`,
+    `${ configServiceInstance.config.DATABASE_NAME }`
+  ].join(''));
   console.log(`  Username: ${ configServiceInstance.config.DATABASE_USERNAME }`);
 
   return configServiceInstance;

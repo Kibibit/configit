@@ -33,5 +33,8 @@
   },
   "conventionalCommits.scopes": [
     "security"
+  ],
+  "cSpell.words": [
+    "configit"
   ]
 }

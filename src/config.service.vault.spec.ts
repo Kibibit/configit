@@ -6,11 +6,11 @@
 import { IsOptional, IsString } from 'class-validator';
 import nconf from 'nconf';
 
-import { ConfigService, IConfigServiceOptions } from './config.service';
-import { BaseConfig } from './config.model';
-import { IVaultConfigOptions, IVaultSecret, VaultHealth, IVaultFallbackConfig } from './vault';
+import { VaultKey, VaultOptional, VaultPath } from './vault/decorators';
 import { VaultIntegration } from './vault/vault-integration';
-import { VaultPath, VaultKey, VaultOptional } from './vault/decorators';
+import { BaseConfig } from './config.model';
+import { ConfigService } from './config.service';
+import { IVaultConfigOptions, IVaultFallbackConfig, VaultHealth } from './vault';
 
 import 'reflect-metadata';
 
@@ -83,7 +83,7 @@ describe('ConfigService + Vault Integration', () => {
     (VaultIntegration as jest.MockedClass<typeof VaultIntegration>).mockImplementation(() => {
       return mockVaultIntegration;
     });
-    
+
     // Reset the mock implementation to ensure it's fresh
     (VaultIntegration as jest.MockedClass<typeof VaultIntegration>).mockClear();
 
@@ -191,7 +191,7 @@ describe('ConfigService + Vault Integration', () => {
       // After initializeVault, config should be re-validated with vault secrets
       // The vault secret should override the env variable
       expect(mockVaultIntegration.loadSecrets).toHaveBeenCalled();
-      
+
       // Verify nconf.overrides was called with vault secrets
       expect(nconf.overrides).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -387,10 +387,10 @@ describe('ConfigService + Vault Integration', () => {
 
       // With fallback.required=false, should log warning and continue (not throw)
       await expect(configService.initializeVault()).resolves.not.toThrow();
-      
+
       // Verify initialize was called
       expect(failingMockVaultIntegration.initialize).toHaveBeenCalled();
-      
+
       // Verify warning was logged
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('Vault initialization failed')
@@ -600,7 +600,7 @@ describe('ConfigService + Vault Integration', () => {
       // The config should be re-validated after vault secrets are loaded
       expect(nconfGetSpy).toHaveBeenCalledTimes(initialConfigCallCount + 1);
       expect(configService.config).toBeDefined();
-      
+
       nconfGetSpy.mockRestore();
     });
 
