@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squad Dashboard - Chat: vault-integration-v1</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: #cccccc;
+      padding: 16px;
+      line-height: 1.6;
+    }
+    
+    .squad-visualization {
+      width: 100%;
+      margin-bottom: 40px;
+    }
+    
+    .squad-visualization-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 16px 20px;
+      border-radius: 8px;
+    }
+    
+    .squad-visualization-header-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .squad-visualization-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .squad-visualization-icon svg {
+      height: 40px;
+      width: 40px;
+    }
+    
+    .squad-visualization-title {
+      flex: 1;
+      color: #cccccc;
+      font-weight: 700;
+      font-size: 20px;
+    }
+    
+    .squad-visualization-info {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      background: #0e639c;
+      color: #ffffff;
+      border-radius: 12px;
+    }
+    
+    .squad-visualization-mission {
+      font-size: 15px;
+      color: #858585;
+      line-height: 1.4;
+    }
+    
+    .squad-visualization-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .squad-visualization-run-summary {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #3e3e42;
+    }
+    
+    .squad-visualization-run-summary-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #cccccc;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+    }
+    
+    .squad-visualization-run-summary-content {
+      font-size: 15px;
+      color: #858585;
+      line-height: 1.4;
+    }
+    
+    .squad-round {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .squad-round-header {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      padding: 16px 20px;
+      border-radius: 8px;
+    }
+    
+    .squad-round-header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .squad-round-number {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      font-weight: 600;
+      color: #cccccc;
+    }
+    
+    .squad-round-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      border-radius: 4px;
+      background: #1e1e1e;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      color: #007acc;
+    }
+    
+    .squad-round-icon svg {
+      height: 35px;
+      width: 35px;
+    }
+    
+    .squad-round-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+    }
+    
+    .squad-round-badge svg {
+      height: 26px;
+    }
+    
+    .squad-round-status {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .squad-round-meta {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 14px;
+      color: #858585;
+    }
+    
+    .squad-round-meta-line {
+      font-weight: 600;
+      display: none;
+    }
+    
+    .squad-round-meta-summary {
+      line-height: 1.3;
+    }
+    
+    .squad-round-count {
+      font-size: 12px;
+      font-weight: 500;
+      color: #858585;
+      padding: 6px 12px;
+      background: #0e639c;
+      color: #ffffff;
+      border-radius: 12px;
+    }
+    
+    .squad-round-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 0 20px;
+      justify-content: flex-start;
+    }
+    
+    .squad-round-arrow {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    .squad-round-arrow svg {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    
+    .squad-round-arrow-label {
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #007acc;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .agent-card {
+      width: 100%;
+      min-width: 280px;
+      height: auto;
+      min-height: 450px;
+      position: relative;
+      overflow: hidden;
+      background-color: #1e1e1e;
+      display: flex;
+      flex-direction: column;
+      // page-break-inside: avoid;
+      border-left: 5px solid #3e3e42;
+    }
+    
+    .agent-card-header {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      padding: 20px 20px 16px 20px;
+      page-break-inside: avoid;
+      flex-shrink: 0;
+      gap: 8px;
+    }
+
+    .agent-card-header::after {
+      content: "";
+      display: block;
+      height: 100px;
+      margin-bottom: -100px;
+    }
+    
+    .agent-card-cover {
+      width: 100%;
+      height: 100px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-size: cover;
+      background-position: center;
+      background: transparent !important;
+      filter: blur(30px);
+      transform: scale(1.2);
+      opacity: 0.6;
+      z-index: 0;
+    }
+    
+    .agent-card-avatar-container {
+      position: relative;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    
+    .agent-card-avatar {
+      width: 80px;
+      height: 80px;
+      box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 28px;
+      border: 3px solid #1e1e1e;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .agent-card-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .agent-card-avatar-initials {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+    }
+    
+    .agent-card-chat-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #007acc 0%, #9cdcfe 100%);
+      border: 2px solid #1e1e1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+    }
+    
+    .agent-card-chat-badge svg {
+      width: 16px;
+      height: 16px;
+      color: white;
+    }
+    
+    .agent-card-header-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      z-index: 1;
+    }
+    
+    .agent-card-fullname {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      white-space: nowrap;
+      color: #cccccc;
+      margin: 0;
+    }
+    
+    .agent-card-role {
+      font-size: 11px;
+      white-space: nowrap;
+      font-weight: 500;
+      opacity: 0.7;
+      font-style: italic;
+      margin: 0;
+      color: #858585;
+    }
+    
+    .agent-card-jobtitle {
+      display: flex;
+      align-items: center;
+      font-size: 10px;
+      white-space: nowrap;
+      font-weight: 600;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 0;
+    }
+    
+    .agent-card-spinner {
+      --size: 6px;
+      display: inline-block;
+      width: var(--size);
+      height: var(--size);
+      margin-right: 6px;
+      border: calc(0.4 * var(--size)) solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: agent-card-spin 0.8s linear infinite;
+    }
+
+    @keyframes agent-card-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .agent-card-main {
+      position: relative;
+      flex: 1;
+      display: flex;
+      padding-top: 10px;
+      flex-direction: column;
+      min-height: 0;
+    }
+    
+    .agent-card-content {
+      padding: 20px;
+      flex: 1;
+    }
+    
+    .agent-card-subtitle {
+      font-weight: 700;
+      font-size: 19px;
+      margin-bottom: 12px;
+      color: #cccccc;
+      opacity: 0.7;
+      letter-spacing: 1px;
+      page-break-inside: avoid;
+      border-bottom: 2px solid #cccccc;
+    }
+
+    .agent-card-subtitle::after {
+      content: "";
+      display: block;
+      height: 100px;
+      margin-bottom: -100px;
+    }
+
+    .agent-card-info-grid .agent-card-info-item:nth-child(1),
+    .agent-card-info-grid .agent-card-info-item:nth-child(2) {
+        display: none;
+    }
+    
+    .agent-card-markdown {
+      line-height: 1.6;
+      color: #858585;
+      font-size: 13px;
+      word-wrap: break-word;
+    }
+    
+    .agent-card-markdown h1,
+    .agent-card-markdown h2,
+    .agent-card-markdown h3 {
+      margin-top: 12px;
+      margin-bottom: 6px;
+      color: #cccccc;
+    }
+    
+    .agent-card-markdown h1 {
+      font-size: 16px;
+      border-bottom: 1px solid #3e3e42;
+      padding-bottom: 4px;
+    }
+    
+    .agent-card-markdown h2 {
+      font-size: 15px;
+    }
+    
+    .agent-card-markdown h3 {
+      font-size: 14px;
+    }
+    
+    .agent-card-markdown p {
+      margin: 6px 0;
+    }
+    
+    .agent-card-markdown code {
+      background-color: #252526;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+    
+    .agent-card-markdown pre {
+      background-color: #252526;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+    
+    .agent-card-markdown pre code {
+      background: none;
+      padding: 0;
+    }
+    
+    .agent-card-markdown ul,
+    .agent-card-markdown ol {
+      margin: 6px 0;
+      padding-left: 20px;
+    }
+    
+    .agent-card-markdown li {
+      margin: 3px 0;
+    }
+    
+    .agent-card-markdown strong {
+      font-weight: 600;
+      color: #cccccc;
+    }
+    
+    .agent-card-markdown a {
+      color: #3794ff;
+      text-decoration: none;
+    }
+    
+    .agent-card-markdown table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+    
+    .agent-card-markdown table th,
+    .agent-card-markdown table td {
+      border: 1px solid #3e3e42;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    
+    .agent-card-markdown table th {
+      background-color: #3c3c3c;
+      font-weight: 600;
+      color: #cccccc;
+    }
+    
+    .agent-card-markdown table tr:nth-child(even) {
+      background-color: #3c3c3c;
+    }
+    
+    .agent-card-error {
+      background-color: rgba(239, 68, 68, 0.1);
+      border-left: 3px solid #ef4444;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    
+    .agent-card-error-label {
+      font-weight: 600;
+      color: #ef4444;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    
+    .agent-card-info-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .agent-card-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .agent-card-info-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #858585;
+      opacity: 0.7;
+    }
+    
+    .agent-card-info-value {
+      font-size: 12px;
+      color: #cccccc;
+      font-weight: 500;
+    }
+    
+    .agent-card-mono {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      word-break: break-all;
+    }
+    
+    .agent-card-muted {
+      opacity: 0.5;
+      font-style: italic;
+    }
+    
+    @media print {
+      .squad-round {
+        // page-break-inside: avoid;
+      }
+      .agent-card {
+        // page-break-inside: avoid;
+      }
+
+      * {
+        /* Disable all shadows since they don't look good in PDF */
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="squad-visualization">
+    <div class="squad-visualization-header">
+      <div class="squad-visualization-header-top">
+        <div class="squad-visualization-icon">
+          <svg viewBox="-0.5 0 25 25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M14.665 9.605H2.995C2.715 9.605 2.495 9.825 2.495 10.105V15.265C2.495 15.545 2.715 15.765 2.995 15.765H4.495V18.505L7.16501 15.765H14.665C14.945 15.765 15.165 15.545 15.165 15.265V10.105C15.165 9.825 14.935 9.605 14.665 9.605Z" stroke="#007acc" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M15.175 12.655H15.165" stroke="#007acc" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8.83496 7.575V6.995C8.83496 6.715 9.05496 6.495 9.33496 6.495H21.005C21.275 6.495 21.505 6.715 21.505 6.995V12.325C21.505 12.505 21.365 12.655 21.185 12.655H19.505" stroke="#9cdcfe" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8.83496 9.605V9.575" stroke="#9cdcfe" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M19.505 12.655V15.385L16.835 12.655" stroke="#9cdcfe" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="squad-visualization-title">Chat: vault-integration-v1</div>
+        <div class="squad-visualization-info">5 Rounds</div>
+      </div>
+      <div class="squad-visualization-mission"><h2>Vault Integration for Configit</h2>
+<p>Adding HashiCorp Vault integration to the Configit configuration library with:</p>
+<ul>
+<li>Dynamic secrets management with TTL-based auto-refresh</li>
+<li>Multi-storage engine support via decorators</li>
+<li>Multiple authentication methods (IAM, AppRole, Token, etc.)</li>
+<li>Local Vault testing infrastructure</li>
+</ul>
+</div>
+    </div>
+    
+    <div class="squad-visualization-timeline">
+      <div class="squad-round">
+        <div class="squad-round-header">
+          <div class="squad-round-header-top">
+            <div class="squad-round-number">
+              <div class="squad-round-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M20.649 21.349c0.064 0.004 0.133 0.012 0.202 0.012 0.977 0.001 1.955-0.005 2.932 0.005 0.214 0.002 0.278-0.071 0.267-0.276-0.014-0.267-0.003-0.535-0.003-0.865 1.109 0.816 2.181 1.604 3.281 2.414-1.092 0.804-2.164 1.593-3.281 2.416 0-0.311 0-0.568-0-0.825-0-0.332-0-0.333-0.323-0.333-6.247 0-12.495 0-18.742 0-0.302 0-0.302-0-0.302-0.304 0-0.659 0.009-1.318-0.005-1.976-0.005-0.214 0.064-0.262 0.269-0.261 3.359 0.006 6.718 0.011 10.077 0.002 1.722-0.005 3.081-0.718 3.98-2.202 1.622-2.68-0.069-6.19-3.177-6.642-2.4-0.349-4.631 1.262-5.038 3.703-0.043 0.254-0.046 0.515-0.071 0.821 0.393-0.053 0.749-0.102 1.152-0.156-0.631 1.22-1.24 2.398-1.858 3.592-0.947-0.976-1.88-1.937-2.792-2.877 0.229-0.038 0.533-0.082 0.834-0.145 0.057-0.012 0.141-0.104 0.139-0.157-0.017-0.639 0.027-1.271 0.152-1.898 0.004-0.019-0.005-0.041-0.011-0.078-0.61-0.104-1.176-0.324-1.689-0.678-1.254-0.868-1.91-2.483-1.602-3.955 0.335-1.604 1.545-2.803 3.109-3.099 1.014-0.191 1.954-0.009 2.827 0.527 0.154 0.095 0.248 0.109 0.349-0.056 0.059-0.097 0.148-0.175 0.25-0.293 0.127 0.512 0.246 0.991 0.364 1.47 0.040 0.161 0.071 0.325 0.118 0.484 0.051 0.172-0.001 0.249-0.183 0.237-0.526-0.036-1.053-0.068-1.579-0.103-0.13-0.009-0.259-0.023-0.426-0.039 0.13-0.164 0.248-0.311 0.377-0.472-0.284-0.216-0.597-0.324-0.923-0.377-1.576-0.258-2.965 0.953-2.933 2.548 0.024 1.224 1.056 2.318 2.275 2.422 0.158 0.013 0.213-0.067 0.274-0.185 0.864-1.658 2.165-2.83 3.935-3.44 4.095-1.412 8.37 1.118 9.159 5.259 0.389 2.039-0.054 3.901-1.291 5.57-0.034 0.046-0.065 0.095-0.095 0.144-0.006 0.009 0.002 0.027 0.007 0.065z" />
+                </svg>
+              </div>
+              <div class="squad-round-badge"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="107.75" height="28" role="img" aria-label="ROUND: 01"><title>ROUND: 01</title><g shape-rendering="crispEdges"><rect width="67.25" height="28" fill="#555"/><rect x="67.25" width="40.5" height="28" fill="#4c1"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="100"><text transform="scale(.1)" x="336.25" y="175" textLength="432.5" fill="#fff">ROUND</text><text transform="scale(.1)" x="875" y="175" textLength="165" fill="#fff" font-weight="bold">01</text></g></svg></div>
+            </div>
+            <div class="squad-round-status" style="color: #89d185">✅ All squad members completed</div>
+            <div class="squad-round-count">2 Squad Members</div>
+          </div>
+          
+            <div class="squad-round-meta">
+              <div class="squad-round-meta-line">Analysis • BMAD Method</div>
+              <div class="squad-round-meta-summary"><p>Parallel analysis by Systems Architect (technical feasibility, architecture patterns) and Security Auditor (threat modeling, secure defaults) to establish foundation for the integration design.</p>
+</div>
+            </div>
+          
+        </div>
+        
+        <div class="squad-round-cards">
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(225, 65%, 55%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(225, 65%, 55%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=694c315e-068b-495b-af4e-cee1904ba4a4-Systems%20Architect" alt="Clifford Ferr1 avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">CF</div>
+                </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">Clifford Ferr1</h1>
+                <h2 class="agent-card-role">Systems Architect</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>Mission: Vault Integration Analysis for Configit</h2>
+<h3>Context</h3>
+<p>Configit is a TypeScript configuration library that validates app configuration against schemas using decorators. We&#39;re adding HashiCorp Vault integration with:</p>
+<ol>
+<li>Dynamic secrets with TTL management (background refresh, sync API)</li>
+<li>Multi-storage engine support (different Vault paths per config attribute)</li>
+<li>Multiple auth methods (IAM, AppRole, Token, etc.)</li>
+</ol>
+<h3>Your Task</h3>
+<p>Analyze the feasibility and design considerations for this integration:</p>
+<ol>
+<li><p><strong>Review the current codebase architecture</strong>:</p>
+<ul>
+<li><code>src/config.service.ts</code> - The main ConfigService singleton</li>
+<li><code>src/config.model.ts</code> - BaseConfig class</li>
+<li><code>src/json-schema.validator.ts</code> - Decorator implementations</li>
+</ul>
+</li>
+<li><p><strong>Research Vault integration patterns</strong>:</p>
+<ul>
+<li>How does <code>node-vault</code> library work?</li>
+<li>What Vault secrets engines should we support? (KV v1, KV v2, dynamic secrets like databases, AWS, etc.)</li>
+<li>How do dynamic secrets work with TTLs and leases?</li>
+</ul>
+</li>
+<li><p><strong>Analyze key architectural decisions</strong>:</p>
+<ul>
+<li>How to keep ConfigService API synchronous while managing async Vault operations?</li>
+<li>How to handle secret refresh before TTL expiry?</li>
+<li>How to map decorators to Vault paths/engines?</li>
+<li>Caching strategy for secrets?</li>
+</ul>
+</li>
+<li><p><strong>Document findings</strong> in <code>docs/vault-integration/analysis/systems-architecture-analysis.md</code></p>
+</li>
+</ol>
+<p>Include diagrams (mermaid) where helpful. Focus on technical feasibility and trade-offs.</p>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><h2>Summary</h2>
+<p>Completed an architecture analysis for integrating HashiCorp Vault into Configit. Findings:</p>
+<h3>Findings</h3>
+<ol>
+<li><p>Architecture is feasible: Maintains Configit&#39;s synchronous API (<code>configService.config.*</code>) while using async Vault operations internally via a background refresh pattern.</p>
+</li>
+<li><p>Design approach:</p>
+<ul>
+<li>Background refresh with synchronous cache: Secrets refresh proactively before TTL expiry, allowing synchronous access to cached values</li>
+<li>Decorator-based mapping: Extend <code>@ConfigVariable</code> with Vault metadata for explicit path mapping</li>
+<li>In-memory caching: TTL-based cache with automatic expiration and refresh scheduling</li>
+</ul>
+</li>
+<li><p>Components:</p>
+<ul>
+<li><code>VaultClient</code>: Handles Vault API interactions</li>
+<li><code>VaultCache</code>: In-memory cache with TTL management</li>
+<li><code>SecretRefreshManager</code>: Background refresh scheduling</li>
+<li><code>AuthManager</code>: Multiple authentication methods (Token, AppRole, AWS IAM, Kubernetes)</li>
+</ul>
+</li>
+<li><p>Decisions:</p>
+<ul>
+<li>Synchronous API preservation (high cost to reverse)</li>
+<li>Decorator-based Vault mapping (medium cost to reverse)</li>
+<li>In-memory caching (low cost to reverse, can evolve to Redis)</li>
+<li>Background refresh pattern (medium cost to reverse)</li>
+</ul>
+</li>
+<li><p>Risk mitigation:</p>
+<ul>
+<li>Vault unavailability: Optional Vault with fallback to env vars</li>
+<li>Secret expiration: Proactive refresh with configurable buffer</li>
+<li>Token expiration: Automatic renewal and re-authentication</li>
+</ul>
+</li>
+</ol>
+<p>The document includes:</p>
+<ul>
+<li>Architecture diagrams (Mermaid)</li>
+<li>Technical specifications with code examples</li>
+<li>Implementation roadmap (3 phases)</li>
+<li>Risk assessment and mitigation strategies</li>
+<li>Performance and security considerations</li>
+</ul>
+<h2>Files Changed</h2>
+<ul>
+<li><code>docs/vault-integration/analysis/systems-architecture-analysis.md</code>: Created architecture analysis document covering current architecture review, Vault integration patterns, architectural decisions, proposed architecture with diagrams, technical specifications, risk assessment, and implementation recommendations.</li>
+</ul>
+<p>The analysis is ready for review and can guide the implementation team through the Vault integration.</p>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Systems Architect</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">Clifford Ferr1</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 3:49:44 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 3:50:33 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">694c315e-068b-495b-af4e-cee1904ba4a4</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(290, 70%, 50%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(290, 70%, 50%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=acdaa821-4f59-4738-b614-4beab1d06e05-Security%20Auditor" alt="May Tat3 avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">MT</div>
+                </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">May Tat3</h1>
+                <h2 class="agent-card-role">Security Auditor</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>Mission: Security Analysis for Vault Integration in Configit</h2>
+<h3>Context</h3>
+<p>Configit is a TypeScript configuration library. We&#39;re adding HashiCorp Vault integration with:</p>
+<ol>
+<li>Dynamic secrets with TTL management</li>
+<li>Multi-storage engine support</li>
+<li>Multiple auth methods (IAM, AppRole, Token, Kubernetes, etc.)</li>
+</ol>
+<h3>Your Task</h3>
+<p>Perform a security analysis of this integration:</p>
+<ol>
+<li><p><strong>Review the current codebase</strong> for existing security patterns:</p>
+<ul>
+<li><code>src/config.service.ts</code></li>
+<li><code>src/config.model.ts</code></li>
+<li>Check for any existing encryption config options</li>
+</ul>
+</li>
+<li><p><strong>Identify security risks and mitigations</strong>:</p>
+<ul>
+<li>Credential storage and handling (how to securely store Vault tokens/credentials)</li>
+<li>Secret exposure risks (logging, error messages, memory)</li>
+<li>TTL management risks (what happens if refresh fails?)</li>
+<li>Auth method security comparison (which are more secure for different use cases?)</li>
+</ul>
+</li>
+<li><p><strong>Recommend security best practices</strong>:</p>
+<ul>
+<li>Secure defaults for the library</li>
+<li>What should NEVER be logged?</li>
+<li>How to handle secret rotation gracefully?</li>
+<li>Fallback strategies when Vault is unavailable</li>
+</ul>
+</li>
+<li><p><strong>Document findings</strong> in <code>docs/vault-integration/analysis/security-analysis.md</code></p>
+</li>
+</ol>
+<p>Be thorough - this is a security-critical feature. Include threat modeling considerations.</p>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><h2>Security Analysis Complete</h2>
+<p>Completed a security analysis of the HashiCorp Vault integration for Configit. Summary:</p>
+<h3>Key Findings</h3>
+<p><strong>Critical security issues identified:</strong></p>
+<ol>
+<li>Secret exposure in logs — Current error handling logs configuration values that could expose secrets</li>
+<li>Missing secret masking — No secret masking in logging or error messages</li>
+<li>Memory security — No explicit memory clearing of sensitive data</li>
+<li>TTL management — Need robust secret refresh and expiration handling</li>
+</ol>
+<h3>Security Analysis Document</h3>
+<p>Created: <code>docs/vault-integration/analysis/security-analysis.md</code></p>
+<p>The document includes:</p>
+<ol>
+<li>Current codebase security review — Analysis of existing security patterns and concerns</li>
+<li>Vault integration security risks — Credential storage, secret exposure, TTL management, auth method comparison</li>
+<li>Threat modeling — STRIDE analysis, attack trees, risk assessment matrix</li>
+<li>Security best practices — Secure defaults, secret masking, secure logging, rotation handling, fallback strategies</li>
+<li>Compliance considerations — OWASP Top 10, SOC 2, PCI DSS, GDPR</li>
+<li>Implementation requirements — Code patterns, configuration validation, testing requirements</li>
+</ol>
+<h3>Critical Security Requirements</h3>
+<ol>
+<li>Never log Vault tokens, credentials, or secrets</li>
+<li>Never expose secrets in error messages</li>
+<li>Always use TLS for Vault communication</li>
+<li>Use secure authentication methods (Kubernetes/IAM/AppRole preferred)</li>
+<li>Implement proper TTL management and refresh logic</li>
+<li>Handle Vault unavailability gracefully</li>
+</ol>
+<h3>Recommendations Summary</h3>
+<ul>
+<li>Critical (P0): Secret masking, error sanitization, TLS enforcement, secure authentication, token security, TTL management, path validation</li>
+<li>High (P1): Memory security, refresh locking, fallback strategy, audit logging, health monitoring</li>
+<li>Medium (P2): Secret caching, rotation support, circuit breaker, documentation</li>
+</ul>
+<h3>Additional Changes</h3>
+<ul>
+<li>Updated <code>.gitignore</code> to include Vault-related files and secret file patterns</li>
+</ul>
+<p>The analysis provides actionable recommendations and code examples for secure implementation of the Vault integration.</p>
+<h2>Files Changed</h2>
+<ul>
+<li><code>docs/vault-integration/analysis/security-analysis.md</code>: Created comprehensive security analysis document covering threat modeling, security risks, best practices, and compliance requirements</li>
+<li><code>.gitignore</code>: Added Vault-related file patterns and secret file extensions to prevent accidental commits of sensitive data</li>
+</ul>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Security Auditor</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">May Tat3</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 3:49:44 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 3:50:53 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">acdaa821-4f59-4738-b614-4beab1d06e05</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="squad-round-arrow">
+          <svg width="40" height="60" viewBox="0 0 40 60">
+            <defs>
+              <linearGradient id="arrowGradient0" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#007acc" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#9cdcfe" stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+            <line x1="20" y1="0" x2="20" y2="40" stroke="url(#arrowGradient0)" stroke-width="2" stroke-dasharray="5,5" />
+            <polygon points="20,50 15,40 25,40" fill="url(#arrowGradient0)" />
+          </svg>
+          <div class="squad-round-arrow-label">Next Round</div>
+        </div>
+      </div>
+      <div class="squad-round">
+        <div class="squad-round-header">
+          <div class="squad-round-header-top">
+            <div class="squad-round-number">
+              <div class="squad-round-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M20.649 21.349c0.064 0.004 0.133 0.012 0.202 0.012 0.977 0.001 1.955-0.005 2.932 0.005 0.214 0.002 0.278-0.071 0.267-0.276-0.014-0.267-0.003-0.535-0.003-0.865 1.109 0.816 2.181 1.604 3.281 2.414-1.092 0.804-2.164 1.593-3.281 2.416 0-0.311 0-0.568-0-0.825-0-0.332-0-0.333-0.323-0.333-6.247 0-12.495 0-18.742 0-0.302 0-0.302-0-0.302-0.304 0-0.659 0.009-1.318-0.005-1.976-0.005-0.214 0.064-0.262 0.269-0.261 3.359 0.006 6.718 0.011 10.077 0.002 1.722-0.005 3.081-0.718 3.98-2.202 1.622-2.68-0.069-6.19-3.177-6.642-2.4-0.349-4.631 1.262-5.038 3.703-0.043 0.254-0.046 0.515-0.071 0.821 0.393-0.053 0.749-0.102 1.152-0.156-0.631 1.22-1.24 2.398-1.858 3.592-0.947-0.976-1.88-1.937-2.792-2.877 0.229-0.038 0.533-0.082 0.834-0.145 0.057-0.012 0.141-0.104 0.139-0.157-0.017-0.639 0.027-1.271 0.152-1.898 0.004-0.019-0.005-0.041-0.011-0.078-0.61-0.104-1.176-0.324-1.689-0.678-1.254-0.868-1.91-2.483-1.602-3.955 0.335-1.604 1.545-2.803 3.109-3.099 1.014-0.191 1.954-0.009 2.827 0.527 0.154 0.095 0.248 0.109 0.349-0.056 0.059-0.097 0.148-0.175 0.25-0.293 0.127 0.512 0.246 0.991 0.364 1.47 0.040 0.161 0.071 0.325 0.118 0.484 0.051 0.172-0.001 0.249-0.183 0.237-0.526-0.036-1.053-0.068-1.579-0.103-0.13-0.009-0.259-0.023-0.426-0.039 0.13-0.164 0.248-0.311 0.377-0.472-0.284-0.216-0.597-0.324-0.923-0.377-1.576-0.258-2.965 0.953-2.933 2.548 0.024 1.224 1.056 2.318 2.275 2.422 0.158 0.013 0.213-0.067 0.274-0.185 0.864-1.658 2.165-2.83 3.935-3.44 4.095-1.412 8.37 1.118 9.159 5.259 0.389 2.039-0.054 3.901-1.291 5.57-0.034 0.046-0.065 0.095-0.095 0.144-0.006 0.009 0.002 0.027 0.007 0.065z" />
+                </svg>
+              </div>
+              <div class="squad-round-badge"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="107.75" height="28" role="img" aria-label="ROUND: 02"><title>ROUND: 02</title><g shape-rendering="crispEdges"><rect width="67.25" height="28" fill="#555"/><rect x="67.25" width="40.5" height="28" fill="#4c1"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="100"><text transform="scale(.1)" x="336.25" y="175" textLength="432.5" fill="#fff">ROUND</text><text transform="scale(.1)" x="875" y="175" textLength="165" fill="#fff" font-weight="bold">02</text></g></svg></div>
+            </div>
+            <div class="squad-round-status" style="color: #89d185">✅ All squad members completed</div>
+            <div class="squad-round-count">2 Squad Members</div>
+          </div>
+          
+            <div class="squad-round-meta">
+              <div class="squad-round-meta-line">Planning • BMAD Method</div>
+              <div class="squad-round-meta-summary"><p>Parallel architecture design by Backend Architect (VaultProvider, TTL Manager, source hierarchy) and Systems Architect (decorator API design, metadata storage) to establish technical specifications.</p>
+</div>
+            </div>
+          
+        </div>
+        
+        <div class="squad-round-cards">
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(18, 78%, 58%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(18, 78%, 58%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=cd779d68-5ccc-4167-8dfe-329897d48c0d-Backend%20Architect" alt="Claudia Garcia avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">CG</div>
+                </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">Claudia Garcia</h1>
+                <h2 class="agent-card-role">Backend Architect</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>Mission: Design Vault Integration Architecture for Configit</h2>
+<h3>Context</h3>
+<p>Configit is a TypeScript configuration library that validates app config against schemas using decorators. We&#39;re adding HashiCorp Vault as an <strong>optional</strong> secrets source with the following requirements:</p>
+<ol>
+<li><strong>Source Priority</strong>: Vault (if configured) → Environment Variables → Config Files</li>
+<li><strong>Auth Method Priority</strong>: GCP IAM (top priority) → AWS IAM → AppRole → Token</li>
+<li><strong>Synchronous API</strong>: Keep <code>configService.config.*</code> synchronous, async operations behind the scenes</li>
+<li><strong>TTL Management</strong>: Background refresh of dynamic secrets before expiry</li>
+</ol>
+<h3>Your Task</h3>
+<p>Design the detailed architecture for the Vault integration:</p>
+<ol>
+<li><p><strong>Review existing analysis</strong>:</p>
+<ul>
+<li><code>docs/vault-integration/analysis/systems-architecture-analysis.md</code></li>
+<li><code>docs/vault-integration/analysis/security-analysis.md</code></li>
+</ul>
+</li>
+<li><p><strong>Design the source hierarchy</strong>:</p>
+<ul>
+<li>How does Vault fit into nconf&#39;s existing source hierarchy?</li>
+<li>How to handle mixed sources (some secrets from Vault, others from env/files)?</li>
+<li>Fallback strategy when Vault is unavailable</li>
+</ul>
+</li>
+<li><p><strong>Design the VaultProvider component</strong>:</p>
+<ul>
+<li>Connection management</li>
+<li>Authentication (prioritize GCP IAM)</li>
+<li>Secret fetching with proper engine support (KV v2, dynamic secrets)</li>
+<li>Error handling and retries</li>
+</ul>
+</li>
+<li><p><strong>Design the TTL/Refresh Manager</strong>:</p>
+<ul>
+<li>How to track TTLs for each secret</li>
+<li>Refresh scheduling algorithm</li>
+<li>Handling refresh failures</li>
+<li>Thread safety considerations</li>
+</ul>
+</li>
+<li><p><strong>Design ConfigService integration</strong>:</p>
+<ul>
+<li>How does ConfigService know which properties come from Vault?</li>
+<li>Initialization flow (async Vault init, then sync access)</li>
+<li>Cache structure and invalidation</li>
+</ul>
+</li>
+<li><p><strong>Document</strong> in <code>docs/vault-integration/planning/architecture-design.md</code></p>
+</li>
+</ol>
+<p>Include:</p>
+<ul>
+<li>Component diagrams (Mermaid)</li>
+<li>Sequence diagrams for key flows</li>
+<li>Interface definitions (TypeScript)</li>
+<li>Error handling strategies</li>
+<li>Configuration schema</li>
+</ul>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><p>Architecture design document created. Summary:</p>
+<h2>Summary</h2>
+<p>Created an architecture design document for integrating HashiCorp Vault into Configit. The document covers:</p>
+<h3>Key Design Decisions</h3>
+<ol>
+<li><strong>Source Hierarchy</strong>: Vault → argv → env → file (Vault highest priority)</li>
+<li><strong>Hybrid Integration</strong>: Vault cache layer that injects values into nconf via <code>overrides()</code> API</li>
+<li><strong>Synchronous API</strong>: Maintained through pre-loading secrets during async initialization</li>
+<li><strong>Background Refresh</strong>: Proactive secret refresh before TTL expiry with configurable buffer</li>
+</ol>
+<h3>Components Designed</h3>
+<ol>
+<li><strong>VaultProvider</strong>: Connection management, authentication (GCP IAM → AWS IAM → AppRole → Token), secret fetching</li>
+<li><strong>SecretRefreshManager</strong>: TTL tracking, refresh scheduling, concurrent refresh prevention</li>
+<li><strong>VaultCache</strong>: In-memory cache with property-to-path mapping, integration with nconf</li>
+<li><strong>ConfigService Integration</strong>: Property scanning, cache injection, synchronous access pattern</li>
+</ol>
+<h3>Documentation Includes</h3>
+<ul>
+<li>Component diagrams (Mermaid)</li>
+<li>Sequence diagrams for initialization, refresh, and access flows</li>
+<li>TypeScript interface definitions</li>
+<li>Error handling strategies with sanitization</li>
+<li>Configuration schema with examples</li>
+<li>Implementation phases (4 phases)</li>
+<li>Security considerations aligned with the security analysis</li>
+</ul>
+<h3>Highlights</h3>
+<ul>
+<li>Maintains backward compatibility (synchronous API)</li>
+<li>Security-first approach (secret masking, error sanitization, TLS enforcement)</li>
+<li>Graceful degradation (fallback strategies)</li>
+<li>Production-ready (circuit breakers, health checks, monitoring)</li>
+</ul>
+<h2>Files Changed</h2>
+<ul>
+<li><code>docs/vault-integration/planning/architecture-design.md</code>: Created architecture design document with component diagrams, sequence diagrams, interface definitions, error handling strategies, configuration schema, and implementation phases.</li>
+</ul>
+<p>The document is ready for review and serves as the blueprint for implementing the Vault integration. It addresses all requirements from the initial task and incorporates security considerations from the security analysis.</p>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Backend Architect</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">Claudia Garcia</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 3:55:11 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 3:56:05 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">cd779d68-5ccc-4167-8dfe-329897d48c0d</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(315, 75%, 55%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(315, 75%, 55%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=807ada20-15fe-408f-a12d-2addec1369da-Systems%20Architect" alt="Richard Clarke avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">RC</div>
+                </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">Richard Clarke</h1>
+                <h2 class="agent-card-role">Systems Architect</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>Mission: Design Decorator API for Vault Secrets in Configit</h2>
+<h3>Context</h3>
+<p>Configit uses decorators (<code>@ConfigVariable</code>, <code>@Configuration</code>) to define configuration schemas. We need to extend this to support Vault secrets mapping.</p>
+<h3>Requirements</h3>
+<ol>
+<li><strong>Vault is optional</strong> - decorators should work whether Vault is configured or not</li>
+<li><strong>Per-property mapping</strong> - each property can specify its own Vault path/engine</li>
+<li><strong>Multiple engines</strong> - support KV v2, database, GCP, AWS secrets engines</li>
+<li><strong>Fallback values</strong> - properties can have defaults or fall back to env vars</li>
+</ol>
+<h3>Your Task</h3>
+<p>Design the decorator API:</p>
+<ol>
+<li><p><strong>Review existing decorators</strong>:</p>
+<ul>
+<li><code>src/json-schema.validator.ts</code> - current <code>@ConfigVariable</code> implementation</li>
+<li><code>src/config.model.ts</code> - BaseConfig class</li>
+</ul>
+</li>
+<li><p><strong>Design decorator options</strong>:</p>
+<ul>
+<li>How to specify Vault path for a property</li>
+<li>How to specify secrets engine type</li>
+<li>How to handle dynamic secrets (e.g., database creds with username/password)</li>
+<li>How to specify refresh behavior per-property</li>
+</ul>
+</li>
+<li><p><strong>Design new decorators</strong> (or extensions to existing):</p>
+<ul>
+<li>Option A: Extend <code>@ConfigVariable</code> with vault options</li>
+<li>Option B: New <code>@VaultSecret</code> decorator that composes with <code>@ConfigVariable</code></li>
+<li>Evaluate trade-offs and recommend one</li>
+</ul>
+</li>
+<li><p><strong>Design metadata storage</strong>:</p>
+<ul>
+<li>How to store Vault metadata on properties</li>
+<li>How ConfigService reads this metadata during initialization</li>
+</ul>
+</li>
+<li><p><strong>Design usage patterns</strong>:</p>
+<ul>
+<li>Simple KV secret</li>
+<li>Dynamic database credentials</li>
+<li>Multiple secrets from same Vault path</li>
+<li>Secrets with custom TTL/refresh settings</li>
+</ul>
+</li>
+<li><p><strong>Document</strong> in <code>docs/vault-integration/planning/decorator-api-design.md</code></p>
+</li>
+</ol>
+<p>Include:</p>
+<ul>
+<li>API examples for each use case</li>
+<li>TypeScript interface definitions</li>
+<li>Migration guide from current decorators</li>
+<li>Edge cases and error handling</li>
+</ul>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><h2>Summary</h2>
+<h3>Design decision: extend <code>@ConfigVariable</code></h3>
+<p>Selected Option A: extend the existing <code>@ConfigVariable</code> decorator with an optional <code>vault</code> property. This:</p>
+<ul>
+<li>Maintains backward compatibility</li>
+<li>Keeps a single decorator pattern</li>
+<li>Provides type safety</li>
+<li>Keeps configuration explicit and secure</li>
+</ul>
+<h3>Key design elements</h3>
+<ol>
+<li><p>TypeScript interfaces:</p>
+<ul>
+<li><code>IVaultConfigOptions</code> — Vault configuration per property</li>
+<li><code>VaultPropertyMetadata</code> — Internal metadata storage</li>
+<li><code>VaultSecretResponse</code> — Vault API response structure</li>
+</ul>
+</li>
+<li><p>Metadata storage:</p>
+<ul>
+<li>Uses <code>reflect-metadata</code> (already in use)</li>
+<li>Stores metadata on class prototype using Symbols</li>
+<li>Supports inheritance and introspection</li>
+</ul>
+</li>
+<li><p>Usage patterns:</p>
+<ul>
+<li>Simple KV v2 secrets</li>
+<li>Dynamic database credentials</li>
+<li>Multiple secrets from same path</li>
+<li>Custom value extraction</li>
+<li>Optional secrets with fallback</li>
+<li>Mixed Vault and non-Vault properties</li>
+<li>AWS secrets engine</li>
+</ul>
+</li>
+<li><p>Error handling:</p>
+<ul>
+<li>Vault unavailable scenarios</li>
+<li>Secret not found</li>
+<li>Expired secrets</li>
+<li>Type mismatches</li>
+<li>Refresh failures</li>
+</ul>
+</li>
+</ol>
+<h3>Architecture alignment</h3>
+<p>The design aligns with the existing systems architecture analysis:</p>
+<ul>
+<li>Synchronous API maintained (background refresh pattern)</li>
+<li>Explicit path mapping (security-first)</li>
+<li>Per-property configuration (flexible)</li>
+<li>Multiple engine support (KV, Database, AWS, etc.)</li>
+</ul>
+<h3>Next steps</h3>
+<ol>
+<li>Review the design document</li>
+<li>Implement decorator extension in <code>src/json-schema.validator.ts</code></li>
+<li>Add metadata storage utilities</li>
+<li>Update ConfigService for Vault integration</li>
+<li>Create VaultClient implementation</li>
+</ol>
+<h2>Files Changed</h2>
+<ul>
+<li><code>docs/vault-integration/planning/decorator-api-design.md</code>: Created decorator API design document with TypeScript interfaces, usage patterns, migration guide, and error handling strategies.</li>
+</ul>
+<p>The design document is ready for review and provides a blueprint for implementing Vault secrets integration into Configit&#39;s decorator system.</p>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Systems Architect</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">Richard Clarke</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 3:55:11 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 3:56:02 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">807ada20-15fe-408f-a12d-2addec1369da</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="squad-round-arrow">
+          <svg width="40" height="60" viewBox="0 0 40 60">
+            <defs>
+              <linearGradient id="arrowGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#007acc" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#9cdcfe" stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+            <line x1="20" y1="0" x2="20" y2="40" stroke="url(#arrowGradient1)" stroke-width="2" stroke-dasharray="5,5" />
+            <polygon points="20,50 15,40 25,40" fill="url(#arrowGradient1)" />
+          </svg>
+          <div class="squad-round-arrow-label">Next Round</div>
+        </div>
+      </div>
+      <div class="squad-round">
+        <div class="squad-round-header">
+          <div class="squad-round-header-top">
+            <div class="squad-round-number">
+              <div class="squad-round-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M20.649 21.349c0.064 0.004 0.133 0.012 0.202 0.012 0.977 0.001 1.955-0.005 2.932 0.005 0.214 0.002 0.278-0.071 0.267-0.276-0.014-0.267-0.003-0.535-0.003-0.865 1.109 0.816 2.181 1.604 3.281 2.414-1.092 0.804-2.164 1.593-3.281 2.416 0-0.311 0-0.568-0-0.825-0-0.332-0-0.333-0.323-0.333-6.247 0-12.495 0-18.742 0-0.302 0-0.302-0-0.302-0.304 0-0.659 0.009-1.318-0.005-1.976-0.005-0.214 0.064-0.262 0.269-0.261 3.359 0.006 6.718 0.011 10.077 0.002 1.722-0.005 3.081-0.718 3.98-2.202 1.622-2.68-0.069-6.19-3.177-6.642-2.4-0.349-4.631 1.262-5.038 3.703-0.043 0.254-0.046 0.515-0.071 0.821 0.393-0.053 0.749-0.102 1.152-0.156-0.631 1.22-1.24 2.398-1.858 3.592-0.947-0.976-1.88-1.937-2.792-2.877 0.229-0.038 0.533-0.082 0.834-0.145 0.057-0.012 0.141-0.104 0.139-0.157-0.017-0.639 0.027-1.271 0.152-1.898 0.004-0.019-0.005-0.041-0.011-0.078-0.61-0.104-1.176-0.324-1.689-0.678-1.254-0.868-1.91-2.483-1.602-3.955 0.335-1.604 1.545-2.803 3.109-3.099 1.014-0.191 1.954-0.009 2.827 0.527 0.154 0.095 0.248 0.109 0.349-0.056 0.059-0.097 0.148-0.175 0.25-0.293 0.127 0.512 0.246 0.991 0.364 1.47 0.040 0.161 0.071 0.325 0.118 0.484 0.051 0.172-0.001 0.249-0.183 0.237-0.526-0.036-1.053-0.068-1.579-0.103-0.13-0.009-0.259-0.023-0.426-0.039 0.13-0.164 0.248-0.311 0.377-0.472-0.284-0.216-0.597-0.324-0.923-0.377-1.576-0.258-2.965 0.953-2.933 2.548 0.024 1.224 1.056 2.318 2.275 2.422 0.158 0.013 0.213-0.067 0.274-0.185 0.864-1.658 2.165-2.83 3.935-3.44 4.095-1.412 8.37 1.118 9.159 5.259 0.389 2.039-0.054 3.901-1.291 5.57-0.034 0.046-0.065 0.095-0.095 0.144-0.006 0.009 0.002 0.027 0.007 0.065z" />
+                </svg>
+              </div>
+              <div class="squad-round-badge"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="107.75" height="28" role="img" aria-label="ROUND: 03"><title>ROUND: 03</title><g shape-rendering="crispEdges"><rect width="67.25" height="28" fill="#555"/><rect x="67.25" width="40.5" height="28" fill="#4c1"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="100"><text transform="scale(.1)" x="336.25" y="175" textLength="432.5" fill="#fff">ROUND</text><text transform="scale(.1)" x="875" y="175" textLength="165" fill="#fff" font-weight="bold">03</text></g></svg></div>
+            </div>
+            <div class="squad-round-status" style="color: #89d185">✅ All squad members completed</div>
+            <div class="squad-round-count">1 Squad Member</div>
+          </div>
+          
+            <div class="squad-round-meta">
+              <div class="squad-round-meta-line">Planning • BMAD Method</div>
+              <div class="squad-round-meta-summary"><p>Revision round: Systems Architect revising decorator API to use dedicated composable decorators (@VaultPath, @VaultEngine, @VaultKey) instead of extending @ConfigVariable.</p>
+</div>
+            </div>
+          
+        </div>
+        
+        <div class="squad-round-cards">
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(315, 75%, 55%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(315, 75%, 55%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=807ada20-15fe-408f-a12d-2addec1369da-Systems%20Architect" alt="Richard Clarke avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">RC</div>
+                </div>
+                
+                  <div class="agent-card-chat-badge" title="Back-and-forth conversation">
+                    <svg viewBox="-0.5 0 25 25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                      <path d="M14.665 9.605H2.995C2.715 9.605 2.495 9.825 2.495 10.105V15.265C2.495 15.545 2.715 15.765 2.995 15.765H4.495V18.505L7.16501 15.765H14.665C14.945 15.765 15.165 15.545 15.165 15.265V10.105C15.165 9.825 14.935 9.605 14.665 9.605Z" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M8.83496 7.575V6.995C8.83496 6.715 9.05496 6.495 9.33496 6.495H21.005C21.275 6.495 21.505 6.715 21.505 6.995V12.325C21.505 12.505 21.365 12.655 21.185 12.655H19.505" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M19.505 12.655V15.385L16.835 12.655" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">Richard Clarke</h1>
+                <h2 class="agent-card-role">Systems Architect</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>REVISION REQUIRED: Decorator API Design</h2>
+<h3>Feedback from Project Manager</h3>
+<p>The PM has rejected the &quot;extend @ConfigVariable&quot; approach. Instead, they want <strong>dedicated composable decorators</strong>:</p>
+<pre><code class="language-typescript">@VaultPath(&#39;database/creds/my-role&#39;)
+@VaultEngine(&#39;database&#39;)
+@VaultKey(&#39;password&#39;)
+@ConfigVariable(&#39;Database password&#39;)
+@IsString()
+DATABASE_PASSWORD: string;
+</code></pre>
+<h3>Required Changes</h3>
+<ol>
+<li><p><strong>Create dedicated decorators</strong>:</p>
+<ul>
+<li><code>@VaultPath(path: string)</code> - Specifies the Vault path (required for Vault secrets)</li>
+<li><code>@VaultEngine(engine: VaultEngineType)</code> - Specifies the engine type (optional, auto-detect from path)</li>
+<li><code>@VaultKey(key: string)</code> - Specifies the key within the secret (optional, defaults to property name)</li>
+</ul>
+</li>
+<li><p><strong>Keep these as separate composable decorators</strong> that work alongside <code>@ConfigVariable</code> and <code>class-validator</code> decorators</p>
+</li>
+<li><p><strong>Consider additional decorators</strong> for other options:</p>
+<ul>
+<li><code>@VaultRefreshBuffer(seconds: number)</code> - Optional refresh buffer override</li>
+<li><code>@VaultOptional()</code> - Mark secret as optional (fallback to env)</li>
+</ul>
+</li>
+<li><p><strong>Update the design document</strong> at <code>docs/vault-integration/planning/decorator-api-design.md</code>:</p>
+<ul>
+<li>Update all usage patterns with the new decorator style</li>
+<li>Update TypeScript interfaces</li>
+<li>Update metadata storage design</li>
+<li>Update migration guide</li>
+<li>Keep edge cases and error handling</li>
+</ul>
+</li>
+</ol>
+<h3>Design Principles</h3>
+<ul>
+<li>Each decorator should do ONE thing</li>
+<li>Decorators should compose well together</li>
+<li>Order shouldn&#39;t matter (except for readability)</li>
+<li>Follow the same pattern as <code>class-validator</code> decorators</li>
+</ul>
+<h3>Example Usage</h3>
+<pre><code class="language-typescript">// Simple KV secret
+@VaultPath(&#39;secret/data/myapp/api&#39;)
+@VaultKey(&#39;api_key&#39;)
+@ConfigVariable(&#39;API Key&#39;)
+@IsString()
+API_KEY: string;
+
+// Dynamic database credentials
+@VaultPath(&#39;database/creds/my-role&#39;)
+@VaultEngine(&#39;database&#39;)
+@VaultKey(&#39;password&#39;)
+@ConfigVariable(&#39;Database password&#39;)
+@IsString()
+DATABASE_PASSWORD: string;
+
+// Optional Vault secret with fallback
+@VaultPath(&#39;secret/data/myapp/optional&#39;)
+@VaultOptional()
+@ConfigVariable(&#39;Optional feature flag&#39;)
+@IsOptional()
+@IsBoolean()
+FEATURE_FLAG?: boolean;
+
+// Non-Vault property (unchanged)
+@ConfigVariable(&#39;Server port&#39;)
+@IsNumber()
+PORT: number;
+</code></pre>
+<p>Please revise the design document with the new decorator approach.</p>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><h2>Summary</h2>
+<p>Revised the decorator API design document to use composable decorators instead of extending <code>@ConfigVariable</code>. Changes:</p>
+<h3>Major changes</h3>
+<ol>
+<li><p>Design approach: switched from extending <code>@ConfigVariable</code> to composable decorators</p>
+<ul>
+<li><code>@VaultPath(path: string)</code> - Required decorator to mark Vault secrets</li>
+<li><code>@VaultEngine(engine: VaultEngineType)</code> - Optional engine specification</li>
+<li><code>@VaultKey(key: string)</code> - Optional key name for KV engines</li>
+<li><code>@VaultRefreshBuffer(seconds: number)</code> - Optional refresh buffer override</li>
+<li><code>@VaultOptional()</code> - Optional marker for fallback to env vars</li>
+</ul>
+</li>
+<li><p>Updated sections:</p>
+<ul>
+<li>Executive Summary: reflects composable decorator approach</li>
+<li>API Design Options: updated to show composable decorators as selected</li>
+<li>TypeScript Interfaces: updated metadata storage to use individual symbols</li>
+<li>Metadata Storage: changed to store individual decorator metadata separately</li>
+<li>Usage Patterns: all 8 patterns updated with new decorator syntax</li>
+<li>Migration Guide: updated examples to use composable decorators</li>
+<li>Edge Cases: updated error messages to reference decorators</li>
+<li>Implementation: updated decorator implementation examples</li>
+</ul>
+</li>
+<li><p>New sections:</p>
+<ul>
+<li>Decorator Composition Best Practices: recommended ordering and guidelines</li>
+<li>Quick Reference: cheat sheet with common patterns</li>
+</ul>
+</li>
+</ol>
+<h3>Design principles</h3>
+<ul>
+<li>Each decorator does one thing (separation of concerns)</li>
+<li>Composable and flexible (mix and match as needed)</li>
+<li>Order-independent (can be applied in any order)</li>
+<li>Follows <code>class-validator</code> pattern (familiar to developers)</li>
+<li>Explicit and secure (no magic behavior)</li>
+</ul>
+<h3>Backward compatibility</h3>
+<ul>
+<li>Existing code without Vault decorators continues to work unchanged</li>
+<li>Only properties with <code>@VaultPath</code> are treated as Vault secrets</li>
+<li>Non-Vault properties behave exactly as before</li>
+</ul>
+<p>The document is ready for implementation review with the composable decorators approach.</p>
+<h2>Files Changed</h2>
+<ul>
+<li><code>docs/vault-integration/planning/decorator-api-design.md</code>: Revised design document to use composable decorators (<code>@VaultPath</code>, <code>@VaultEngine</code>, <code>@VaultKey</code>, <code>@VaultRefreshBuffer</code>, <code>@VaultOptional</code>) instead of extending <code>@ConfigVariable</code>, updated all usage patterns, migration guide, and implementation examples.</li>
+</ul>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Systems Architect</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">Richard Clarke</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 4:00:09 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 4:01:25 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">807ada20-15fe-408f-a12d-2addec1369da</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="squad-round-arrow">
+          <svg width="40" height="60" viewBox="0 0 40 60">
+            <defs>
+              <linearGradient id="arrowGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#007acc" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#9cdcfe" stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+            <line x1="20" y1="0" x2="20" y2="40" stroke="url(#arrowGradient2)" stroke-width="2" stroke-dasharray="5,5" />
+            <polygon points="20,50 15,40 25,40" fill="url(#arrowGradient2)" />
+          </svg>
+          <div class="squad-round-arrow-label">Next Round</div>
+        </div>
+      </div>
+      <div class="squad-round">
+        <div class="squad-round-header">
+          <div class="squad-round-header-top">
+            <div class="squad-round-number">
+              <div class="squad-round-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M20.649 21.349c0.064 0.004 0.133 0.012 0.202 0.012 0.977 0.001 1.955-0.005 2.932 0.005 0.214 0.002 0.278-0.071 0.267-0.276-0.014-0.267-0.003-0.535-0.003-0.865 1.109 0.816 2.181 1.604 3.281 2.414-1.092 0.804-2.164 1.593-3.281 2.416 0-0.311 0-0.568-0-0.825-0-0.332-0-0.333-0.323-0.333-6.247 0-12.495 0-18.742 0-0.302 0-0.302-0-0.302-0.304 0-0.659 0.009-1.318-0.005-1.976-0.005-0.214 0.064-0.262 0.269-0.261 3.359 0.006 6.718 0.011 10.077 0.002 1.722-0.005 3.081-0.718 3.98-2.202 1.622-2.68-0.069-6.19-3.177-6.642-2.4-0.349-4.631 1.262-5.038 3.703-0.043 0.254-0.046 0.515-0.071 0.821 0.393-0.053 0.749-0.102 1.152-0.156-0.631 1.22-1.24 2.398-1.858 3.592-0.947-0.976-1.88-1.937-2.792-2.877 0.229-0.038 0.533-0.082 0.834-0.145 0.057-0.012 0.141-0.104 0.139-0.157-0.017-0.639 0.027-1.271 0.152-1.898 0.004-0.019-0.005-0.041-0.011-0.078-0.61-0.104-1.176-0.324-1.689-0.678-1.254-0.868-1.91-2.483-1.602-3.955 0.335-1.604 1.545-2.803 3.109-3.099 1.014-0.191 1.954-0.009 2.827 0.527 0.154 0.095 0.248 0.109 0.349-0.056 0.059-0.097 0.148-0.175 0.25-0.293 0.127 0.512 0.246 0.991 0.364 1.47 0.040 0.161 0.071 0.325 0.118 0.484 0.051 0.172-0.001 0.249-0.183 0.237-0.526-0.036-1.053-0.068-1.579-0.103-0.13-0.009-0.259-0.023-0.426-0.039 0.13-0.164 0.248-0.311 0.377-0.472-0.284-0.216-0.597-0.324-0.923-0.377-1.576-0.258-2.965 0.953-2.933 2.548 0.024 1.224 1.056 2.318 2.275 2.422 0.158 0.013 0.213-0.067 0.274-0.185 0.864-1.658 2.165-2.83 3.935-3.44 4.095-1.412 8.37 1.118 9.159 5.259 0.389 2.039-0.054 3.901-1.291 5.57-0.034 0.046-0.065 0.095-0.095 0.144-0.006 0.009 0.002 0.027 0.007 0.065z" />
+                </svg>
+              </div>
+              <div class="squad-round-badge"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="107.75" height="28" role="img" aria-label="ROUND: 04"><title>ROUND: 04</title><g shape-rendering="crispEdges"><rect width="67.25" height="28" fill="#555"/><rect x="67.25" width="40.5" height="28" fill="#4c1"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="100"><text transform="scale(.1)" x="336.25" y="175" textLength="432.5" fill="#fff">ROUND</text><text transform="scale(.1)" x="875" y="175" textLength="165" fill="#fff" font-weight="bold">04</text></g></svg></div>
+            </div>
+            <div class="squad-round-status" style="color: #89d185">✅ All squad members completed</div>
+            <div class="squad-round-count">1 Squad Member</div>
+          </div>
+          
+            <div class="squad-round-meta">
+              <div class="squad-round-meta-line">Implementation • BMAD Method</div>
+              <div class="squad-round-meta-summary"><p>Implementation Round 1: Backend Architect implementing core Vault components - decorators (@VaultPath, @VaultEngine, @VaultKey, etc.), VaultProvider (auth, read secrets), VaultCache (in-memory caching), and TypeScript types.</p>
+</div>
+            </div>
+          
+        </div>
+        
+        <div class="squad-round-cards">
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(18, 78%, 58%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(18, 78%, 58%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=cd779d68-5ccc-4167-8dfe-329897d48c0d-Backend%20Architect" alt="Claudia Garcia avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">CG</div>
+                </div>
+                
+                  <div class="agent-card-chat-badge" title="Back-and-forth conversation">
+                    <svg viewBox="-0.5 0 25 25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                      <path d="M14.665 9.605H2.995C2.715 9.605 2.495 9.825 2.495 10.105V15.265C2.495 15.545 2.715 15.765 2.995 15.765H4.495V18.505L7.16501 15.765H14.665C14.945 15.765 15.165 15.545 15.165 15.265V10.105C15.165 9.825 14.935 9.605 14.665 9.605Z" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M8.83496 7.575V6.995C8.83496 6.715 9.05496 6.495 9.33496 6.495H21.005C21.275 6.495 21.505 6.715 21.505 6.995V12.325C21.505 12.505 21.365 12.655 21.185 12.655H19.505" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M19.505 12.655V15.385L16.835 12.655" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">Claudia Garcia</h1>
+                <h2 class="agent-card-role">Backend Architect</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>Mission: Implement Core Vault Integration for Configit</h2>
+<h3>Context</h3>
+<p>We&#39;re implementing HashiCorp Vault integration for Configit. The planning documents are complete:</p>
+<ul>
+<li><code>docs/vault-integration/planning/architecture-design.md</code></li>
+<li><code>docs/vault-integration/planning/decorator-api-design.md</code></li>
+</ul>
+<p>A local Vault instance is running at <code>http://127.0.0.1:8200</code> with test secrets at <code>secret/configit/*</code>.</p>
+<h3>Your Task: Implement Core Components</h3>
+<h4>1. Vault Decorators (<code>src/vault/decorators.ts</code>)</h4>
+<p>Create composable decorators using <code>reflect-metadata</code>:</p>
+<ul>
+<li><code>@VaultPath(path: string)</code> - Required, marks property as Vault secret</li>
+<li><code>@VaultEngine(engine: VaultEngineType)</code> - Optional, engine type</li>
+<li><code>@VaultKey(key: string)</code> - Optional, key within secret</li>
+<li><code>@VaultRefreshBuffer(seconds: number)</code> - Optional, refresh buffer</li>
+<li><code>@VaultOptional()</code> - Optional, allow fallback to env</li>
+</ul>
+<p>Also create metadata utilities:</p>
+<ul>
+<li><code>getVaultPath()</code>, <code>getVaultEngine()</code>, <code>getVaultKey()</code>, etc.</li>
+<li><code>buildVaultMetadata()</code> - builds complete metadata from decorators</li>
+<li><code>getAllVaultMetadata()</code> - gets all Vault metadata for a class</li>
+</ul>
+<h4>2. Vault Types (<code>src/vault/types.ts</code>)</h4>
+<p>Create TypeScript interfaces:</p>
+<ul>
+<li><code>VaultEngineType</code> - enum/type for engine types</li>
+<li><code>IVaultConfigOptions</code> - Vault configuration for ConfigService</li>
+<li><code>IVaultAuthConfig</code>, <code>IGCPAuthConfig</code>, <code>IAWSAuthConfig</code>, <code>IAppRoleAuthConfig</code>, <code>ITokenAuthConfig</code></li>
+<li><code>VaultSecretResponse</code>, <code>VaultPropertyMetadata</code>, <code>VaultCacheEntry</code></li>
+<li><code>VaultHealth</code>, <code>VaultError</code></li>
+</ul>
+<h4>3. VaultProvider (<code>src/vault/vault-provider.ts</code>)</h4>
+<p>Create the Vault client wrapper:</p>
+<ul>
+<li>Initialize connection to Vault</li>
+<li>Authentication with priority: GCP IAM → AWS IAM → AppRole → Token</li>
+<li><code>read(path: string)</code> - read secrets</li>
+<li><code>renewLease(leaseId: string)</code> - renew dynamic secret leases</li>
+<li>Error handling with retries</li>
+<li>TLS enforcement</li>
+</ul>
+<p>Use <code>node-vault</code> library (add to package.json dependencies).</p>
+<h4>4. VaultCache (<code>src/vault/vault-cache.ts</code>)</h4>
+<p>Create in-memory cache:</p>
+<ul>
+<li>Store secrets with TTL</li>
+<li><code>get(propertyName: string)</code> - get cached value</li>
+<li><code>set(propertyName: string, secret, metadata)</code> - cache secret</li>
+<li><code>invalidate(path: string)</code> - invalidate cache entry</li>
+<li>Integration with nconf via <code>overrides()</code></li>
+</ul>
+<h4>5. Export from index (<code>src/vault/index.ts</code>)</h4>
+<p>Export all public APIs.</p>
+<h4>6. Update main index (<code>src/index.ts</code>)</h4>
+<p>Add vault exports.</p>
+<h3>Implementation Notes</h3>
+<ul>
+<li>Follow existing code style in the project</li>
+<li>Use <code>reflect-metadata</code> (already a dependency via class-validator)</li>
+<li>Add <code>node-vault</code> to dependencies</li>
+<li>Create proper TypeScript types</li>
+<li>Add JSDoc comments</li>
+<li>Follow security requirements from <code>docs/vault-integration/analysis/security-analysis.md</code>:<ul>
+<li>Never log secrets or tokens</li>
+<li>Sanitize error messages</li>
+<li>Enforce TLS</li>
+</ul>
+</li>
+</ul>
+<h3>Files to Create</h3>
+<ul>
+<li><code>src/vault/decorators.ts</code></li>
+<li><code>src/vault/types.ts</code></li>
+<li><code>src/vault/vault-provider.ts</code></li>
+<li><code>src/vault/vault-cache.ts</code></li>
+<li><code>src/vault/index.ts</code></li>
+</ul>
+<h3>Files to Modify</h3>
+<ul>
+<li><code>src/index.ts</code> - add vault exports</li>
+<li><code>package.json</code> - add node-vault dependency</li>
+</ul>
+<h3>Success Criteria</h3>
+<ul>
+<li>All decorators work and store metadata correctly</li>
+<li>VaultProvider can authenticate and read secrets</li>
+<li>VaultCache stores and retrieves secrets</li>
+<li>Code compiles without errors</li>
+<li>Follows security best practices</li>
+</ul>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><p>No linter errors. Summary of what was implemented:</p>
+<h2>Summary</h2>
+<p>Implemented the core Vault integration components for Configit:</p>
+<h3>Completed Components</h3>
+<ol>
+<li><p><strong>Types</strong> (<code>src/vault/types.ts</code>): TypeScript interfaces including:</p>
+<ul>
+<li>Vault engine types</li>
+<li>Configuration options</li>
+<li>Authentication configs (GCP, AWS, AppRole, Token)</li>
+<li>Secret response structures</li>
+<li>Cache entries and health status</li>
+</ul>
+</li>
+<li><p><strong>Decorators</strong> (<code>src/vault/decorators.ts</code>): Composable decorators:</p>
+<ul>
+<li><code>@VaultPath()</code> - Required decorator for Vault secrets</li>
+<li><code>@VaultEngine()</code> - Optional engine type specification</li>
+<li><code>@VaultKey()</code> - Optional key name for KV engines</li>
+<li><code>@VaultRefreshBuffer()</code> - Optional refresh buffer override</li>
+<li><code>@VaultOptional()</code> - Optional fallback to env vars</li>
+<li>Metadata utilities: <code>getVaultPath()</code>, <code>buildVaultMetadata()</code>, <code>getAllVaultMetadata()</code>, etc.</li>
+</ul>
+</li>
+<li><p><strong>VaultProvider</strong> (<code>src/vault/vault-provider.ts</code>): Vault client wrapper with:</p>
+<ul>
+<li>Connection management with TLS enforcement</li>
+<li>Authentication with priority: GCP IAM → AWS IAM → AppRole → Token</li>
+<li>Secret reading (<code>read()</code>)</li>
+<li>Lease renewal (<code>renewLease()</code>)</li>
+<li>Retry logic with exponential backoff</li>
+<li>Error handling and path sanitization</li>
+</ul>
+</li>
+<li><p><strong>VaultCache</strong> (<code>src/vault/vault-cache.ts</code>): In-memory cache with:</p>
+<ul>
+<li>TTL-based expiration</li>
+<li>Property-to-path mapping</li>
+<li>Integration with nconf via <code>overrides()</code></li>
+<li>Cache invalidation</li>
+<li>Refresh scheduling support</li>
+</ul>
+</li>
+<li><p><strong>Exports</strong>: All components exported through <code>src/vault/index.ts</code> and <code>src/index.ts</code></p>
+</li>
+<li><p><strong>Dependencies</strong>: Added <code>node-vault</code> and <code>@types/node-vault</code> to package.json</p>
+</li>
+</ol>
+<h3>Security Features</h3>
+<ul>
+<li>TLS enforcement (HTTP only allowed for localhost)</li>
+<li>Path sanitization for logging</li>
+<li>No secrets or tokens logged</li>
+<li>Secure error messages</li>
+</ul>
+<h3>Notes</h3>
+<ul>
+<li>GCP and AWS IAM authentication are stubbed (throw &quot;not yet implemented&quot;) but structured for future implementation</li>
+<li>AppRole and Token authentication are fully implemented</li>
+<li>Code follows existing project patterns and TypeScript best practices</li>
+<li>No linter errors detected</li>
+</ul>
+<p>The implementation is ready for testing with a local Vault instance.</p>
+<h2>Files Changed</h2>
+<ul>
+<li><code>src/vault/types.ts</code>: Created TypeScript interfaces for Vault integration</li>
+<li><code>src/vault/decorators.ts</code>: Created composable decorators and metadata utilities using reflect-metadata</li>
+<li><code>src/vault/vault-provider.ts</code>: Created VaultProvider class with authentication and secret reading capabilities</li>
+<li><code>src/vault/vault-cache.ts</code>: Created VaultCache class with in-memory caching and nconf integration</li>
+<li><code>src/vault/index.ts</code>: Created vault module exports</li>
+<li><code>src/index.ts</code>: Added vault module exports to main index</li>
+<li><code>package.json</code>: Added node-vault dependency and @types/node-vault dev dependency</li>
+</ul>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Backend Architect</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">Claudia Garcia</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 4:08:42 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 4:09:58 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">cd779d68-5ccc-4167-8dfe-329897d48c0d</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="squad-round-arrow">
+          <svg width="40" height="60" viewBox="0 0 40 60">
+            <defs>
+              <linearGradient id="arrowGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#007acc" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#9cdcfe" stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+            <line x1="20" y1="0" x2="20" y2="40" stroke="url(#arrowGradient3)" stroke-width="2" stroke-dasharray="5,5" />
+            <polygon points="20,50 15,40 25,40" fill="url(#arrowGradient3)" />
+          </svg>
+          <div class="squad-round-arrow-label">Next Round</div>
+        </div>
+      </div>
+      <div class="squad-round">
+        <div class="squad-round-header">
+          <div class="squad-round-header-top">
+            <div class="squad-round-number">
+              <div class="squad-round-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M20.649 21.349c0.064 0.004 0.133 0.012 0.202 0.012 0.977 0.001 1.955-0.005 2.932 0.005 0.214 0.002 0.278-0.071 0.267-0.276-0.014-0.267-0.003-0.535-0.003-0.865 1.109 0.816 2.181 1.604 3.281 2.414-1.092 0.804-2.164 1.593-3.281 2.416 0-0.311 0-0.568-0-0.825-0-0.332-0-0.333-0.323-0.333-6.247 0-12.495 0-18.742 0-0.302 0-0.302-0-0.302-0.304 0-0.659 0.009-1.318-0.005-1.976-0.005-0.214 0.064-0.262 0.269-0.261 3.359 0.006 6.718 0.011 10.077 0.002 1.722-0.005 3.081-0.718 3.98-2.202 1.622-2.68-0.069-6.19-3.177-6.642-2.4-0.349-4.631 1.262-5.038 3.703-0.043 0.254-0.046 0.515-0.071 0.821 0.393-0.053 0.749-0.102 1.152-0.156-0.631 1.22-1.24 2.398-1.858 3.592-0.947-0.976-1.88-1.937-2.792-2.877 0.229-0.038 0.533-0.082 0.834-0.145 0.057-0.012 0.141-0.104 0.139-0.157-0.017-0.639 0.027-1.271 0.152-1.898 0.004-0.019-0.005-0.041-0.011-0.078-0.61-0.104-1.176-0.324-1.689-0.678-1.254-0.868-1.91-2.483-1.602-3.955 0.335-1.604 1.545-2.803 3.109-3.099 1.014-0.191 1.954-0.009 2.827 0.527 0.154 0.095 0.248 0.109 0.349-0.056 0.059-0.097 0.148-0.175 0.25-0.293 0.127 0.512 0.246 0.991 0.364 1.47 0.040 0.161 0.071 0.325 0.118 0.484 0.051 0.172-0.001 0.249-0.183 0.237-0.526-0.036-1.053-0.068-1.579-0.103-0.13-0.009-0.259-0.023-0.426-0.039 0.13-0.164 0.248-0.311 0.377-0.472-0.284-0.216-0.597-0.324-0.923-0.377-1.576-0.258-2.965 0.953-2.933 2.548 0.024 1.224 1.056 2.318 2.275 2.422 0.158 0.013 0.213-0.067 0.274-0.185 0.864-1.658 2.165-2.83 3.935-3.44 4.095-1.412 8.37 1.118 9.159 5.259 0.389 2.039-0.054 3.901-1.291 5.57-0.034 0.046-0.065 0.095-0.095 0.144-0.006 0.009 0.002 0.027 0.007 0.065z" />
+                </svg>
+              </div>
+              <div class="squad-round-badge"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="107.75" height="28" role="img" aria-label="ROUND: 05"><title>ROUND: 05</title><g shape-rendering="crispEdges"><rect width="67.25" height="28" fill="#555"/><rect x="67.25" width="40.5" height="28" fill="#4c1"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="100"><text transform="scale(.1)" x="336.25" y="175" textLength="432.5" fill="#fff">ROUND</text><text transform="scale(.1)" x="875" y="175" textLength="165" fill="#fff" font-weight="bold">05</text></g></svg></div>
+            </div>
+            <div class="squad-round-status" style="color: #89d185">✅ All squad members completed</div>
+            <div class="squad-round-count">1 Squad Member</div>
+          </div>
+          
+            <div class="squad-round-meta">
+              <div class="squad-round-meta-line">Implementation • BMAD Method</div>
+              <div class="squad-round-meta-summary"><p>Implementation Round 2: Backend Architect implementing SecretRefreshManager (TTL-based auto-refresh), VaultIntegration (high-level API), and ConfigService integration.</p>
+</div>
+            </div>
+          
+        </div>
+        
+        <div class="squad-round-cards">
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-card-cover" style="background: hsl(18, 78%, 58%)"></div>
+              <div class="agent-card-avatar-container">
+                <div class="agent-card-avatar" style="background: hsl(18, 78%, 58%)">
+                  <img class="agent-card-avatar-img" src="https://api.dicebear.com/9.x/glass/svg?seed=cd779d68-5ccc-4167-8dfe-329897d48c0d-Backend%20Architect" alt="Claudia Garcia avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div class="agent-card-avatar-initials" style="display: none;">CG</div>
+                </div>
+                
+                  <div class="agent-card-chat-badge" title="Back-and-forth conversation">
+                    <svg viewBox="-0.5 0 25 25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                      <path d="M14.665 9.605H2.995C2.715 9.605 2.495 9.825 2.495 10.105V15.265C2.495 15.545 2.715 15.765 2.995 15.765H4.495V18.505L7.16501 15.765H14.665C14.945 15.765 15.165 15.545 15.165 15.265V10.105C15.165 9.825 14.935 9.605 14.665 9.605Z" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M8.83496 7.575V6.995C8.83496 6.715 9.05496 6.495 9.33496 6.495H21.005C21.275 6.495 21.505 6.715 21.505 6.995V12.325C21.505 12.505 21.365 12.655 21.185 12.655H19.505" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M19.505 12.655V15.385L16.835 12.655" stroke="currentColor" fill="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                
+              </div>
+              <div class="agent-card-header-text">
+                <h1 class="agent-card-fullname">Claudia Garcia</h1>
+                <h2 class="agent-card-role">Backend Architect</h2>
+                <h3 class="agent-card-jobtitle" style="color: #89d185">✓ Completed</h3>
+              </div>
+            </div>
+
+            <div class="agent-card-main">
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">TASK</div>
+                <div class="agent-card-markdown"><h2>Mission: Implement Secret Refresh Manager &amp; ConfigService Integration</h2>
+<h3>Context</h3>
+<p>Round 1 delivered core Vault components. Now we need:</p>
+<ol>
+<li>Secret Refresh Manager for TTL-based auto-refresh</li>
+<li>ConfigService integration to use Vault secrets</li>
+</ol>
+<h3>Your Task</h3>
+<h4>1. SecretRefreshManager (<code>src/vault/secret-refresh-manager.ts</code>)</h4>
+<p>Create a background refresh manager:</p>
+<pre><code class="language-typescript">export class SecretRefreshManager {
+  private refreshQueue: Map&lt;string, NodeJS.Timeout&gt;;
+  private vaultProvider: VaultProvider;
+  private cache: VaultCache;
+
+  constructor(provider: VaultProvider, cache: VaultCache);
+
+  // Schedule refresh for a secret based on TTL
+  scheduleRefresh(propertyName: string, metadata: VaultPropertyMetadata): void;
+
+  // Cancel scheduled refresh
+  cancelRefresh(propertyName: string): void;
+
+  // Get refresh status
+  getRefreshStatus(): RefreshStatus[];
+
+  // Stop all refresh workers
+  shutdown(): void;
+}
+</code></pre>
+<p>Features:</p>
+<ul>
+<li>Calculate refresh time = TTL - buffer (default: min(10% of TTL, 300s))</li>
+<li>Use setTimeout for scheduling</li>
+<li>Auto-reschedule after successful refresh</li>
+<li>Handle refresh failures with retry</li>
+<li>Emit events for monitoring (optional)</li>
+</ul>
+<h4>2. VaultIntegration (<code>src/vault/vault-integration.ts</code>)</h4>
+<p>Create a high-level integration class:</p>
+<pre><code class="language-typescript">export class VaultIntegration {
+  private provider: VaultProvider;
+  private cache: VaultCache;
+  private refreshManager: SecretRefreshManager;
+  private initialized: boolean = false;
+
+  constructor(config: IVaultConfigOptions);
+
+  // Async initialization - must be called before use
+  async initialize(): Promise&lt;void&gt;;
+
+  // Load secrets for a config class
+  async loadSecrets&lt;T&gt;(configClass: new () =&gt; T): Promise&lt;void&gt;;
+
+  // Get secret value (sync - from cache)
+  getSecret(propertyName: string): any;
+
+  // Check if initialized
+  isInitialized(): boolean;
+
+  // Get health status
+  getHealth(): VaultHealth;
+
+  // Shutdown gracefully
+  shutdown(): void;
+}
+</code></pre>
+<h4>3. Update ConfigService (<code>src/config.service.ts</code>)</h4>
+<p>Add Vault integration to ConfigService:</p>
+<ol>
+<li>Add <code>vault?: IVaultConfigOptions</code> to ConfigServiceOptions</li>
+<li>Add <code>vaultIntegration?: VaultIntegration</code> private property</li>
+<li>In <code>initializeConfiguration()</code> (async):<ul>
+<li>If vault config present, create VaultIntegration</li>
+<li>Call <code>vaultIntegration.initialize()</code></li>
+<li>Call <code>vaultIntegration.loadSecrets(configClass)</code></li>
+</ul>
+</li>
+<li>Vault secrets automatically take priority via nconf overrides</li>
+<li>Add <code>getVaultHealth()</code> method</li>
+</ol>
+<p><strong>Important</strong>: Maintain backward compatibility - Vault is optional!</p>
+<h4>4. Create new interfaces</h4>
+<p>Add to <code>src/vault/types.ts</code>:</p>
+<ul>
+<li><code>IRefreshStatus</code> - status of scheduled refreshes</li>
+<li><code>IVaultHealthDetails</code> - detailed health info</li>
+</ul>
+<h3>Implementation Notes</h3>
+<ul>
+<li>Follow existing code style</li>
+<li>Maintain backward compatibility - existing code must work unchanged</li>
+<li>Use async/await properly</li>
+<li>Handle errors gracefully</li>
+<li>Add JSDoc comments</li>
+<li>No secrets in logs</li>
+</ul>
+<h3>Files to Create</h3>
+<ul>
+<li><code>src/vault/secret-refresh-manager.ts</code></li>
+<li><code>src/vault/vault-integration.ts</code></li>
+</ul>
+<h3>Files to Modify</h3>
+<ul>
+<li><code>src/vault/types.ts</code> - add new interfaces</li>
+<li><code>src/vault/index.ts</code> - add exports</li>
+<li><code>src/config.service.ts</code> - integrate Vault</li>
+</ul>
+<h3>Success Criteria</h3>
+<ul>
+<li>SecretRefreshManager schedules and executes refreshes</li>
+<li>VaultIntegration provides clean API for ConfigService</li>
+<li>ConfigService can optionally use Vault</li>
+<li>Existing tests still pass</li>
+<li>Build succeeds with no errors</li>
+</ul>
+</div>
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">RESULT</div>
+                
+                  <div class="agent-card-markdown"><p>All components are implemented. Summary:</p>
+<h2>Summary</h2>
+<p>Implemented Secret Refresh Manager and ConfigService integration for Vault:</p>
+<h3>Completed Components</h3>
+<ol>
+<li><p><strong>New Interfaces</strong> (<code>src/vault/types.ts</code>):</p>
+<ul>
+<li><code>IRefreshStatus</code> - Status of scheduled refreshes</li>
+<li><code>IVaultHealthDetails</code> - Detailed health information</li>
+</ul>
+</li>
+<li><p><strong>SecretRefreshManager</strong> (<code>src/vault/secret-refresh-manager.ts</code>):</p>
+<ul>
+<li>TTL-based refresh scheduling</li>
+<li>Calculates refresh time = TTL - buffer (default: min(10% of TTL, 300s))</li>
+<li>Uses <code>setTimeout</code> for scheduling</li>
+<li>Auto-reschedules after successful refresh</li>
+<li>Handles refresh failures with exponential backoff retry</li>
+<li>Prevents concurrent refreshes with locking mechanism</li>
+<li>Provides refresh status monitoring</li>
+</ul>
+</li>
+<li><p><strong>VaultIntegration</strong> (<code>src/vault/vault-integration.ts</code>):</p>
+<ul>
+<li>High-level API for Vault secrets management</li>
+<li>Async initialization (<code>initialize()</code>)</li>
+<li>Loads secrets for config classes (<code>loadSecrets()</code>)</li>
+<li>Synchronous secret access from cache (<code>getSecret()</code>)</li>
+<li>Health monitoring (<code>getHealth()</code>, <code>getHealthDetails()</code>)</li>
+<li>Cache invalidation methods</li>
+<li>Graceful shutdown</li>
+</ul>
+</li>
+<li><p><strong>ConfigService Integration</strong> (<code>src/config.service.ts</code>):</p>
+<ul>
+<li>Added <code>vault?: IVaultConfigOptions</code> to <code>IConfigServiceOptions</code></li>
+<li>Added <code>vaultIntegration?: VaultIntegration</code> private property</li>
+<li>Added <code>initializeVault()</code> async method for Vault initialization</li>
+<li>Added <code>getVaultHealth()</code> method</li>
+<li>Added <code>invalidateVaultCache()</code> and <code>invalidateVaultProperty()</code> methods</li>
+<li>Added <code>shutdownVault()</code> method</li>
+<li>Maintains backward compatibility - Vault is optional</li>
+</ul>
+</li>
+<li><p><strong>Exports</strong> (<code>src/vault/index.ts</code>):</p>
+<ul>
+<li>Exported <code>SecretRefreshManager</code> and <code>VaultIntegration</code></li>
+</ul>
+</li>
+</ol>
+<h3>Features</h3>
+<ul>
+<li>TTL-based auto-refresh: Secrets refresh before expiration</li>
+<li>Locking mechanism: Prevents concurrent refresh attempts</li>
+<li>Error handling: Retries with exponential backoff</li>
+<li>Health monitoring: Track refresh status and errors</li>
+<li>Backward compatible: Existing code works unchanged</li>
+<li>Security: Error messages sanitized, no secrets in logs</li>
+</ul>
+<h3>Usage Example</h3>
+<pre><code class="language-typescript">// Create ConfigService with Vault config
+const configService = new ConfigService(AppConfig, undefined, {
+  vault: {
+    endpoint: &#39;http://127.0.0.1:8200&#39;,
+    auth: {
+      methods: [{
+        type: &#39;token&#39;,
+        config: { type: &#39;token&#39;, token: process.env.VAULT_TOKEN }
+      }]
+    }
+  }
+});
+
+// Initialize Vault (async)
+await configService.initializeVault();
+
+// Access config (synchronous) - Vault secrets automatically injected
+const password = configService.config.DATABASE_PASSWORD;
+
+// Check health
+const health = configService.getVaultHealth();
+</code></pre>
+<h3>Notes</h3>
+<ul>
+<li>All code follows existing project patterns</li>
+<li>No linter errors detected</li>
+<li>Maintains backward compatibility</li>
+<li>Proper error handling and sanitization</li>
+<li>TypeScript types are complete</li>
+</ul>
+<p>The implementation is ready for testing with a local Vault instance.</p>
+<h2>Files Changed</h2>
+<ul>
+<li><code>src/vault/types.ts</code>: Added IRefreshStatus and IVaultHealthDetails interfaces</li>
+<li><code>src/vault/secret-refresh-manager.ts</code>: Created SecretRefreshManager class with TTL-based refresh scheduling</li>
+<li><code>src/vault/vault-integration.ts</code>: Created VaultIntegration high-level integration class</li>
+<li><code>src/config.service.ts</code>: Added Vault integration to ConfigService with async initialization and health monitoring</li>
+<li><code>src/vault/index.ts</code>: Added exports for SecretRefreshManager and VaultIntegration</li>
+</ul>
+</div>
+                
+              </div>
+              <div class="agent-card-content">
+                <div class="agent-card-subtitle">DETAILS</div>
+                <div class="agent-card-info-grid">
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Role</div>
+                    <div class="agent-card-info-value">Backend Architect</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Member Name</div>
+                      <div class="agent-card-info-value">Claudia Garcia</div>
+                    </div>
+                  
+                  <div class="agent-card-info-item">
+                    <div class="agent-card-info-label">Started At</div>
+                    <div class="agent-card-info-value">12/21/2025, 4:15:40 AM</div>
+                  </div>
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Finished At</div>
+                      <div class="agent-card-info-value">12/21/2025, 4:16:39 AM</div>
+                    </div>
+                  
+                  
+                    <div class="agent-card-info-item">
+                      <div class="agent-card-info-label">Chat ID</div>
+                      <div class="agent-card-info-value agent-card-mono">cd779d68-5ccc-4167-8dfe-329897d48c0d</div>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="squad-visualization-run-summary">
+        <div class="squad-visualization-run-summary-label">Run Summary</div>
+        <div class="squad-visualization-run-summary-content"><h1>Vault Integration for Configit - Mission Complete</h1>
+<h2>Mission Summary</h2>
+<p>Successfully implemented HashiCorp Vault integration for the Configit configuration library, enabling dynamic secrets management with TTL-based auto-refresh.</p>
+<h2>Delivered Components</h2>
+<h3>1. Core Vault Components (<code>src/vault/</code>)</h3>
+<ul>
+<li><strong>Types</strong> (<code>types.ts</code>): Complete TypeScript interfaces for Vault integration</li>
+<li><strong>Decorators</strong> (<code>decorators.ts</code>): 5 composable decorators for Vault secrets</li>
+<li><strong>VaultProvider</strong> (<code>vault-provider.ts</code>): Vault client wrapper with authentication</li>
+<li><strong>VaultCache</strong> (<code>vault-cache.ts</code>): In-memory cache with TTL management</li>
+<li><strong>SecretRefreshManager</strong> (<code>secret-refresh-manager.ts</code>): Background refresh scheduling</li>
+<li><strong>VaultIntegration</strong> (<code>vault-integration.ts</code>): High-level integration API</li>
+</ul>
+<h3>2. ConfigService Integration (<code>src/config.service.ts</code>)</h3>
+<ul>
+<li>Optional Vault support (backward compatible)</li>
+<li><code>initializeVault()</code> async method</li>
+<li><code>getVaultHealth()</code> for monitoring</li>
+<li>Vault secrets as highest priority source</li>
+</ul>
+<h3>3. Testing Infrastructure</h3>
+<ul>
+<li>Local Vault via Docker (<code>docker-compose.vault.yml</code>)</li>
+<li>Setup script (<code>scripts/vault-setup.sh</code>)</li>
+<li>Integration test script (<code>scripts/test-vault.ts</code>)</li>
+<li>Jest test suite (<code>src/vault/__tests__/</code>)</li>
+</ul>
+<h2>Key Features</h2>
+<ul>
+<li>✅ Composable decorators: <code>@VaultPath()</code>, <code>@VaultEngine()</code>, <code>@VaultKey()</code>, <code>@VaultRefreshBuffer()</code>, <code>@VaultOptional()</code></li>
+<li>✅ Multi-auth support: Token &amp; AppRole (GCP/AWS IAM stubbed)</li>
+<li>✅ TTL-based auto-refresh with locking</li>
+<li>✅ nconf integration via overrides</li>
+<li>✅ TLS enforcement &amp; path sanitization</li>
+<li>✅ Backward compatible - all 29 tests pass</li>
+</ul>
+<h2>Usage Example</h2>
+<pre><code class="language-typescript">class AppConfig extends BaseConfig {
+  @VaultPath(&#39;secret/data/myapp/db&#39;)
+  @VaultKey(&#39;password&#39;)
+  @IsString()
+  DB_PASSWORD!: string;
+}
+
+const configService = new ConfigService(AppConfig, undefined, {
+  vault: {
+    endpoint: &#39;https://vault.example.com:8200&#39;,
+    auth: { methods: [{ type: &#39;approle&#39;, config: { ... } }] }
+  }
+});
+
+await configService.initializeVault();
+// DB_PASSWORD now loaded from Vault with auto-refresh!
+</code></pre>
+</div>
+      </div>
+    
+  </div>
+</body>
+</html>

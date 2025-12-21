@@ -22,6 +22,7 @@ import * as nconfJsoncFormat from '@kibibit/nconf-jsonc';
 import { ConfigValidationError } from './config.errors';
 import { BaseConfig } from './config.model';
 import { getEnvironment, setEnvironment } from './environment.service';
+import { IVaultConfigOptions, VaultHealth, VaultIntegration } from './vault';
 
 type INconfKibibitFormats = IFormats & {
   yaml: nconfYamlFormat;
@@ -45,6 +46,7 @@ export interface IConfigServiceOptions {
     algorithm: string;
     secret: string;
   };
+  vault?: IVaultConfigOptions;
 }
 
 export enum EFileFormats {
@@ -83,6 +85,7 @@ export class ConfigService<T extends BaseConfig> {
   readonly configFileFullPath?: string;
   readonly configFileRoot?: string;
   readonly appRoot: string;
+  private vaultIntegration?: VaultIntegration;
 
   constructor(
     givenClass: TClass<T>,
@@ -157,6 +160,78 @@ export class ConfigService<T extends BaseConfig> {
     }
 
     configService = this;
+  }
+
+  /**
+   * Initialize Vault integration (async)
+   * Call this after constructor if using Vault
+   */
+  async initializeVault(): Promise<void> {
+    if (!this.options.vault) {
+      return; // Vault not configured
+    }
+
+    if (!this.genericClass) {
+      throw new Error('ConfigService not properly initialized');
+    }
+
+    // Create Vault integration
+    this.vaultIntegration = new VaultIntegration(this.options.vault);
+
+    // Initialize Vault connection
+    await this.vaultIntegration.initialize();
+
+    // Load secrets for this config class - cast to satisfy TypeScript
+    // TClass<T> is compatible with 'new () => T' for our purposes
+    await this.vaultIntegration.loadSecrets(this.genericClass as unknown as new () => T);
+
+    // Secrets are now cached and injected into nconf via overrides
+    // Re-validate config with Vault secrets included
+    const config = nconf.get();
+    const envConfig = this.validateInput(config);
+    if (envConfig) {
+      envConfig.NODE_ENV = this.mode;
+      // Use type assertion to allow reassigning readonly property
+      // This is safe as we're updating after Vault secrets are loaded
+      (this as { config?: T }).config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
+    }
+  }
+
+  /**
+   * Get Vault health status
+   */
+  getVaultHealth(): VaultHealth | null {
+    if (!this.vaultIntegration) {
+      return null;
+    }
+    return this.vaultIntegration.getHealth();
+  }
+
+  /**
+   * Invalidate Vault cache for a specific path
+   */
+  invalidateVaultCache(vaultPath: string): void {
+    if (this.vaultIntegration) {
+      this.vaultIntegration.invalidateCache(vaultPath);
+    }
+  }
+
+  /**
+   * Invalidate Vault cache for a property
+   */
+  invalidateVaultProperty(propertyName: string): void {
+    if (this.vaultIntegration) {
+      this.vaultIntegration.invalidateProperty(propertyName);
+    }
+  }
+
+  /**
+   * Shutdown Vault integration gracefully
+   */
+  shutdownVault(): void {
+    if (this.vaultIntegration) {
+      this.vaultIntegration.shutdown();
+    }
   }
 
   toPlainObject() {
