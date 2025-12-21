@@ -1,8 +1,10 @@
 /**
  * Vault Integration Tests
- * Tests require local Vault instance running:
+ * These tests require a local Vault instance and are skipped in CI.
+ * To run locally:
  *   docker compose -f docker-compose.vault.yml up -d
  *   bash scripts/vault-setup.sh
+ *   VAULT_INTEGRATION_TESTS=true npm test
  */
 
 import { IsString } from 'class-validator';
@@ -12,6 +14,9 @@ import { IVaultConfigOptions } from '../types';
 import { VaultIntegration } from '../vault-integration';
 
 import 'reflect-metadata';
+
+// Skip these tests unless explicitly enabled (requires running Vault)
+const SKIP_VAULT_TESTS = !process.env.VAULT_INTEGRATION_TESTS;
 
 /**
  * Test configuration class with Vault secrets
@@ -67,30 +72,24 @@ const VAULT_CONFIG: IVaultConfigOptions = {
       {
         type: 'token',
         config: {
-          type: 'token',
           token: process.env.VAULT_TOKEN || 'configit-dev-token'
         }
       }
     ]
   },
   tls: {
-    enabled: false, // Allow HTTP for local dev
+    enabled: false,
     verifyCertificate: false
   }
 };
 
-describe('VaultIntegration', () => {
+// Use describe.skip when Vault is not available
+const describeVault = SKIP_VAULT_TESTS ? describe.skip : describe;
+
+describeVault('VaultIntegration (requires running Vault)', () => {
   let vaultIntegration: VaultIntegration;
 
-  beforeAll(async () => {
-    // Skip if SKIP_VAULT_TESTS is set (for CI without Vault)
-    if (process.env.SKIP_VAULT_TESTS) {
-      console.log('Skipping Vault tests (SKIP_VAULT_TESTS=true)');
-      return;
-    }
-  });
-
-  afterAll(() => {
+  afterEach(() => {
     if (vaultIntegration) {
       vaultIntegration.shutdown();
     }
@@ -98,32 +97,15 @@ describe('VaultIntegration', () => {
 
   describe('when Vault is available', () => {
     beforeEach(() => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
       vaultIntegration = new VaultIntegration(VAULT_CONFIG);
     });
 
-    afterEach(() => {
-      if (vaultIntegration) {
-        vaultIntegration.shutdown();
-      }
-    });
-
     it('should initialize successfully', async () => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
-
       await vaultIntegration.initialize();
       expect(vaultIntegration.isInitialized()).toBe(true);
     });
 
     it('should load secrets for a config class', async () => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
-
       await vaultIntegration.initialize();
       await vaultIntegration.loadSecrets(TestVaultConfig);
 
@@ -139,10 +121,6 @@ describe('VaultIntegration', () => {
     });
 
     it('should report healthy status after initialization', async () => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
-
       await vaultIntegration.initialize();
       await vaultIntegration.loadSecrets(TestVaultConfig);
 
@@ -153,10 +131,6 @@ describe('VaultIntegration', () => {
     });
 
     it('should invalidate cache entries', async () => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
-
       await vaultIntegration.initialize();
       await vaultIntegration.loadSecrets(TestVaultConfig);
 
@@ -173,10 +147,6 @@ describe('VaultIntegration', () => {
 
   describe('error handling', () => {
     it('should throw error when not initialized', async () => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
-
       vaultIntegration = new VaultIntegration(VAULT_CONFIG);
 
       await expect(vaultIntegration.loadSecrets(TestVaultConfig))
@@ -185,10 +155,6 @@ describe('VaultIntegration', () => {
     });
 
     it('should throw error with invalid token', async () => {
-      if (process.env.SKIP_VAULT_TESTS) {
-        return;
-      }
-
       const invalidConfig: IVaultConfigOptions = {
         ...VAULT_CONFIG,
         auth: {
@@ -196,7 +162,6 @@ describe('VaultIntegration', () => {
             {
               type: 'token',
               config: {
-                type: 'token',
                 token: 'invalid-token'
               }
             }
