@@ -78,7 +78,7 @@ export class ConfigService<T extends BaseConfig> {
   private fileExtension: EFileFormats;
   readonly mode: string = getEnvironment();
   readonly options: IConfigServiceOptions;
-  readonly config?: T;
+  private _config?: T;
   readonly genericClass?: TClass<T>;
   readonly fileName?: string;
   readonly configFileName: string = '';
@@ -110,8 +110,8 @@ export class ConfigService<T extends BaseConfig> {
     this.appRoot = this.findRoot();
     this.genericClass = givenClass;
     this.fileExtension = this.options.fileFormat || EFileFormats.json;
-    this.config = this.createConfigInstance(this.genericClass, {}) as T;
-    this.configFileName = this.config.getFileName(this.fileExtension);
+    this._config = this.createConfigInstance(this.genericClass, {}) as T;
+    this.configFileName = this._config.getFileName(this.fileExtension);
     this.configFileRoot = this.findConfigRoot();
     this.configFileFullPath = join(
       this.configFileRoot,
@@ -120,12 +120,25 @@ export class ConfigService<T extends BaseConfig> {
 
     this.initializeNconf();
 
+    /**
+     * Two-Phase Initialization Pattern:
+     * 
+     * Phase 1 (Constructor - Synchronous):
+     * - Create VaultIntegration instance if configured (not initialized yet)
+     * - This allows Vault to be optional and maintains backward compatibility
+     * - Actual initialization happens in initializeVault() (Phase 2)
+     */
+    if (this.options.vault) {
+      this.vaultIntegration = new VaultIntegration(this.options.vault);
+      // Note: Not initialized yet - will be done in initializeVault()
+    }
+
     const config = passedConfig || nconf.get();
 
     const pathDoesNotExist = pathExistsSync(this.configFileFullPath) === false;
     if (pathDoesNotExist && (config.saveToFile || config.init)) {
       console.log(cyan('Initializing Configuration File'));
-      this.config = this.createConfigInstance(this.genericClass, {}) as T;
+      this._config = this.createConfigInstance(this.genericClass, {}) as T;
       this.writeConfigToFile();
       this.writeSchema();
       console.log(cyan('EXITING'));
@@ -145,7 +158,7 @@ export class ConfigService<T extends BaseConfig> {
     }
     if (!envConfig) { return; }
     envConfig.NODE_ENV = this.mode;
-    this.config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
+    this._config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
 
     if (config.saveToFile || config.init) {
       if (config.convert) {
@@ -163,37 +176,94 @@ export class ConfigService<T extends BaseConfig> {
   }
 
   /**
-   * Initialize Vault integration (async)
-   * Call this after constructor if using Vault
+   * Getter for config property with Vault initialization guard
+   * 
+   * Phase 3 (Runtime Access - Synchronous):
+   * - Returns config synchronously (Vault secrets already loaded via nconf.overrides())
+   * - Warns if Vault is configured but not initialized
+   */
+  get config(): T {
+    // Guard: Warn if Vault is configured but not initialized
+    if (this.options.vault && this.vaultIntegration && !this.vaultIntegration.isInitialized()) {
+      console.warn(
+        'Warning: Vault is configured but not initialized. ' +
+        'Call await configService.initializeVault() before accessing config. ' +
+        'Config may not include Vault secrets.'
+      );
+    }
+    
+    if (!this._config) {
+      throw new Error('ConfigService config not initialized');
+    }
+    
+    return this._config;
+  }
+
+  /**
+   * Phase 2: Vault Initialization (Async)
+   * 
+   * Initializes Vault connection, authenticates, and loads secrets.
+   * Secrets are injected into nconf.overrides() (highest priority).
+   * Config is re-created with Vault secrets included.
+   * 
+   * Error Handling:
+   * - If fallback.required === false: Logs warning and continues without Vault secrets
+   * - If fallback.required === true (default): Throws error and fails fast
+   * 
+   * @throws {Error} If Vault initialization fails and fallback.required !== false
    */
   async initializeVault(): Promise<void> {
     if (!this.options.vault) {
-      return; // Vault not configured
+      return; // Vault not configured - no-op
+    }
+
+    if (!this.vaultIntegration) {
+      // Should not happen if constructor ran correctly
+      throw new Error('VaultIntegration not created. Check constructor.');
     }
 
     if (!this.genericClass) {
       throw new Error('ConfigService not properly initialized');
     }
 
-    // Create Vault integration
-    this.vaultIntegration = new VaultIntegration(this.options.vault);
+    try {
+      // Initialize Vault connection and authenticate
+      await this.vaultIntegration.initialize();
 
-    // Initialize Vault connection
-    await this.vaultIntegration.initialize();
+      // Load secrets for this config class
+      // This will call VaultCache.set() which injects into nconf.overrides()
+      await this.vaultIntegration.loadSecrets(this.genericClass as unknown as new () => T);
 
-    // Load secrets for this config class - cast to satisfy TypeScript
-    // TClass<T> is compatible with 'new () => T' for our purposes
-    await this.vaultIntegration.loadSecrets(this.genericClass as unknown as new () => T);
-
-    // Secrets are now cached and injected into nconf via overrides
-    // Re-validate config with Vault secrets included
-    const config = nconf.get();
-    const envConfig = this.validateInput(config);
-    if (envConfig) {
-      envConfig.NODE_ENV = this.mode;
-      // Use type assertion to allow reassigning readonly property
-      // This is safe as we're updating after Vault secrets are loaded
-      (this as { config?: T }).config = this.createConfigInstance(this.genericClass, envConfig as T) as T;
+      // Now that Vault secrets are in nconf.overrides(), re-validate config
+      const config = nconf.get(); // Now includes Vault secrets (highest priority)
+      const envConfig = this.validateInput(config);
+      
+      if (envConfig) {
+        envConfig.NODE_ENV = this.mode;
+        // Update config instance with Vault secrets included
+        this._config = this.createConfigInstance(
+          this.genericClass,
+          envConfig as T
+        ) as T;
+      }
+    } catch (error: any) {
+      // Handle initialization failure based on fallback config
+      const fallback = this.options.vault.fallback;
+      
+      if (fallback?.required !== false) {
+        // Required - rethrow error
+        throw new Error(
+          `Vault initialization failed: ${error?.message || 'Unknown error'}. ` +
+          `Vault is required for this configuration.`
+        );
+      }
+      
+      // Optional - log warning and continue with existing config
+      console.warn(
+        `Vault initialization failed: ${error?.message || 'Unknown error'}. ` +
+        `Continuing without Vault secrets.`
+      );
+      // Config already created without Vault secrets - that's fine
     }
   }
 
@@ -236,7 +306,7 @@ export class ConfigService<T extends BaseConfig> {
 
   toPlainObject() {
     // hope this works now!
-    return classToPlain(new this.genericClass(this.config));
+    return classToPlain(new this.genericClass(this._config));
   }
 
   writeConfigToFile(
@@ -384,13 +454,13 @@ export class ConfigService<T extends BaseConfig> {
       sharedConfigsSchemas.push(sharedConfigSchema);
     }
 
-    const schema = this.config.toJsonSchema();
+    const schema = this._config.toJsonSchema();
     const schemaFullPath = join(
       this.configFileRoot,
       '/',
       this.options.schemaFolderName,
       '/',
-      this.config.getSchemaFileName()
+      this._config.getSchemaFileName()
     );
 
     let sharedConfigsProperties = {};
@@ -442,7 +512,7 @@ export class ConfigService<T extends BaseConfig> {
   }
 
   private writeSharedConfigToFile(configClass: TClass<BaseConfig>) {
-    const config = this.createConfigInstance(configClass, this.config);
+    const config = this.createConfigInstance(configClass, this._config);
     const plainConfig = classToPlain(config);
     const relativePathToSchema = relative(
       this.configFileRoot,
@@ -535,7 +605,7 @@ export class ConfigService<T extends BaseConfig> {
 
     if (validationErrors.length > 0) {
       const validationError = new ConfigValidationError(validationErrors);
-      const errorMessageTitle = `${ startCase(this.config.name) } Configuration Errors`;
+      const errorMessageTitle = `${ startCase(this._config.name) } Configuration Errors`;
       const titleBar = this.generateTerminalTitleBar(errorMessageTitle);
       console.error(titleBar, validationError.message);
 
