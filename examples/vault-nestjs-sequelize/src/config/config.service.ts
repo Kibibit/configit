@@ -26,7 +26,6 @@ export async function initializeConfigit(): Promise<ConfigService<DatabaseConfig
         {
           type: 'token',
           config: {
-            type: 'token',
             token: process.env.LOCAL_VAULT_TOKEN || 'configit-dev-token'
           }
         }
@@ -53,8 +52,8 @@ export async function initializeConfigit(): Promise<ConfigService<DatabaseConfig
   vaultInitialized = true;
 
   console.log('✓ Vault initialized and secrets loaded');
-  console.log(`  Database: ${configServiceInstance.config.DATABASE_HOST}:${configServiceInstance.config.DATABASE_PORT}/${configServiceInstance.config.DATABASE_NAME}`);
-  console.log(`  Username: ${configServiceInstance.config.DATABASE_USERNAME}`);
+  console.log(`  Database: ${ configServiceInstance.config.DATABASE_HOST }:${ configServiceInstance.config.DATABASE_PORT }/${ configServiceInstance.config.DATABASE_NAME }`);
+  console.log(`  Username: ${ configServiceInstance.config.DATABASE_USERNAME }`);
 
   return configServiceInstance;
 }
@@ -86,7 +85,7 @@ export class AppConfigService {
     database: string;
     username: string;
     password: string;
-  } {
+    } {
     if (!this.config.DATABASE_USERNAME || !this.config.DATABASE_PASSWORD) {
       throw new Error('Database credentials not loaded from Vault. Call initializeVault() first.');
     }
