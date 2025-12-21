@@ -8,7 +8,7 @@
   "editor.guides.bracketPairs":"active",
   "debug.javascript.autoAttachFilter": "onlyWithFlag",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
+    "source.fixAll.eslint": "explicit"
   },
   "eslint.format.enable": true,
   "bracketPairColorizer.colorMode": "Consecutive",
@@ -33,5 +33,8 @@
   },
   "conventionalCommits.scopes": [
     "security"
+  ],
+  "cSpell.words": [
+    "configit"
   ]
 }
