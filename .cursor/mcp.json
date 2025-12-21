@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gs-squad-mcp": {
+      "command": "gs-squad-mcp",
+      "args": [
+        "--engine",
+        "cursor-agent",
+        "--state-mode",
+        "stateful"
+      ]
+    }
+  }
+}
