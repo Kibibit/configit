@@ -18,6 +18,7 @@
     "skipLibCheck": true
   },
   "exclude": [
+    "scripts",
     "node_modules",
     "test",
     "dist",
