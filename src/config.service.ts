@@ -245,6 +245,10 @@ export class ConfigService<T extends BaseConfig> {
           this.genericClass,
           envConfig as T
         ) as T;
+
+        // Register the config instance for automatic refresh updates
+        // This ensures refreshed secrets are applied directly to the config object
+        this.vaultIntegration.registerConfigInstance(this._config);
       }
     } catch (error: any) {
       // Handle initialization failure based on fallback config

@@ -64,6 +64,7 @@ describe('ConfigService + Vault Integration', () => {
     mockVaultIntegration = {
       initialize: jest.fn().mockResolvedValue(undefined),
       loadSecrets: jest.fn().mockResolvedValue(undefined),
+      registerConfigInstance: jest.fn(),
       getHealth: jest.fn().mockReturnValue({
         connected: true,
         authenticated: true,
@@ -337,6 +338,7 @@ describe('ConfigService + Vault Integration', () => {
       const failingMockVaultIntegration = {
         initialize: jest.fn().mockRejectedValue(new Error('Vault connection failed')),
         loadSecrets: jest.fn().mockResolvedValue(undefined),
+        registerConfigInstance: jest.fn(),
         getHealth: jest.fn().mockReturnValue({
           connected: false,
           authenticated: false,
