@@ -1,0 +1,25 @@
+src/config.service.ts
+  3bcbf7a3b6388a1e 248-251
+src/vault/vault-integration.ts
+  3bcbf7a3b6388a1e 27-28,71-73,75,80,144-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.42",
+  "base_commit_sha": "4c04984819c4025272da4b5870e79ef97e94bdf0",
+  "prompts": {
+    "3bcbf7a3b6388a1e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "36dd3ec8-1336-4f72-a030-7091fdfe0220",
+        "model": "claude-4.5-opus-high-thinking"
+      },
+      "human_author": "thatkookooguy <Neilkalman@gmail.com>",
+      "messages": [],
+      "total_additions": 52,
+      "total_deletions": 10,
+      "accepted_lines": 46,
+      "overriden_lines": 0
+    }
+  }
+}
