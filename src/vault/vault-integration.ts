@@ -24,6 +24,8 @@ export class VaultIntegration {
   private initialized = false;
   private config: IVaultConfigOptions;
   private errors: Array<{ timestamp: number; path: string; error: string; retryable: boolean }> = [];
+  private targetClass?: new () => any;
+  private vaultMetadata: Record<string, VaultPropertyMetadata> = {};
 
   constructor(config: IVaultConfigOptions) {
     this.config = config;
@@ -66,15 +68,16 @@ export class VaultIntegration {
     const targetClass = isClass ? configOrClass : (configOrClass.constructor as new () => T);
     const targetInstance = isClass ? null : configOrClass;
 
-    // Get all Vault metadata from decorators
-    const vaultMetadata = getAllVaultMetadata(targetClass);
+    // Store metadata and class for later use (e.g., registerConfigInstance)
+    this.targetClass = targetClass;
+    this.vaultMetadata = getAllVaultMetadata(targetClass);
 
-    if (Object.keys(vaultMetadata).length === 0) {
+    if (Object.keys(this.vaultMetadata).length === 0) {
       return; // No Vault properties
     }
 
     // Group properties by full Vault path (including engine prefix)
-    const pathGroups = this.groupByFullPath(vaultMetadata);
+    const pathGroups = this.groupByFullPath(this.vaultMetadata);
 
     // Load secrets for each path
     for (const [ fullPath, properties ] of pathGroups.entries()) {
@@ -135,6 +138,37 @@ export class VaultIntegration {
    */
   isInitialized(): boolean {
     return this.initialized;
+  }
+
+  /**
+   * Register a config instance for automatic refresh updates
+   * Call this after creating the config instance to ensure refreshed secrets
+   * are automatically applied to the instance
+   */
+  registerConfigInstance<T extends object>(instance: T): void {
+    if (Object.keys(this.vaultMetadata).length === 0) {
+      // No Vault properties to register
+      return;
+    }
+
+    // Re-register all properties with the refresh manager using this instance
+    for (const [ propertyName, metadata ] of Object.entries(this.vaultMetadata)) {
+      const entry = this.cache.getEntry(propertyName);
+      if (!entry) {
+        continue;
+      }
+
+      // Merge global refreshBuffer config with property metadata
+      const propertyWithDefaults = {
+        ...metadata,
+        refreshBuffer: metadata.refreshBuffer ?? this.config.refreshBuffer
+      };
+
+      // Re-schedule refresh with the actual instance
+      if (entry.secret.leaseDuration > 0) {
+        this.refreshManager.scheduleRefresh(propertyName, propertyWithDefaults, instance);
+      }
+    }
   }
 
   /**
