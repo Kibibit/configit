@@ -22,7 +22,7 @@ import * as nconfJsoncFormat from '@kibibit/nconf-jsonc';
 import { ConfigValidationError } from './config.errors';
 import { BaseConfig } from './config.model';
 import { getEnvironment, setEnvironment } from './environment.service';
-import { IVaultConfigOptions, VaultHealth, VaultIntegration } from './vault';
+import { IVaultConfigOptions, SecretRefreshCallback, VaultHealth, VaultIntegration } from './vault';
 
 type INconfKibibitFormats = IFormats & {
   yaml: nconfYamlFormat;
@@ -296,6 +296,26 @@ export class ConfigService<T extends BaseConfig> {
   invalidateVaultProperty(propertyName: string): void {
     if (this.vaultIntegration) {
       this.vaultIntegration.invalidateProperty(propertyName);
+    }
+  }
+
+  /**
+   * Register a callback for when Vault secrets are refreshed.
+   * Fired once per Vault path after all properties from that path are updated.
+   * Config values are already set when the callback fires.
+   *
+   * Can be called before or after initializeVault().
+   *
+   * @example
+   * configService.onSecretRefreshed((event) => {
+   *   if (event.properties.includes('DB_PASSWORD')) {
+   *     // Reconnect database pool with fresh credentials
+   *   }
+   * });
+   */
+  onSecretRefreshed(callback: SecretRefreshCallback): void {
+    if (this.vaultIntegration) {
+      this.vaultIntegration.onSecretRefreshed(callback);
     }
   }
 

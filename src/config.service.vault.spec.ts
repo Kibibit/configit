@@ -77,7 +77,8 @@ describe('ConfigService + Vault Integration', () => {
       invalidateProperty: jest.fn(),
       shutdown: jest.fn(),
       isInitialized: jest.fn().mockReturnValue(true),
-      getSecret: jest.fn().mockReturnValue(null)
+      getSecret: jest.fn().mockReturnValue(null),
+      onSecretRefreshed: jest.fn()
     } as unknown as jest.Mocked<VaultIntegration>;
 
     // Ensure the mock implementation returns our mock instance
@@ -856,6 +857,51 @@ describe('ConfigService + Vault Integration', () => {
       );
 
       await expect(configService.initializeVault()).rejects.toThrow('Failed to load secrets');
+    });
+  });
+
+  describe('onSecretRefreshed', () => {
+    it('should delegate callback registration to vaultIntegration', async () => {
+      const vaultConfig: IVaultConfigOptions = {
+        endpoint: 'http://localhost:8200',
+        auth: {
+          methods: [
+            {
+              type: 'token',
+              config: {
+                type: 'token',
+                token: 'test-token'
+              }
+            }
+          ]
+        }
+      };
+
+      const configService = new ConfigService(TestVaultConfig, {
+        NODE_ENV: 'test',
+        REGULAR_CONFIG: 'regular'
+      } as any, {
+        vault: vaultConfig
+      });
+
+      await configService.initializeVault();
+
+      const callback = jest.fn();
+      configService.onSecretRefreshed(callback);
+
+      expect(mockVaultIntegration.onSecretRefreshed).toHaveBeenCalledWith(callback);
+    });
+
+    it('should be a no-op when vault is not configured', () => {
+      const configService = new ConfigService(TestRegularConfig, {
+        NODE_ENV: 'test',
+        REGULAR_CONFIG: 'test-value'
+      } as any);
+
+      const callback = jest.fn();
+      configService.onSecretRefreshed(callback);
+
+      expect(mockVaultIntegration.onSecretRefreshed).not.toHaveBeenCalled();
     });
   });
 });

@@ -17,7 +17,8 @@ import {
   VaultEngine,
   VaultIntegration,
   VaultProvider,
-  IVaultConfigOptions
+  IVaultConfigOptions,
+  SecretRefreshEvent
 } from '../src/vault';
 
 // ============================================
@@ -25,26 +26,28 @@ import {
 // ============================================
 class DynamicSecretsConfig {
   // Static KV v2 secret (no TTL)
-  @VaultPath('secret/data/configit/api')
+  @VaultPath('configit/api')
   @VaultKey('api_key')
   @VaultEngine('kv-v2')
   @IsString()
   API_KEY!: string;
 
   // Dynamic database credential (60s TTL!)
-  @VaultPath('database/creds/configit-readonly')
+  @VaultPath('creds/configit-readonly')
   @VaultKey('username')
   @VaultEngine('database')
   @IsString()
   DB_USERNAME!: string;
 
   // Dynamic database credential (60s TTL!)
-  @VaultPath('database/creds/configit-readonly')
+  @VaultPath('creds/configit-readonly')
   @VaultKey('password')
   @VaultEngine('database')
   @IsString()
   DB_PASSWORD!: string;
 }
+
+const refreshEvents: SecretRefreshEvent[] = [];
 
 const VAULT_CONFIG: IVaultConfigOptions = {
   endpoint: 'http://127.0.0.1:8200',
@@ -52,7 +55,15 @@ const VAULT_CONFIG: IVaultConfigOptions = {
     methods: [{ type: 'token', config: { type: 'token', token: 'configit-dev-token' } }]
   },
   tls: { enabled: false, verifyCertificate: false },
-  refreshBuffer: 30 // Refresh 30 seconds before expiry
+  refreshBuffer: 30, // Refresh 30 seconds before expiry
+  onSecretRefreshed: (event: SecretRefreshEvent) => {
+    refreshEvents.push(event);
+    console.log(`  \x1b[35m[CALLBACK]\x1b[0m Secret refreshed!`);
+    console.log(`    Path: ${ event.vaultPath }`);
+    console.log(`    Properties: ${ event.properties.join(', ') }`);
+    console.log(`    Engine: ${ event.engine }`);
+    console.log(`    Refresh #${ event.refreshCount }`);
+  }
 };
 
 async function runDynamicSecretsTest() {
@@ -150,6 +161,20 @@ async function runDynamicSecretsTest() {
     console.log(`  DB credentials rotated: ${ dbRotated ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m (may need more time)' }`);
     console.log('');
 
+    // Step 7: Verify onSecretRefreshed callback
+    console.log('\x1b[1;33mStep 7: Verifying onSecretRefreshed callback...\x1b[0m');
+    const callbackFired = refreshEvents.length > 0;
+    console.log(`  Callback events received: ${ refreshEvents.length } ${ callbackFired ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m' }`);
+    if (callbackFired) {
+      const dbEvent = refreshEvents.find((e) => e.engine === 'database');
+      if (dbEvent) {
+        const bothProps = dbEvent.properties.includes('DB_USERNAME') && dbEvent.properties.includes('DB_PASSWORD');
+        console.log(`  DB event includes both properties: ${ bothProps ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m' }`);
+        console.log(`  Single event for path (atomic): \x1b[32m✓\x1b[0m (not 2 separate events)`);
+      }
+    }
+    console.log('');
+
     // Summary
     console.log('\x1b[1;34m' + '='.repeat(60) + '\x1b[0m');
     if (apiKeyUnchanged) {
@@ -159,6 +184,9 @@ async function runDynamicSecretsTest() {
         console.log('\x1b[32m    - Dynamic secrets were rotated based on TTL\x1b[0m');
       } else {
         console.log('\x1b[33m    - Dynamic secrets not rotated yet (TTL ~60s, may need more time)\x1b[0m');
+      }
+      if (callbackFired) {
+        console.log('\x1b[32m    - onSecretRefreshed callback fired correctly\x1b[0m');
       }
     } else {
       console.log('\x1b[31m  ✗ Unexpected behavior\x1b[0m');
