@@ -29,3 +29,7 @@ export { VaultProvider } from './vault-provider';
 export { VaultCache } from './vault-cache';
 export { SecretRefreshManager } from './secret-refresh-manager';
 export { VaultIntegration } from './vault-integration';
+
+// Helpers
+export { buildVaultConfigFromEnv } from './build-vault-config';
+export type { IBuildVaultConfigOptions } from './build-vault-config';
