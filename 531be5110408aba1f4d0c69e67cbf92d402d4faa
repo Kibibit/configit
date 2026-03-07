@@ -1,0 +1,27 @@
+src/config.service.vault.spec.ts
+  60addb608255c43b 80-81,862-906
+src/vault/__tests__/vault-integration-callback.spec.ts
+  60addb608255c43b 1-73
+src/vault/__tests__/secret-refresh-manager.spec.ts
+  60addb608255c43b 1-328
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "531be5110408aba1f4d0c69e67cbf92d402d4faa",
+  "prompts": {
+    "60addb608255c43b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "8c7c02da-a79d-40e0-8cbc-a936b1badf28",
+        "model": "claude-4.6-opus-high-thinking"
+      },
+      "human_author": "Neil Kalman <neil.kalman@growthspace.com>",
+      "messages": [],
+      "total_additions": 464,
+      "total_deletions": 17,
+      "accepted_lines": 448,
+      "overriden_lines": 0
+    }
+  }
+}
