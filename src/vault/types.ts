@@ -68,6 +68,14 @@ export interface IVaultConfigOptions {
    * Circuit breaker configuration
    */
   circuitBreaker?: ICircuitBreakerConfig;
+
+  /**
+   * Callback invoked when a secret is refreshed.
+   * Fired once per Vault path after all properties from that path are updated.
+   * Config values are already set when this fires, so consumers can
+   * safely read the new values from the config instance.
+   */
+  onSecretRefreshed?: SecretRefreshCallback;
 }
 
 /**
@@ -224,6 +232,36 @@ export interface IRetryPolicy {
   /** Default: ['ECONNREFUSED', 'ETIMEDOUT', '5xx'] */
   retryableErrors: string[];
 }
+
+/**
+ * Event emitted when a Vault secret is refreshed.
+ * Fired once per Vault path (not per property), so consumers
+ * can react to credential rotation (e.g., reconnect a database pool).
+ *
+ * Secret values are intentionally excluded for security.
+ */
+export interface SecretRefreshEvent {
+  /** The Vault path that was refreshed (e.g. 'database/creds/my-role') */
+  vaultPath: string;
+
+  /** Config property names updated from this path (e.g. ['DB_USERNAME', 'DB_PASSWORD']) */
+  properties: string[];
+
+  /** Vault engine type */
+  engine: VaultEngineType;
+
+  /** ISO timestamp of the refresh */
+  timestamp: string;
+
+  /** Number of times this path has been refreshed (1-based) */
+  refreshCount: number;
+}
+
+/**
+ * Callback invoked when Vault secrets are refreshed.
+ * Config values are already updated when this fires.
+ */
+export type SecretRefreshCallback = (event: SecretRefreshEvent) => void | Promise<void>;
 
 /**
  * Circuit breaker configuration

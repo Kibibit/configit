@@ -9,8 +9,9 @@
 
 import { IsString } from 'class-validator';
 
-import { VaultKey, VaultPath } from '../decorators';
-import { IVaultConfigOptions } from '../types';
+import { VaultEngine, VaultKey, VaultPath } from '../decorators';
+import { buildVaultConfigFromEnv } from '../build-vault-config';
+import { IVaultConfigOptions, SecretRefreshEvent } from '../types';
 import { VaultIntegration } from '../vault-integration';
 
 import 'reflect-metadata';
@@ -174,6 +175,177 @@ describeVault('VaultIntegration (requires running Vault)', () => {
       await expect(vaultIntegration.initialize())
         .rejects
         .toThrow(/authentication.*failed/i);
+    });
+  });
+
+  describe('onSecretRefreshed callback', () => {
+    it('should fire callback with correct event when configured via constructor', async () => {
+      const events: SecretRefreshEvent[] = [];
+      const configWithCallback: IVaultConfigOptions = {
+        ...VAULT_CONFIG,
+        onSecretRefreshed: (event) => { events.push(event); }
+      };
+
+      vaultIntegration = new VaultIntegration(configWithCallback);
+      await vaultIntegration.initialize();
+      await vaultIntegration.loadSecrets(TestVaultConfig);
+
+      expect(events).toHaveLength(0);
+    });
+
+    it('should fire callback via runtime registration', async () => {
+      const events: SecretRefreshEvent[] = [];
+
+      vaultIntegration = new VaultIntegration(VAULT_CONFIG);
+      vaultIntegration.onSecretRefreshed((event) => { events.push(event); });
+      await vaultIntegration.initialize();
+      await vaultIntegration.loadSecrets(TestVaultConfig);
+
+      expect(events).toHaveLength(0);
+    });
+  });
+
+  describe('dynamic secrets with TTL-based refresh', () => {
+    /**
+     * Config class using the database engine with dynamic credentials.
+     * database/creds/configit-readonly has a 60s TTL in the test Vault setup.
+     */
+    class DynamicConfig {
+      @VaultPath('creds/configit-readonly')
+      @VaultKey('username')
+      @VaultEngine('database')
+      @IsString()
+        DB_USERNAME!: string;
+
+      @VaultPath('creds/configit-readonly')
+      @VaultKey('password')
+      @VaultEngine('database')
+      @IsString()
+        DB_PASSWORD!: string;
+    }
+
+    it('should load dynamic database credentials', async () => {
+      vaultIntegration = new VaultIntegration({
+        ...VAULT_CONFIG,
+        refreshBuffer: 30
+      });
+      await vaultIntegration.initialize();
+      await vaultIntegration.loadSecrets(DynamicConfig);
+
+      const username = vaultIntegration.getSecret('DB_USERNAME');
+      const password = vaultIntegration.getSecret('DB_PASSWORD');
+
+      expect(username).toBeDefined();
+      expect(username).toMatch(/^v-token-/);
+      expect(password).toBeDefined();
+      expect(password!.length).toBeGreaterThan(0);
+    });
+
+    it('should schedule refresh for dynamic secrets', async () => {
+      vaultIntegration = new VaultIntegration({
+        ...VAULT_CONFIG,
+        refreshBuffer: 30
+      });
+      await vaultIntegration.initialize();
+      await vaultIntegration.loadSecrets(DynamicConfig);
+
+      const health = vaultIntegration.getHealthDetails();
+      expect(health.refreshQueueSize).toBeGreaterThanOrEqual(1);
+
+      const dbUserStatus = health.refreshStatus.find((s) => s.propertyName === 'DB_USERNAME');
+      expect(dbUserStatus).toBeDefined();
+      expect(dbUserStatus!.scheduled).toBe(true);
+      expect(dbUserStatus!.timeUntilRefresh).toBeLessThanOrEqual(60000);
+    });
+
+    it('should perform path-level atomic refresh and fire callback', async () => {
+      const events: SecretRefreshEvent[] = [];
+
+      vaultIntegration = new VaultIntegration({
+        ...VAULT_CONFIG,
+        refreshBuffer: 55, // 60s TTL minus 55s buffer = refresh after ~5s
+        onSecretRefreshed: (event) => { events.push(event); }
+      });
+      await vaultIntegration.initialize();
+      await vaultIntegration.loadSecrets(DynamicConfig);
+
+      const initialUser = vaultIntegration.getSecret('DB_USERNAME');
+      const initialPass = vaultIntegration.getSecret('DB_PASSWORD');
+
+      // Wait for the refresh to trigger (~5s + some margin)
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+
+      const refreshedUser = vaultIntegration.getSecret('DB_USERNAME');
+      const refreshedPass = vaultIntegration.getSecret('DB_PASSWORD');
+
+      // Credentials should have changed
+      expect(refreshedUser).not.toBe(initialUser);
+      expect(refreshedPass).not.toBe(initialPass);
+
+      // Exactly one callback event for the path
+      expect(events.length).toBeGreaterThanOrEqual(1);
+      const dbEvent = events.find((e) => e.engine === 'database');
+      expect(dbEvent).toBeDefined();
+      expect(dbEvent!.properties).toContain('DB_USERNAME');
+      expect(dbEvent!.properties).toContain('DB_PASSWORD');
+      expect(dbEvent!.vaultPath).toContain('configit-readonly');
+      expect(dbEvent!.refreshCount).toBeGreaterThanOrEqual(1);
+    }, 20000);
+  });
+
+  describe('buildVaultConfigFromEnv end-to-end', () => {
+    const savedEnv: Record<string, string | undefined> = {};
+
+    beforeEach(() => {
+      savedEnv.VAULT_ADDR = process.env.VAULT_ADDR;
+      savedEnv.VAULT_TOKEN = process.env.VAULT_TOKEN;
+      savedEnv.VAULT_GCP_ROLE = process.env.VAULT_GCP_ROLE;
+    });
+
+    afterEach(() => {
+      for (const [key, val] of Object.entries(savedEnv)) {
+        if (val !== undefined) {
+          process.env[key] = val;
+        } else {
+          delete process.env[key];
+        }
+      }
+    });
+
+    it('should produce a config that VaultIntegration can use', async () => {
+      process.env.VAULT_ADDR = 'http://127.0.0.1:8200';
+      process.env.VAULT_TOKEN = 'configit-dev-token';
+      delete process.env.VAULT_GCP_ROLE;
+
+      const config = buildVaultConfigFromEnv();
+      expect(config).toBeDefined();
+
+      vaultIntegration = new VaultIntegration(config!);
+      await vaultIntegration.initialize();
+      expect(vaultIntegration.isInitialized()).toBe(true);
+
+      await vaultIntegration.loadSecrets(TestVaultConfig);
+      expect(vaultIntegration.getSecret('API_KEY')).toBe('test-api-key-123');
+    });
+
+    it('should wire onSecretRefreshed callback through to VaultIntegration', async () => {
+      process.env.VAULT_ADDR = 'http://127.0.0.1:8200';
+      process.env.VAULT_TOKEN = 'configit-dev-token';
+      delete process.env.VAULT_GCP_ROLE;
+
+      const events: SecretRefreshEvent[] = [];
+      const config = buildVaultConfigFromEnv({
+        onSecretRefreshed: (event) => { events.push(event); }
+      });
+      expect(config).toBeDefined();
+      expect(config!.onSecretRefreshed).toBeDefined();
+
+      vaultIntegration = new VaultIntegration(config!);
+      await vaultIntegration.initialize();
+      await vaultIntegration.loadSecrets(TestVaultConfig);
+
+      // No events yet (KV secrets have no TTL-based refresh in this setup)
+      expect(events).toHaveLength(0);
     });
   });
 });

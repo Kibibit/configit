@@ -8,6 +8,7 @@ import { SecretRefreshManager } from './secret-refresh-manager';
 import {
   IVaultConfigOptions,
   IVaultHealthDetails,
+  SecretRefreshCallback,
   VaultHealth,
   VaultPropertyMetadata
 } from './types';
@@ -31,8 +32,12 @@ export class VaultIntegration {
     this.config = config;
     this.provider = new VaultProvider(config);
     this.cache = new VaultCache();
-    const refreshBuffer = config.refreshBuffer || 300; // Default 5 minutes
+    const refreshBuffer = config.refreshBuffer || 300;
     this.refreshManager = new SecretRefreshManager(this.provider, this.cache, refreshBuffer);
+
+    if (config.onSecretRefreshed) {
+      this.refreshManager.onSecretRefreshed(config.onSecretRefreshed);
+    }
   }
 
   /**
@@ -169,6 +174,14 @@ export class VaultIntegration {
         this.refreshManager.scheduleRefresh(propertyName, propertyWithDefaults, instance);
       }
     }
+  }
+
+  /**
+   * Register a callback for secret refresh events.
+   * Can be called before or after initialization.
+   */
+  onSecretRefreshed(callback: SecretRefreshCallback): void {
+    this.refreshManager.onSecretRefreshed(callback);
   }
 
   /**
